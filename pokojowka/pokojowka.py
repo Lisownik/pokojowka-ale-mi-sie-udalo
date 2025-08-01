@@ -40,7 +40,7 @@ class WebSocketClient:
                 temperature = self.bme680.temperature
                 humidity = self.bme680.humidity
                 pressure = self.bme680.pressure
-                quality = self.bme680.quality
+                quality = self.bme680.gas
 
                 msg = {
                     "action": "response",
