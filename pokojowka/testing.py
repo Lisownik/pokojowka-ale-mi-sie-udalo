@@ -3,6 +3,8 @@ import datetime
 import random
 import websockets
 import json
+from dotenv import load_dotenv, dotenv_values
+import os
 # import board
 # import busio
 # import adafruit_bme680
@@ -151,7 +153,7 @@ def read_file_safe(filename):
         return ""
 
 async def main():
-    client = WebSocketClient()
+    client = WebSocketClient(os.getenv("API_URL"))
     await client.connect()
     while True:
         await asyncio.sleep(1)
@@ -170,6 +172,7 @@ async def start_with_name(ws, name):
     await ws.send(json.dumps(msg))
 
 if __name__ == "__main__":
+    load_dotenv()
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
