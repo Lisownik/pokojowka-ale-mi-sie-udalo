@@ -73,3 +73,16 @@ h2 {
   font-weight: 500;
   margin-left: 12px;
 }
+
+.error-info {
+  position: fixed;
+  top: calc(50% - 200px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 32px;
+  background: #232323;
+  color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.24);
+}
+

@@ -4,134 +4,111 @@
 
 <div class="rooms-grid">
 
-  <div  class="room" (click)="goToRoom()">
+<!--  <div  class="room" (click)="goToRoom(1)">-->
 
-    <h2>Pokój 1</h2>
+<!--    <h2>Pokój 1</h2>-->
 
-    <div class="room-content">
+<!--    <div class="room-content">-->
 
-      <div class="room-image">
-        <img src="/assets/pokojowka.png" alt="Pokojówka" />
-      </div>
+<!--      <div class="room-image">-->
+<!--        <img src="/assets/pokojowka.png" alt="Pokojówka" />-->
+<!--      </div>-->
 
-      <div class="room-info">
-        <div class="info-row">
-          <span>Temperatura</span>
-          <span class="info-value">17°</span>
-        </div>
+<!--      <div class="room-info">-->
+<!--        <div class="info-row">-->
+<!--          <span>Temperatura</span>-->
+<!--          <span class="info-value">17°</span>-->
+<!--        </div>-->
 
-        <div class="info-row">
-          <span>Wilgotność</span>
-          <span class="info-value">45%</span>
-        </div>
+<!--        <div class="info-row">-->
+<!--          <span>Wilgotność</span>-->
+<!--          <span class="info-value">45%</span>-->
+<!--        </div>-->
 
-        <div class="info-row">
-          <span>Jakość powietrza</span>
-          <span class="info-value">50 AQI</span>
-        </div>
+<!--        <div class="info-row">-->
+<!--          <span>Jakość powietrza</span>-->
+<!--          <span class="info-value">50 AQI</span>-->
+<!--        </div>-->
 
-      </div>
+<!--      </div>-->
 
-    </div>
+<!--    </div>-->
 
-  </div>
+<!--  </div>-->
+  @defer (when dataService.rooms){
+    @for (room of dataService.rooms ; track room.name) {
+      <div  class="room" (click)="goToRoom(room.id)">
 
-  <div class="room" (click)="goToRoom()">
+        <h2>{{ room.name }}</h2>
 
-    <h2>Pokój 2</h2>
+        <div class="room-content">
 
-    <div class="room-content">
+          <div class="room-image">
+            <img src="/assets/pokojowka.png" alt="Pokojówka" />
+          </div>
 
-      <div class="room-image">
-        <img src="/assets/pokojowka.png" alt="Pokojówka" />
-      </div>
+          <div class="room-info">
+              <div class="info-row">
+                <span>Temperatura</span>
+                @if (room.data.temperature) {
+                  <span class="info-value">
+<!--                    {{ room.data.temperature }}°-->
+                    <app-animated-counter
+                      [value]="parseInt(room.data.temperature.toString())"
+                      suffix="°"
+                      [minDigits]="1"
+                      theme="default">
+                    </app-animated-counter>
+                  </span>
+                } @else {
+                  <span class="info-value">Brak odczytu</span>
+                }
+              </div>
+              <div class="info-row">
+                <span>Wilgotność</span>
+                @if (room.data.humidity) {
+                  <span class="info-value">
+<!--                    {{ room.data.humidity }}%-->
+                    <app-animated-counter
+                    [value]="room.data.humidity"
+                    suffix="%"
+                    [minDigits]="1"
+                    theme="default">
+                    </app-animated-counter>
+                  </span>
+                } @else {
+                  <span class="info-value">Brak Odczytu</span>
+                }
+              </div>
+              <div class="info-row">
+                <span>Jakość powietrza</span>
+                @if (room.data.quality) {
+                  <span class="info-value">
+<!--                    {{ room.data.air_quality }} AQI-->
+                    <app-animated-counter
+                    [value]="room.data.quality"
+                    suffix="AQI"
+                    [minDigits]="1"
+                    theme="default"
+                    [fontSize]="16"
+                    >
+                    </app-animated-counter>
+                  </span>
+                } @else {
+                  <span class="info-value">Brak odczytu</span>
+                }
+              </div>
+          </div>
 
-      <div class="room-info">
-        <div class="info-row">
-          <span>Temperatura</span>
-          <span class="info-value">17°</span>
-        </div>
-
-        <div class="info-row">
-          <span>Wilgotność</span>
-          <span class="info-value">45%</span>
-        </div>
-
-        <div class="info-row">
-          <span>Jakość powietrza</span>
-          <span class="info-value">50 AQI</span>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="room" (click)="goToRoom()">
-
-    <h2>Pokój 3</h2>
-
-    <div class="room-content" >
-
-      <div class="room-image">
-        <img src="/assets/pokojowka.png" alt="Pokojówka" />
-      </div>
-
-      <div class="room-info">
-
-        <div class="info-row">
-          <span>Temperatura</span>
-          <span class="info-value">17°</span>
-        </div>
-
-        <div class="info-row">
-          <span>Wilgotność</span>
-          <span class="info-value">45%</span>
-        </div>
-
-        <div class="info-row">
-          <span>Jakość powietrza</span>
-          <span class="info-value">50 AQI</span>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="room" (click)="goToRoom()">
-
-    <h2>Pokój 4</h2>
-
-    <div class="room-content">
-
-      <div class="room-image">
-        <img src="/assets/pokojowka.png" alt="Pokojówka" />
-      </div>
-
-      <div class="room-info">
-
-        <div class="info-row">
-          <span>Temperatura</span>
-          <span class="info-value">17°</span>
-        </div>
-
-        <div class="info-row">
-          <span>Wilgotność</span>
-          <span class="info-value">45%</span>
-        </div>
-
-        <div class="info-row">
-          <span>Jakość powietrza</span>
-          <span class="info-value">50 AQI</span>
         </div>
 
       </div>
+    } @empty {
+        <h3 class="error-info">Nie ma żadnych dostępnych pokojówek</h3>
+    }
+  } @placeholder {
+    Nic
+  }
 
-    </div>
-
-  </div>
 
 </div>

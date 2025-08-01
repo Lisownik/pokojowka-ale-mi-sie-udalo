@@ -3,7 +3,6 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
   font-family: Arial, sans-serif;
   background: url('/assets/background-default.png') no-repeat center center fixed;
@@ -122,6 +121,14 @@ body.light-theme .card .card-desc.good {
   color: #4B5563  !important;
 }
 
+body.light-theme .error-info {
+  background: white !important;
+  color: #232323 !important;
+}
+
+body.light-theme .digit {
+  color: #232323 !important;
+}
 
 main{
   display: flex;

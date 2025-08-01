@@ -10,5 +10,6 @@ export const appRoutes: Routes = [
   { path: 'pokojowki', component: PokojowkiComponent },
   { path: 'potki', component: PotkiComponent },
   { path: 'pokojowka-widok', component: PokojowkaWidokComponent },
+  { path: 'pokojowka-widok/:id', component: PokojowkaWidokComponent },
   {path: 'potka-widok', component: PotkaWidokComponent}
 ];
