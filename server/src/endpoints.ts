@@ -15,7 +15,6 @@ app.get('/room-list', (_req: Request, res: Response) => {
 
 
 app.get('/room-values', (_req: Request, res: Response) => {
-    console.log("A")
     console.table(filters["room"]["get"]())
     res.header("Access-Control-Allow-Origin", "*");
     res.json(filters["room"]["get"]())
@@ -104,7 +103,6 @@ app.put('/bulb/:id/brightness', (req: Request, res: Response)=> {
 
 function assert_requirement(res: Response, params: any[], errorMessage: string = "Parameters requiremenets were not met"): boolean {
     params.forEach((param) => {
-        console.log(param, !param)
         if(!param) {
             res.status(400).json({
                 params,

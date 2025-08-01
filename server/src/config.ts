@@ -214,7 +214,6 @@ export const filters: FiltersStructure = {
         },
         "name-start": (id: string, params: Parameters): void => {
             let data = Users.get(id);
-            console.log('fucking nigger?')
             if(!data || !params['name']) return;
             data.name = params['name'];
         }
@@ -234,14 +233,12 @@ export const filters: FiltersStructure = {
                     )
                 }
             })
-            console.log(arr)
             return arr;
         },
         "brightness-change": (id: string, brightness: number, duration?: number): boolean => {
             let bulb = IdToYeelight.get(id);
             if(!bulb)
                 return false
-            console.log("try to bright: ", brightness)
             bulb.setName("niga?")
             bulb.setBrightness(Number(brightness))
             return true
