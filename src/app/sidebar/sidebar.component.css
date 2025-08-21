@@ -1,6 +1,6 @@
 .sidebar {
   position: absolute;
-  top: 20px;
+  top: 0;
   left: 10px;
   display: flex;
   flex-direction: column;
@@ -19,21 +19,20 @@
   background: #202020;
   border: none;
   border-radius: 50%;
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: white;
-  font-size: 14px;
   z-index: 2;
   transition: background 0.2s;
 }
 
 .sidebar button img {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
 }
 
 .sidebar-panel {
@@ -49,7 +48,7 @@
   align-items: center;
   gap: 10px;
   font-size: 1.2em;
-  height: 55px;
+  height: 50px;
   min-width: fit-content;
   opacity: 0;
   pointer-events: none;

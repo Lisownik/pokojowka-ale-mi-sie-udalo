@@ -1,0 +1,39 @@
+<app-back-button></app-back-button>
+<app-action-button></app-action-button>
+
+<div class="bulb-card">
+  <div class="bulb-header">
+    <div>
+      <h2 class="bulb-title">Żarówka LED</h2>
+      <div class="bulb-desc">Inteligentne oświetlenie</div>
+    </div>
+    <div class="bulb-icon-placeholder">
+      <span class="bulb-ico"><img src="/assets/icons/slocne.png" alt="cisnienie white"></span>
+    </div>
+  </div>
+
+  <div class="bulb-status-row">
+    <span class="status-dot"></span>
+    <span class="status-label">Status</span>
+    <span class="status-value off">WYŁĄCZONA</span>
+  </div>
+
+  <div class="bulb-slider-row">
+    <div class="slider-label">Jasność</div>
+    <input type="range" min="0" max="100" value="75" class="brightness-slider" />
+    <span class="slider-value">75%</span>
+  </div>
+
+  <div class="bulb-slider-row">
+    <div class="slider-label">Temperatura</div>
+    <input type="range" min="2200" max="6500" step="100" value="3000" class="temperature-slider" />
+    <span class="slider-value">3000K</span>
+  </div>
+
+  <div class="bulb-btn-row">
+    <button class="bulb-btn on">
+      <span class="bulb-center-ico"> <img src="/assets/icons/slocne.png" alt="cisnienie white"></span>
+      <span class="bulb-btn-text">ON</span>
+    </button>
+  </div>
+</div>

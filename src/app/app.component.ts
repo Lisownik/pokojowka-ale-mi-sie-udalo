@@ -7,9 +7,9 @@ import {ThemeChangeComponent} from './theme-change/theme-change.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SidebarComponent, ClockComponent, ThemeChangeComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [RouterOutlet, SidebarComponent, ThemeChangeComponent],
+  styleUrl: './app.component.css',
+  templateUrl: './app.component.html'
 })
 export class AppComponent {
   title = 'pokojowka';

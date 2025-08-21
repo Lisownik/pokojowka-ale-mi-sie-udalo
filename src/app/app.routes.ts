@@ -4,6 +4,7 @@ import { PokojowkiComponent } from './pokojowki/pokojowki.component';
 import { PotkiComponent } from './potki/potki.component';
 import {PokojowkaWidokComponent} from './pokojowka-widok/pokojowka-widok.component';
 import {PotkaWidokComponent} from './potka-widok/potka-widok.component';
+import {ZarowkiComponent} from './zarowki/zarowki.component';
 
 export const appRoutes: Routes = [
   { path: '', component: HomeComponent },
@@ -11,5 +12,6 @@ export const appRoutes: Routes = [
   { path: 'potki', component: PotkiComponent },
   { path: 'pokojowka-widok', component: PokojowkaWidokComponent },
   { path: 'pokojowka-widok/:id', component: PokojowkaWidokComponent },
-  {path: 'potka-widok', component: PotkaWidokComponent}
+  {path: 'potka-widok', component: PotkaWidokComponent},
+  {path: 'zarowki', component: ZarowkiComponent}
 ];
