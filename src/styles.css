@@ -164,3 +164,70 @@ main{
   justify-content: center;
 }
 
+body.light-theme .lights-grid .light-container {
+  background: white !important;
+  box-shadow: 0 3px 9px #0004;
+  color: black !important;
+}
+
+body.light-theme .lights-grid .light-header h2 {
+  color: #1E3A8A !important; /* ciemniejszy niebieski zamiast #70A7FE */
+}
+
+body.light-theme .lights-grid .light-status-indicator {
+  color: black !important;
+}
+
+body.light-theme .lights-grid .status-on {
+  background-color: #059669 !important;
+  box-shadow: 0 0 8px rgba(5, 150, 105, 0.6) !important;
+}
+
+body.light-theme .lights-grid .status-off {
+  background-color: #9CA3AF !important;
+}
+
+body.light-theme .lights-grid .light-image img {
+  filter: invert(1) !important;
+}
+
+body.light-theme .lights-grid .light-on {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 150, 0.7)) invert(1) !important;
+}
+
+body.light-theme .lights-grid .light-off {
+  opacity: 0.6 !important;
+  filter: invert(1) !important;
+}
+
+body.light-theme .lights-grid .toggle-label,
+body.light-theme .lights-grid .slider-container label,
+body.light-theme .lights-grid .slider-value {
+  color: black !important;
+}
+
+body.light-theme .lights-grid .toggle-button {
+  background-color: #9CA3AF !important;
+}
+
+body.light-theme .lights-grid .toggle-on {
+  background-color: #059669 !important;
+}
+
+body.light-theme .lights-grid input[type="range"] {
+  background: #D1D5DB !important;
+}
+
+body.light-theme .lights-grid input[type="range"]::-webkit-slider-thumb {
+  background: #2563EB !important; /* ciemny niebieski */
+}
+/* CIEMNY MOTYW – biała ikonka */
+.lights-grid .light-image img {
+  filter: invert(1);
+}
+
+/* JASNY MOTYW – czarna ikonka */
+body.light-theme .lights-grid .light-image img {
+  filter: none !important;
+}

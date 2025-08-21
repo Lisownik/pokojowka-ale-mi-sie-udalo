@@ -1,0 +1,46 @@
+<app-back-button></app-back-button>
+<app-action-button></app-action-button>
+
+<div class="bulb-card" *ngIf="light">
+  <div class="bulb-header">
+    <div>
+      <h2 class="bulb-title">{{ light.name }}</h2>
+      <div class="bulb-desc">Inteligentne oświetlenie</div>
+    </div>
+    <div class="bulb-icon-placeholder">
+      <span class="bulb-ico"><img src="/assets/icons/slocne.png" alt="Ikona żarówki"></span>
+    </div>
+  </div>
+
+  <div class="bulb-status-row">
+    <span class="status-dot" [style.background-color]="light.isOn ? '#00ff77' : '#ff3d3d'"></span>
+    <span class="status-label">Status</span>
+    <span class="status-value" [ngClass]="{'on': light.isOn, 'off': !light.isOn}">{{ light.isOn ? 'WŁĄCZONA' : 'WYŁĄCZONA' }}</span>
+  </div>
+
+  <div class="bulb-slider-row">
+    <div class="slider-label">Jasność</div>
+    <input type="range" min="0" max="100" [value]="light.brightness" class="brightness-slider"
+           (input)="onBrightnessChange($event)" [disabled]="!light.isOn" />
+    <span class="slider-value">{{ light.brightness }}%</span>
+  </div>
+
+  <div class="bulb-slider-row">
+    <div class="slider-label">Temperatura</div>
+    <input type="range" min="2200" max="6500" step="100" [value]="light.temperature || 3000" class="temperature-slider"
+           (input)="onTemperatureChange($event)" [disabled]="!light.isOn" />
+    <span class="slider-value">{{ light.temperature || 3000 }}K</span>
+  </div>
+
+  <div class="bulb-btn-row">
+    <button
+      class="bulb-btn"
+      [ngClass]="light.isOn ? 'on' : 'off'"
+      (click)="toggleLight()">
+      <span class="bulb-center-ico">
+        <img src="/assets/icons/slocne.png" alt="Przycisk zasilania">
+      </span>
+      <span class="bulb-btn-text">{{ light.isOn ? 'ON' : 'OFF' }}</span>
+    </button>
+  </div>
+</div>
