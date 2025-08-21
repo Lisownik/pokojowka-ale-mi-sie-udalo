@@ -14,17 +14,27 @@
 <!--          {{ room!.data.temperature }}°C-->
           <app-animated-counter
             [value]="parseInt(room!.data.temperature.toString())"
+            suffix=""
+            [minDigits]="1"
+            theme="default">
+          </app-animated-counter>
+          .
+          <app-animated-counter
+            [value]="parseInt((room!.data.temperature%1 * 100).toString())"
             suffix="°C"
             [minDigits]="1"
             theme="default">
           </app-animated-counter>
         </div>
-        <div class="card-desc up">
-          <img
-            [src]="`assets/icons/arrow-${(room!.data.temperature - dataService.roomAvg.temperature) > 0 ? 'up' : 'down'}.png`"
-            alt="Wzrost" class="icon-mini" />
-          {{ Math.abs((room!.data.temperature - dataService.roomAvg.temperature)).toFixed(1) }}° stopni {{ (room!.data.temperature - dataService.roomAvg.temperature) > 0 ? "więcej" : "mniej" }}
-        </div>
+        @if (dataService.rooms.length > 1) {
+          <div class="card-desc up">
+            <img
+              [src]="`assets/icons/arrow-${(room!.data.temperature - dataService.roomAvg.temperature) > 0 ? 'up' : 'down'}.png`"
+              alt="Wzrost" class="icon-mini" />
+            {{ Math.abs((room!.data.temperature - dataService.roomAvg.temperature)).toFixed(1) }}° stopni {{ (room!.data.temperature - dataService.roomAvg.temperature) > 0 ? "więcej" : "mniej" }}
+          </div>
+        }
+
 <!--                <div class="card-desc up">
           <img src="assets/icons/arrow-up.png" alt="Wzrost" class="icon-mini" />
           <app-animated-counter
@@ -56,11 +66,19 @@
 <!--          {{ room!.data.pressure }} hPa-->
           <app-animated-counter
             [value]="parseInt(room!.data.pressure.toString())"
-            suffix=" hPa"
+            suffix=""
+            [minDigits]="1"
+            theme="default">
+          </app-animated-counter>
+          .
+          <app-animated-counter
+            [value]="parseInt((room!.data.pressure % 1 * 100).toString())"
+            suffix="hPa"
             [minDigits]="1"
             theme="default">
           </app-animated-counter>
         </div>
+        @if (dataService.rooms.length > 1) {
         <div class="card-desc down">
           <img
             [src]="`assets/icons/arrow-${(room!.data.pressure - dataService.roomAvg.pressure) > 0 ? 'up' : 'down'}.png`"
@@ -68,6 +86,7 @@
           {{ Math.abs((room!.data.pressure - dataService.roomAvg.pressure)).toFixed(1) }} hPa {{ (room!.data.pressure - dataService.roomAvg.pressure) > 0 ? "więcej" : "mniej" }}
 
         </div>
+        }
       </div>
       <div class="card rating">
         <div class="card-title">
@@ -89,7 +108,14 @@
         <div class="card-value">
 <!--          {{ room!.data.humidity }}%-->
           <app-animated-counter
-            [value]="room!.data.humidity"
+            [value]="parseInt(room!.data.humidity.toString())"
+            suffix=""
+            [minDigits]="1"
+            theme="default">
+          </app-animated-counter>
+          .
+          <app-animated-counter
+            [value]="parseInt((room!.data.humidity%1 * 100).toString())"
             suffix="%"
             [minDigits]="1"
             theme="default">

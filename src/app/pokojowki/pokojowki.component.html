@@ -70,7 +70,7 @@
                   <span class="info-value">
 <!--                    {{ room.data.humidity }}%-->
                     <app-animated-counter
-                    [value]="room.data.humidity"
+                    [value]="parseInt(room.data.humidity.toString())"
                     suffix="%"
                     [minDigits]="1"
                     theme="default">

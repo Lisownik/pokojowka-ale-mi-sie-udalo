@@ -1,0 +1,29 @@
+<div class="counter-container" [style.font-size.px]="fontSize" [class]="'theme-' + theme">
+  <div class="counter-display">
+    @for (digit of displayDigits; track displayDigits.indexOf(digit)) {
+      <span
+        class="digit-container"
+        [style.height.px]="fontSize * 1.4"
+      >
+          <div
+            class="digit-wheel"
+            [style.transform]="'translateY(' + digit.offset + 'px)'"
+          >
+            @for (num of [0,1,2,3,4,5,6,7,8,9] ; track [0,1,2,3,4,5,6,7,8,9].indexOf(num)) {
+              <span
+                class="digit"
+                [style.height.px]="digitHeight"
+                [style.line-height.px]="digitHeight"
+              >
+              {{ num }}
+            </span>
+            }
+          </div>
+        </span>
+    }
+
+    @if(suffix) {
+      <span class="suffix">{{ suffix }}</span>
+    }
+  </div>
+</div>
