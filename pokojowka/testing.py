@@ -15,7 +15,6 @@ class WebSocketClient:
     def __init__(self, uri="ws://localhost:8000"):
         self.uri = uri
         self.ws = None
-        # Don't call connect here - instead use the async context below
         # self.bme680 = None
 
     async def connect(self):
@@ -54,6 +53,8 @@ class WebSocketClient:
                             "humidity": humidity,
                             "pressure": pressure,
                             "quality": quality,
+                            "co": False,
+                            "gasses": False
                         }
                     }
                 }
@@ -63,9 +64,10 @@ class WebSocketClient:
                 await asyncio.sleep(5)
         except websockets.exceptions.ConnectionClosed:
             print("❌ WebSocket connection closed")
+            exit(1)
 
     # async def init(self):
-    #     print("🔄 Sending init...")
+    #     print("Sending init...")
     #     await self.send("init", {"msg": "hello"}, response_var="init_response")
 
 
@@ -93,6 +95,7 @@ class WebSocketClient:
 
         except websockets.exceptions.ConnectionClosed:
             print("❌ WebSocket connection closed")
+            exit(1)
 
 def handleMessage(message):
     match message.get('action'):

@@ -42,3 +42,4 @@ export interface FiltersStructure {
     [category: string]: QueryCategory;
 }
 
+export type PowerState = "on" | "off";

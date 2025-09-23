@@ -3,7 +3,7 @@ import {
     ActionType,
     FiltersStructure,
     IncomingResponsePayload,
-    Parameters,
+    Parameters, PowerState,
     ResponsePayload,
     ServerData,
     UserData, userInfo
@@ -16,6 +16,10 @@ import {
     IYeelightMethodResponse, YeelightEffect,
     YeelightMethodStatusEnum
 } from 'yeelight-service/lib/yeelight.interface';
+import OpenAI from 'openai';
+
+export const GPTClient = new OpenAI({apiKey: process.env.API_KEY});
+
 
 export function standardizeData(action: ActionType, params: ResponsePayload): string {
     return JSON.stringify(
@@ -92,7 +96,7 @@ export const wss: WebSocketServer = new WebSocketServer({
 });
 
 export function simpleId(): string {
-    return crypto.randomBytes(16).toString('hex');
+    return crypto.randomBytes(8).toString('hex');
 }
 
 export function simpleName(): string {
@@ -151,8 +155,10 @@ yeelightService.devices.subscribe((devices) => {
         })
 
         device.setPower('on')
+        device.setName("żarówka")
     });
 });
+
 
 export const Users = new Map<string, UserData>();
 export const IdToWS = new Map<string, WebSocket>();
@@ -181,7 +187,7 @@ export const filters: FiltersStructure = {
             let keys = Array.from(Users.entries())
             let objects: { keys: any[], values: any[] } = { keys: [], values: [] }
             keys.forEach(([key, value]) => {
-                if (value.type === 'room') {
+                if (value.type === 'lightbulb') {
                     objects.keys.push(key)
                     objects.values.push(Users.get(key))
                 }
@@ -239,8 +245,21 @@ export const filters: FiltersStructure = {
             let bulb = IdToYeelight.get(id);
             if(!bulb)
                 return false
-            bulb.setName("niga?")
             bulb.setBrightness(Number(brightness))
+            return true
+        },
+        "power-change": (id: string, power: PowerState): boolean => {
+            let bulb = IdToYeelight.get(id);
+            if(!bulb)
+                return false
+            bulb.setPower(power)
+            return true
+        },
+        "name-change": (id: string, newName: string): boolean => {
+            let bulb = IdToYeelight.get(id);
+            if(!bulb)
+                return false
+            bulb.setName(newName)
             return true
         }
     }

@@ -31,7 +31,7 @@ class WebSocketClient:
 
         asyncio.create_task(self.receive_loop())
         asyncio.create_task(self.send_data())
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
 
 
     async def send_data(self):
