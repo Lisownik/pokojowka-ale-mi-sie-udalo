@@ -19,8 +19,12 @@ class WebSocketClient:
 
     async def connect(self):
         name = read_file_safe('./name.txt')
-        self.ws = await websockets.connect(self.uri)
-        print(f"✅ Connected to {self.uri}")
+        try:
+            self.ws = await websockets.connect(self.uri)
+        except:
+            print("❌ Connection Can Not Be Established ❌")
+            exit(0x1)
+        print(f"✅ Connected to {self.uri} ✅")
 
         # self.bme680 = init()
         # if self.bme680 is None:
@@ -62,9 +66,10 @@ class WebSocketClient:
                 await self.ws.send(json.dumps(msg))
                 print(f"> Sent: {msg}")
                 await asyncio.sleep(5)
-        except websockets.exceptions.ConnectionClosed:
-            print("❌ WebSocket connection closed")
-            exit(1)
+        except:
+            self.ws.close()
+            print("❌ WebSocket connection closed ❌")
+            exit(0x2)
 
     # async def init(self):
     #     print("Sending init...")
