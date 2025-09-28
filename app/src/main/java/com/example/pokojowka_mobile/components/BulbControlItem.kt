@@ -64,7 +64,7 @@ fun BulbControlItem(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = bulb.roomName,
+                            text = bulb.name,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 17.sp
@@ -105,7 +105,7 @@ fun BulbControlItem(
                         onValueChange = { newValue ->
                             onBrightnessChange(newValue.roundToInt())
                         },
-                        valueRange = 0f..100f,
+                        valueRange = 1f..100f,
                         steps = 99,
                         modifier = Modifier.weight(1f),
                         thumb = {
@@ -145,7 +145,7 @@ fun BulbControlItemOnPreview() {
             mutableStateOf(
                 BulbData(
                     id = "preview_on",
-                    roomName = "Salon (Podgląd)",
+                    name = "Salon (Podgląd)",
                     brightnessPercentage = 75,
                     isSwitchedOn = true,
                     colorTemperatureKelvin = 3500
@@ -176,7 +176,7 @@ fun BulbControlItemOffPreview() {
             mutableStateOf(
                 BulbData(
                     id = "preview_off",
-                    roomName = "Sypialnia (Podgląd)",
+                    name = "Sypialnia (Podgląd)",
                     brightnessPercentage = 0,
                     isSwitchedOn = false,
                     colorTemperatureKelvin = 2700

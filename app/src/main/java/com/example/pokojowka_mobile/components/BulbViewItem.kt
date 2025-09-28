@@ -1,8 +1,10 @@
 package com.example.pokojowka_mobile.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Info
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,13 +46,14 @@ fun BulbViewItem(
     isChecked: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)? = null,
     sliderValue: Float = 0f,
-    sliderValueRange: ClosedFloatingPointRange<Float> = 0f..100f,
+    sliderValueRange: ClosedFloatingPointRange<Float> = 1f..100f,
     sliderSteps: Int = 0,
     sliderValueRepresentation: (Float) -> String = { it.roundToInt().toString() },
     onSliderValueChange: ((Float) -> Unit)? = null,
     onSliderValueChangeFinished: (() -> Unit)? = null,
     enabled: Boolean = true,
-    contentColor: Color = MaterialTheme.colorScheme.onSurface
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    onClick: (() -> Unit)? = null
 ) {
     Card(
         modifier = modifier
@@ -90,12 +94,25 @@ fun BulbViewItem(
                 when (itemType) {
                     BulbViewItemType.INFO -> {
                         if (itemValueString != null) {
-                            Text(
-                                text = itemValueString,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                color = contentColor.copy(alpha = if (enabled) 1f else 0.6f)
-                            )
+                            if (onClick != null) {
+                                Text(
+                                    text = itemValueString,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = contentColor.copy(alpha = if (enabled) 1f else 0.6f),
+                                    modifier = Modifier.clickable(
+                                        enabled = enabled,
+                                        onClick = onClick
+                                    )
+                                )
+                            } else {
+                                Text(
+                                    text = itemValueString,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = contentColor.copy(alpha = if (enabled) 1f else 0.6f)
+                                )
+                            }
                         }
                     }
                     BulbViewItemType.SWITCH -> {

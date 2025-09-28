@@ -31,11 +31,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pokojowka_mobile.data.RoomData
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.network.AuthViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
 
+    val authViewModel: AuthViewModel = viewModel()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
@@ -48,6 +53,15 @@ fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier)
     )
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
+    val rooms by authViewModel.roomsFlow.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        authViewModel.getRooms()
+    }
+
+    LaunchedEffect(rooms) {
+        Log.d("API_RoomsScreen", "Rooms updated: ${rooms.size}")
+    }
 
 
     Scaffold(
@@ -89,7 +103,7 @@ fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier)
             )
 
             RoomsSection(
-                rooms = sampleRoomsGlobal,
+                rooms = rooms.toMutableList(),
                 onRoomClick = { roomId ->
                     Log.d("RoomsScreen", "Kliknięto pokój o ID: $roomId. Nawigacja do RoomView.")
                     navController.navigate("${AppDestinations.ROOM_VIEW_SCREEN_ROUTE}/$roomId")

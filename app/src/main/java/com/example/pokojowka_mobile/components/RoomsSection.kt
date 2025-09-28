@@ -27,7 +27,7 @@ import com.example.pokojowka_mobile.ui.theme.RoomIconBackgroundLiving
 @Composable
 fun RoomsSection(
     modifier: Modifier = Modifier,
-    rooms: List<RoomData>,
+    rooms: MutableList<RoomData>,
     onRoomClick: (roomId: String) -> Unit,
     title: String = "Twoje Pokoje"
 ) {
@@ -73,7 +73,7 @@ fun RoomsSectionPreview() {
     PokojowkamobileTheme {
 
         val sampleRooms = remember {
-            listOf(
+            mutableListOf(
                 RoomData(
                     id = "1",
                     name = "Sypialnia",
@@ -124,7 +124,7 @@ fun RoomsSectionPreview() {
 fun EmptyRoomsSectionPreview() {
     PokojowkamobileTheme {
         RoomsSection(
-            rooms = emptyList(),
+            rooms = mutableListOf(),
             onRoomClick = {},
             title = "Brak Pokoi (Preview)"
         )

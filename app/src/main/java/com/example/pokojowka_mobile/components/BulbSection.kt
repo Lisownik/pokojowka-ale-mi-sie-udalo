@@ -63,7 +63,7 @@ fun BulbsSection(
             } else {
                 bulbs.forEachIndexed { index, bulbData ->
                     BulbItem(
-                        roomName = bulbData.roomName,
+                        roomName = bulbData.name,
                         brightness = bulbData.brightnessDisplay,
                         isSwitchedOn = bulbData.isSwitchedOn,
                         iconBackgroundColor = bulbData.currentIconColor,

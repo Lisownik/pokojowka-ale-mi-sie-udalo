@@ -7,7 +7,7 @@ import com.example.pokojowka_mobile.ui.theme.BulbInactiveColor
 
 data class BulbData(
     val id: String,
-    val roomName: String,
+    val name: String,
     var brightnessPercentage: Int,
     var isSwitchedOn: Boolean,
     var colorTemperatureKelvin: Int,
@@ -27,31 +27,31 @@ data class BulbData(
     }
 }
 
-val sampleBulbsGlobalList: List<BulbData> = listOf(
+var sampleBulbsGlobalList: MutableList<BulbData> = mutableListOf(
     BulbData(
         id = "salon_main",
-        roomName = "Salon",
+        name = "Salon",
         brightnessPercentage = 70,
         isSwitchedOn = true,
         colorTemperatureKelvin = 3500
     ),
     BulbData(
         id = "bedroom_night",
-        roomName = "Sypialnia",
+        name = "Sypialnia",
         brightnessPercentage = 0,
         isSwitchedOn = false,
         colorTemperatureKelvin = 2700
     ),
     BulbData(
         id = "kitchen_spot",
-        roomName = "Kuchnia",
+        name = "Kuchnia",
         brightnessPercentage = 90,
         isSwitchedOn = true,
         colorTemperatureKelvin = 4500
     ),
     BulbData(
         id = "office_desk",
-        roomName = "Biuro",
+        name = "Biuro",
         brightnessPercentage = 50,
         isSwitchedOn = true,
         iconColorActive = Color(0xFF3B82F6),
@@ -59,7 +59,7 @@ val sampleBulbsGlobalList: List<BulbData> = listOf(
     ),
     BulbData(
         id = "hallway_led",
-        roomName = "Przedpokój",
+        name = "Przedpokój",
         brightnessPercentage = 0,
         isSwitchedOn = false,
         colorTemperatureKelvin = 3000

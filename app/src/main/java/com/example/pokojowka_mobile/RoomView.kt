@@ -2,6 +2,7 @@ package com.example.pokojowka_mobile
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +43,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.derivedStateOf
 import com.example.pokojowka_mobile.ui.components.ThreatsTile
 import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.ui.components.RoomViewSection
@@ -56,10 +62,16 @@ import com.example.pokojowka_mobile.data.EnvironmentData
 import com.example.pokojowka_mobile.data.SampleUserData
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Observer
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.network.AuthViewModel
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -94,10 +106,6 @@ fun RoomViewInternalHeader(
 }
 
 
-private fun getRoomById(roomId: String?): RoomData? {
-    if (roomId == null) return null
-    return sampleRoomsGlobal.find { it.id == roomId }
-}
 
 private object RoomParameterIcons {
     val Temperature: ImageVector = Icons.Filled.Thermostat
@@ -106,18 +114,24 @@ private object RoomParameterIcons {
     val AirQuality: ImageVector = Icons.Filled.Air
 }
 
+private fun getRoomById(roomId: String?): RoomData? {
+    if (roomId == null) return null
+    return sampleRoomsGlobal.find { it.id == roomId }
+}
+
 @Composable
 fun RoomView(
     navController: NavHostController,
     roomId: String?,
     modifier: Modifier = Modifier
 ) {
-    var roomData by remember { mutableStateOf<RoomData?>(null) }
+//    var roomData by remember { mutableStateOf<RoomData?>(null) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
 
 
+    val authViewModel: AuthViewModel = viewModel()
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
 
@@ -128,8 +142,64 @@ fun RoomView(
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
 
-    LaunchedEffect(roomId) {
-        roomData = getRoomById(roomId)
+
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var newRoomName by remember { mutableStateOf("") }
+    val rooms by authViewModel.roomsFlow.collectAsStateWithLifecycle()
+//    val roomData = remember(rooms) {
+//        rooms.firstOrNull { it.id == roomId }
+//    }
+
+
+    LaunchedEffect(rooms) {
+        Log.d("API_RoomView_Debug", "Rooms list: ${rooms.joinToString { it.id + ":" + it.name }}")
+        delay(500)
+        rooms.forEach { room ->
+            Log.d("API_RoomView_Debug", "Room ${room.id}: ${room.hashCode()}")
+            delay(250)
+        }
+    }
+
+    val roomData = rooms.firstOrNull { it.id == roomId }
+
+    LaunchedEffect(roomData) {
+        if (roomData != null) {
+            delay(250)
+            Log.d("API_RoomView", "Room data reference: ${roomData.hashCode()}")
+            delay(250)
+            Log.d("API_RoomView", "Room data: $roomData")
+        }
+    }
+
+    if (showRenameDialog && roomId != null) {
+        AlertDialog(
+            onDismissRequest = { showRenameDialog = false },
+            title = {
+                Text("Zmień nazwę pokoju")
+            },
+            text = {
+                OutlinedTextField(
+                    value = newRoomName,
+                    onValueChange = { newRoomName = it },
+                    label = { Text("Nowa nazwa") }
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    if (newRoomName.isNotBlank()) {
+                        authViewModel.changeRoomName(roomId, newRoomName)
+                        showRenameDialog = false
+                    }
+                }) {
+                    Text("Zatwierdź")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRenameDialog = false }) {
+                    Text("Anuluj")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -173,7 +243,11 @@ fun RoomView(
             RoomViewInternalHeader(
                 roomName = roomData?.name ?: "Szczegóły Pokoju",
                 onNavigateUp = { navController.popBackStack() },
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = 8.dp).clickable(onClick = {
+                    newRoomName = roomData?.name ?: "Nie ma"
+                    showRenameDialog = true
+                }),
+
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -195,7 +269,7 @@ fun RoomView(
                 }
             } else {
                 val currentRoomData = roomData!!
-                val roomParameters = remember(currentRoomData) {
+                val roomParameters =
                     buildList<SectionItemUIData> {
                         add(
                             SectionItemUIData(
@@ -232,7 +306,7 @@ fun RoomView(
                             )
                         }
                     }
-                }
+
 
                 RoomViewSection(
                     title = "Parametry Pomieszczenia",

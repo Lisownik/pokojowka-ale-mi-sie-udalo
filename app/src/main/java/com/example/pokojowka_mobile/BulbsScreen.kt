@@ -2,6 +2,7 @@
 package com.example.pokojowka_mobile.screens
 
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -38,18 +39,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.network.AuthViewModel
+import com.example.pokojowka_mobile.network.RetrofitClient
+import kotlinx.coroutines.delay
+import kotlin.getValue
 
 @Composable
 fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+    val authViewModel: AuthViewModel = viewModel()
 
+//    val bulbsListState = remember(sampleBulbsGlobalList) {
+//        mutableStateListOf<BulbData>().apply {
+//            addAll(sampleBulbsGlobalList.map { it.copy() })
+//        }
+//    }
+    val bulbsListState by authViewModel.bulbsFlow.collectAsStateWithLifecycle()
 
-    val bulbsListState = remember {
-        mutableStateListOf<BulbData>().apply {
-            addAll(sampleBulbsGlobalList.map { it.copy() })
-        }
+    LaunchedEffect(Unit) {
+        authViewModel.loadBulbs()
     }
-
 
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
@@ -103,20 +113,23 @@ fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier)
             BulbsListSection(
                 bulbs = bulbsListState,
                 onSwitchToggle = { bulbId, newState ->
+
                     val index = bulbsListState.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-                        val oldBulb = bulbsListState[index]
-                        bulbsListState[index] = oldBulb.copy(
-                            isSwitchedOn = newState,
-                            brightnessPercentage = if (!newState) 0 else if (oldBulb.brightnessPercentage == 0) 50 else oldBulb.brightnessPercentage
-                        )
+//                        val oldBulb = bulbsListState[index]
+//                        bulbsListState[index] = oldBulb.copy(
+//                            isSwitchedOn = newState
+//                        )
+                        Log.d("Logging bulbsListState", bulbsListState.toString())
+                        authViewModel.changePowerState(bulbId, if(newState) "on" else "off")
                     }
                     Log.d("BulbsScreen", "Żarówka $bulbId przełączona na: $newState")
                 },
                 onBrightnessChange = { bulbId, newBrightness ->
                     val index = bulbsListState.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-                        bulbsListState[index] = bulbsListState[index].copy(brightnessPercentage = newBrightness)
+//                        bulbsListState[index] = bulbsListState[index].copy(brightnessPercentage = newBrightness)
+                        authViewModel.changeBrightness(bulbId, newBrightness, RetrofitClient.BULB_CHANGE_DURATION)
                     }
                     Log.d("BulbsScreen", "Jasność żarówki $bulbId zmieniona na: $newBrightness%")
                 },

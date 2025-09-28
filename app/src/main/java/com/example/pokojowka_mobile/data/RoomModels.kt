@@ -46,8 +46,8 @@ data class RoomData(
     val airQualityTrend: TrendData? = null,
 
     val coDetected: Boolean = false,
-    val otherGasesDetected: Boolean = false
-
+    val otherGasesDetected: Boolean = false,
+    val lastUpdated: Long = System.currentTimeMillis()
 ) {
 
     val statusColor: Color
@@ -59,7 +59,7 @@ data class RoomData(
         }
 }
 
-val sampleRoomsGlobal: List<RoomData> = listOf(
+var sampleRoomsGlobal: MutableList<RoomData> = mutableListOf(
     RoomData(
         id = "r1", name = "Sypialnia", icon = Icons.Filled.Bed, backgroundColor = RoomIconBackgroundBed,
         status = RoomStatus.GOOD, temperature = "22°C", humidity = "45%", airQuality = "Dobra", pressure = "1012 hPa",

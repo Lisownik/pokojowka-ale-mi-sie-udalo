@@ -1,5 +1,6 @@
 package com.example.pokojowka_mobile
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -42,16 +43,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.data.samplePlantsGlobal
+import com.example.pokojowka_mobile.data.sampleRoomsGlobal
+import com.example.pokojowka_mobile.network.AuthViewModel
+import kotlinx.coroutines.flow.subscribe
 
 
 @Composable
 fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+    val authViewModel: AuthViewModel = viewModel()
 
-    val bulbsList = remember {
-        mutableStateListOf<BulbData>().apply {
-            addAll(sampleBulbsGlobalList.map { it.copy() })
-        }
+//    val bulbsList = remember {
+//        mutableStateListOf<BulbData>().apply {
+//            addAll(sampleBulbsGlobalList.map { it.copy() })
+//        }
+//    }
+    val bulbsList by authViewModel.bulbsFlow.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        authViewModel.loadBulbs()
     }
 
     val notificationsList = remember {
@@ -70,7 +81,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         initialValue = UserData(userName = "", lastName = "", selectedHub = "", connectedDevices = emptyList())
     )
 
-    val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
+    val currentEnvironmentData by authViewModel.getAvgRooms.collectAsStateWithLifecycle()
 
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -122,7 +133,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     gradientColors = listOf(RoomsGradientStart, RoomsGradientEnd),
                     icon = Icons.Filled.Home,
                     iconContentDescription = "Pokoje",
-                    chipText = "3 pokoje",
+                    chipText = "${sampleRoomsGlobal.count()} pokoje",
                     title = "Pokojówki",
                     subtitle = "Parametry w normie",
                     onTileClick = {
@@ -143,7 +154,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     gradientColors = listOf(PlantsGradientStart, PlantsGradientEnd),
                     icon = Icons.Filled.Eco,
                     iconContentDescription = "Rośliny",
-                    chipText = "5 roślin",
+                    chipText = "${samplePlantsGlobal.count()} roślin",
                     title = "Rośliny",
                     subtitle = "Wszystkie zdrowe",
                     onTileClick = {
@@ -174,17 +185,10 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                         val oldBulb = bulbsList[index]
 
                         val updatedBulb = oldBulb.copy(
-                            isSwitchedOn = newState,
-                            brightnessPercentage = if (!newState) {
-                                0
-                            } else if (oldBulb.brightnessPercentage == 0) {
-                                50
-                            } else {
-                                oldBulb.brightnessPercentage
-                            }
+                            isSwitchedOn = newState
                         )
+                        authViewModel.changePowerState(bulbId, if(newState) "on" else "off")
 
-                        bulbsList[index] = updatedBulb
                     }
                 }
             )
