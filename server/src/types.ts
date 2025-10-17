@@ -1,4 +1,3 @@
-import { WebSocket } from 'ws'
 export type dataAgentType = 'room' | 'pot' | 'lightbulb';
 export type ActionType = 'request' | 'response';
 export type Parameters = { [key: string]: any };
@@ -27,10 +26,11 @@ export interface RequestPayload {
     responseVar?: string;
 }
 
-export interface UserData {
+export interface ModuleData {
     name: string;
     type?: dataAgentType;
     params: Parameters;
+    timeoutIt?: NodeJS.Timeout;
     // websocket: WebSocket;
 }
 

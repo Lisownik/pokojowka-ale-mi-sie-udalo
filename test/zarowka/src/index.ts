@@ -1,9 +1,6 @@
 import { YeelightService } from 'yeelight-service';
 import {
-    IYeelight,
-    IYeelightDevice,
-    IYeelightMethodResponse,
-    YeelightMethodStatusEnum
+    IYeelight
 } from 'yeelight-service/lib/yeelight.interface';
 
 const yeelightService: IYeelight = new YeelightService();

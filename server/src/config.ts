@@ -6,17 +6,17 @@ import {
     Parameters, PowerState,
     ResponsePayload,
     ServerData,
-    UserData, userInfo
+    ModuleData, userInfo
 } from "./types";
 import crypto from 'crypto';
 import { YeelightService } from 'yeelight-service';
 import {
     IYeelight,
-    IYeelightDevice,
-    IYeelightMethodResponse, YeelightEffect,
-    YeelightMethodStatusEnum
+    IYeelightDevice
 } from 'yeelight-service/lib/yeelight.interface';
 import OpenAI from 'openai';
+import {getPotki, modifyPotka} from './file-managment'
+import {clearTimeout} from "node:timers";
 
 export const GPTClient = new OpenAI({apiKey: process.env.API_KEY});
 
@@ -70,8 +70,8 @@ export async function sendRequest(ws: WebSocket, method: string, params: Paramet
 export function parseResponse(ws: WebSocket, userId: string, payload: IncomingResponsePayload) {
     console.log("New response incoming")
     console.table(payload);
-    Users.set(userId, {
-        name: Users.get(userId)!.name,
+    Modules.set(userId, {
+        name: Modules.get(userId)!.name,
         params: payload.value,
         type: payload.type,
     })
@@ -99,9 +99,9 @@ export function simpleId(): string {
     return crypto.randomBytes(8).toString('hex');
 }
 
-export function simpleName(): string {
-    let pass = "room_" + crypto.randomBytes(2).toString('hex');
-    if(!Array.from(Users.values()).find((user: UserData)=> user.name === pass))
+export function simpleName(type: string = "room"): string {
+    let pass = `${type}_` + crypto.randomBytes(2).toString('hex');
+    if(!Array.from(Modules.values()).find((user: ModuleData)=> user.name === pass))
         return pass;
     else
         return simpleName();
@@ -118,7 +118,7 @@ yeelightService.devices.subscribe((devices) => {
         }
         const bulbId = simpleId();
 
-        Users.set(bulbId, {
+        Modules.set(bulbId, {
             name: deviceName,
             type: 'lightbulb',
             params: {
@@ -137,7 +137,7 @@ yeelightService.devices.subscribe((devices) => {
             }
         })
 
-        let bulbData = Users.get(bulbId)!;
+        let bulbData = Modules.get(bulbId)!;
 
         console.log(deviceName)
 
@@ -160,43 +160,100 @@ yeelightService.devices.subscribe((devices) => {
 });
 
 
-export const Users = new Map<string, UserData>();
+export const Modules = new Map<string, ModuleData>();
 export const IdToWS = new Map<string, WebSocket>();
 export const IdToYeelight = new Map<string, IYeelightDevice>();
 
-export class RoomService {
+export class PotManagment {
     static info(): userInfo[] {
         let arr = new Array<{id: string, name: string, data: Parameters}>()
-        Array.from(Users.entries()).forEach(([key, value]) => {
-            if (value.type === 'room') {
+        Array.from(Modules.entries()).forEach(([key, value]) => {
+            if (value.type === 'pot') {
                 arr.push(
                     {
                         id: key,
                         name: value.name,
                         data: value.params,
-                    })
+                    }
+                    )
             }
         })
         return arr;
+    }
+    static read(id: string): userInfo | undefined {
+        const find = Array.from(Modules.entries()).find(([key, value]) => value.type === 'pot' && key === id)
+        if(!find)
+            return undefined;
+        return {
+            id: find[0],
+            name: find[1].name,
+            data: find[1].params,
+        } as userInfo
+    }
+    static register() {
+        let id = simpleId();
+        modifyPotka(id, simpleName("pot"))
+        return id
+    }
+    static async changeName(id: string, name: string) {
+        console.group(`Changing name of ${id}`)
+        console.log(`New Name: ${name}`)
+        await modifyPotka(id, name)
+        const potka = Modules.get(id);
+        console.log("Potka", potka?.name);
+        if(!potka)
+        {
+            console.log("Potka data not found :/")
+        } else
+            potka.name = name;
+        console.groupEnd()
+    }
+    static async updateData(id: string, data: Parameters) {
+        console.group("Update data")
+        const timeout = setTimeout(() => {
+            PotManagment.deletePot(id)
+        }, 10 * 1000)
+        const potka = Modules.get(id);
+        console.log("Data: ", data)
+        if(!potka)
+        {
+            const potki = await getPotki()
+            console.log(`First data request of id: ${id}, and name: ${potki[id] || "none"}`)
+            Modules.set(id, {name: potki[id] || simpleName("pot"), params: data, type: "pot", timeoutIt: timeout})
+        } else {
+            console.log(`Data modify request of id: ${id}, and name: ${potka.name}`)
+            clearTimeout(potka.timeoutIt)
+            Modules.set(id, {
+                name: potka!.name,
+                params: data,
+                type: "pot",
+                timeoutIt: timeout
+            })
+        }
+        console.groupEnd()
+
+    }
+    static deletePot(id: string) {
+        Modules.delete(id)
     }
 }
 
 export const filters: FiltersStructure = {
     "room": {
         "get": (): { keys: any[], values: any[] } => {
-            let keys = Array.from(Users.entries())
+            let keys = Array.from(Modules.entries())
             let objects: { keys: any[], values: any[] } = { keys: [], values: [] }
             keys.forEach(([key, value]) => {
-                if (value.type === 'lightbulb') {
+                if (value.type === 'room') {
                     objects.keys.push(key)
-                    objects.values.push(Users.get(key))
+                    objects.values.push(Modules.get(key))
                 }
             })
             return objects
         },
         "info": (): {id: string, name: string, data: Parameters}[] => {
             let arr = new Array<{id: string, name: string, data: Parameters}>()
-            let keys = Array.from(Users.entries())
+            let keys = Array.from(Modules.entries())
             keys.forEach(([key, value]) => {
                 if (value.type === 'room') {
                     arr.push(
@@ -213,13 +270,13 @@ export const filters: FiltersStructure = {
         "name-change": (id: string, name: string): number => {
             let ws: WebSocket | undefined = IdToWS.get(id);
             if(!ws || !name) return 300;
-            let data = Users.get(id);
+            let data = Modules.get(id);
             data!.name = name;
             sendRequest(ws, 'name.change', {'name': name})
             return 200;
         },
         "name-start": (id: string, params: Parameters): void => {
-            let data = Users.get(id);
+            let data = Modules.get(id);
             if(!data || !params['name']) return;
             data.name = params['name'];
         }
@@ -227,7 +284,7 @@ export const filters: FiltersStructure = {
     "bulb": {
         "get": () => {
             let arr = new Array<{id: string, name: string, data: Parameters}>()
-            let keys = Array.from(Users.entries())
+            let keys = Array.from(Modules.entries())
             keys.forEach(([key, value]) => {
                 if (value.type === 'lightbulb') {
                     arr.push(

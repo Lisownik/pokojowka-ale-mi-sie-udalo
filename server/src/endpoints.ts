@@ -1,8 +1,9 @@
-import express, { Request, Response } from 'express';
-import {filters, Users} from "./config";
+import express, {Request, Response} from 'express';
+import {filters, Modules, PotManagment} from "./config";
 import {PowerState} from "./types";
 import cors from 'cors';
 import {GPTClient} from "./config";
+import {Parameters} from "./types";
 
 export const app = express();
 
@@ -16,7 +17,7 @@ app.get('/', (_req, res) => {
 })
 
 app.get('/room-list', (_req: Request, res: Response) => {
-    res.json(Array.from(Users.keys()));
+    res.json(Array.from(Modules.keys()));
 })
 
 
@@ -153,13 +154,12 @@ app.get('/gpt', async (req, res) => {
     }
 })
 
-app.get('/tts', async (req, res) => {
-    const { message } = req.query;
-    if(!message) return res.status(400).send({
+app.get('/tts', async (req, res, next) => {
+    const {message} = req.query;
+    if (!message) return res.status(400).send({
         error: 'Invalid query',
     })
-    try{
-        res.setHeader("Content-Type", "audio/mpeg");
+    try {
         console.log(`Input: ${message}`)
         console.log(`{Jeśli ten tekst/pytania będzie wspominało o warunkach w jakimś pokoju to są dane z pokojów jako JSON: ${JSON.stringify(filters["room"]["info"]())}} /* Krótko odpowiedz na: */` + message.toString())
         const text = (await GPTClient.responses.create({
@@ -177,8 +177,9 @@ app.get('/tts', async (req, res) => {
 
         const buffer = Buffer.from(await mp3.arrayBuffer());
         console.log(`Sending`)
-        res.send(buffer);
-
+        res
+            .setHeader("Content-Type", "audio/mpeg")
+            .send(buffer);
     } catch (err) {
         console.log(err)
         res.status(500).send({
@@ -186,6 +187,73 @@ app.get('/tts', async (req, res) => {
             errMessage: err,
         })
     }
+})
+
+app.get('/pot', (_req, res) => {
+    send_response(res, 200, PotManagment.info())
+})
+
+app.get('/pot/register', (_req, res) => {
+  send_response(res, 200, PotManagment.register())
+})
+
+app.get('/pot/:id', (req, res) => {
+    const { id } = req.params;
+
+    if(!assert_requirement(res, [id], 'ID is required'))
+        return
+
+    try{
+        send_response(res, 200, PotManagment.read(id) || {})
+    } catch (e) {
+        send_response(res, 500, {e})
+    }
+})
+
+app.post('/pot/:id', async (req, res) => {
+    const { id } = req.params;
+    const { data } = req.query;
+
+    if(!assert_requirement(res, [id, data], 'ID and data are required'))
+        return
+
+    try{
+        await PotManagment.updateData(id, data as Parameters)
+        send_response(res, 201, {msg: "Successfully updated data!"})
+    } catch (e) {
+        send_response(res, 500, {e})
+    }
+})
+
+app.delete('/pot/:id', (req, res) => {
+    const { id } = req.params;
+
+    if(!assert_requirement(res, [id], 'ID is required'))
+        return
+
+    try{
+        PotManagment.deletePot(id)
+        send_response(res, 201, {msg: "Successfully disconnected!"})
+    } catch (e) {
+        send_response(res, 500, {e})
+        throw e
+    }
+})
+
+app.post('/pot/:id/:name', async (req, res) => {
+    const { id, name } = req.params;
+
+    if(!assert_requirement(res, [id, name], 'ID and name are required'))
+        return
+
+    try{
+        await PotManagment.changeName(id, name)
+        send_response(res, 201, {msg: `Successfully changed name of pot: ${id}!`})
+    } catch (e) {
+        send_response(res, 500, {e})
+        throw e
+    }
+
 })
 
 app.use((req, res, next) => {
@@ -206,6 +274,7 @@ function assert_requirement(res: Response, params: any[], errorMessage: string =
     })
     return true
 }
+
 
 function error_response(res: Response, code: number, errorMessage: string) {
     res.status(code).json({errorMessage})

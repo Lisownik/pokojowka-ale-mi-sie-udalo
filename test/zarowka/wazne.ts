@@ -1,8 +1,6 @@
 import {
   Discover,
   IDevice,
-  StartFlowAction,
-  FlowState,
   Yeelight,
 } from 'yeelight-awesome';
 

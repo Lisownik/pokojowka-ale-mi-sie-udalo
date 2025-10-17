@@ -3,12 +3,11 @@ import {
     wss,
     sendResponse,
     sendError,
-    Users,
+    Modules,
     simpleId,
     parseResponse,
     filters,
     simpleName,
-    sendRequest,
     IdToWS
 } from "./config";
 import { WebSocket } from "ws";
@@ -21,14 +20,14 @@ wss.on('listening', () => {
 
 wss.on('connection', async (ws: WebSocket) => {
     wss.clients.forEach((client: WebSocket) => {
-        sendResponse(client, 'list', Array.from(Users.keys()))
+        sendResponse(client, 'list', Array.from(Modules.keys()))
     })
 
     const UserId = simpleId();
-    Users.set(UserId, { params: {} , name: simpleName()})
+    Modules.set(UserId, { params: {} , name: simpleName()})
     IdToWS.set(UserId, ws);
 
-    await sendResponse(ws, 'message', `Successfully connected! ${UserId}, ${Users.get(UserId)!.name}`);
+    await sendResponse(ws, 'message', `Successfully connected! ${UserId}, ${Modules.get(UserId)!.name}`);
 
     ws.on('error', async (err) => {
         await sendError(ws, 0x1, 'WebSocket Spotted an Error', err);
@@ -60,10 +59,10 @@ wss.on('connection', async (ws: WebSocket) => {
 
     ws.on('close', () => {
         console.log('Websocket closed');
-        Users.delete(UserId);
+        Modules.delete(UserId);
     })
 })
 
 app.listen(process.env.endpointPort ?? 3333, () => {
-    console.log(`Listening on port ${process.env.endpointPort ?? 3333}`);
+    console.log(`Listening on (express) port ${process.env.endpointPort ?? 3333}`);
 })
