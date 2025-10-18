@@ -1,9 +1,7 @@
 #!/bin/bash
 
-echo "===== Python virtual environment must be made in ~/pvenv ====="
-
-COMMAND="source ~/pvenv/bin/activate; ${1:-python pokojowka/testing.py}"
-WORKING_DIR="${2:-/home/szymon/WebstormProjects/pokojowka-ale-mi-sie-udalo}"
+COMMAND="npm install; ${1:-npm run prod}"
+WORKING_DIR="${2:-/home/szymon/WebstormProjects/pokojowka-ale-mi-sie-udalo/server}"
 INTERVAL=5
 
 if [ ! -d "$WORKING_DIR" ]; then

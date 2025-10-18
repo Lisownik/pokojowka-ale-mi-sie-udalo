@@ -2,7 +2,7 @@
 
 echo "===== Python virtual environment must be made in ~/pvenv ====="
 
-COMMAND="source ~/pvenv/bin/activate; ${1:-python pokojowka/testing.py}"
+COMMAND="source ~/pvenv/bin/activate; ${1:-python potka/testing.py}"
 WORKING_DIR="${2:-/home/szymon/WebstormProjects/pokojowka-ale-mi-sie-udalo}"
 INTERVAL=5
 
