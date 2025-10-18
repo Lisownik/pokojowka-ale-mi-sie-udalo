@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.pokojowka_mobile.ui.theme.*
 
+
 enum class PlantHealthStatus {
     HEALTHY, NEEDS_WATER, NEEDS_FERTILIZER, LOW_LIGHT, UNKNOWN
 }
@@ -22,12 +23,11 @@ data class PlantData(
     val healthStatus: PlantHealthStatus,
     val lightLevel: String,
     val soilMoisture: String,
-    val fertilizerLevel: String,
+    val airHumidity: String, // <<< ZMIENIONO Z fertilizerLevel
     val roomLocation: String,
-    val backgroundColor: Color
-
+    val backgroundColor: Color,
+    val temperature: String
 ) {
-
     val statusColor: Color
         get() = when (healthStatus) {
             PlantHealthStatus.HEALTHY -> PlantStatusHealthy
@@ -38,7 +38,6 @@ data class PlantData(
         }
 }
 
-
 val samplePlantsGlobal: List<PlantData> = listOf(
     PlantData(
         id = "p1",
@@ -48,9 +47,10 @@ val samplePlantsGlobal: List<PlantData> = listOf(
         healthStatus = PlantHealthStatus.HEALTHY,
         lightLevel = "750 lux",
         soilMoisture = "60%",
-        fertilizerLevel = "OK",
+        airHumidity = "55%", // <<< ZMIENIONO
         roomLocation = "Salon",
-        backgroundColor = RoomIconBackgroundBed
+        backgroundColor = RoomIconBackgroundBed,
+        temperature = "22.5°C"
     ),
     PlantData(
         id = "p2",
@@ -60,9 +60,10 @@ val samplePlantsGlobal: List<PlantData> = listOf(
         healthStatus = PlantHealthStatus.NEEDS_WATER,
         lightLevel = "500 lux",
         soilMoisture = "25%",
-        fertilizerLevel = "OK",
+        airHumidity = "50%", // <<< ZMIENIONO
         roomLocation = "Sypialnia",
-        backgroundColor = RoomIconBackgroundLiving
+        backgroundColor = RoomIconBackgroundLiving,
+        temperature = "21.0°C"
     ),
     PlantData(
         id = "p3",
@@ -72,9 +73,10 @@ val samplePlantsGlobal: List<PlantData> = listOf(
         healthStatus = PlantHealthStatus.NEEDS_FERTILIZER,
         lightLevel = "400 lux",
         soilMoisture = "50%",
-        fertilizerLevel = "Niski",
+        airHumidity = "65%", // <<< ZMIENIONO
         roomLocation = "Parapet",
-        backgroundColor = RoomIconBackgroundKitchen
+        backgroundColor = RoomIconBackgroundKitchen,
+        temperature = "23.1°C"
     ),
     PlantData(
         id = "p4",
@@ -84,9 +86,9 @@ val samplePlantsGlobal: List<PlantData> = listOf(
         healthStatus = PlantHealthStatus.LOW_LIGHT,
         lightLevel = "200 lux",
         soilMoisture = "45%",
-        fertilizerLevel = "OK",
+        airHumidity = "45%", // <<< ZMIENIONO
         roomLocation = "Biuro",
-        backgroundColor = RoomIconBackgroundBathroom
+        backgroundColor = RoomIconBackgroundBathroom,
+        temperature = "20.5°C"
     )
 )
-

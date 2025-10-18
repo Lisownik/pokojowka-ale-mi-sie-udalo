@@ -43,9 +43,9 @@ class AuthViewModel : ViewModel() {
     public lateinit var publicOwner: LifecycleOwner
 
     init {
-        startPolling()
-        getBulbs()
-        getRooms()
+//        startPolling()
+//        getBulbs()
+//        getRooms()
     }
 
 //    fun init() {
@@ -104,6 +104,7 @@ class AuthViewModel : ViewModel() {
     }
 
     fun loadBulbs() {
+        return // do wywalenia
         viewModelScope.launch {
             _bulbsFlow.tryEmit(RetrofitClient.apiService.getBulbs().map { it.toBulbData() })
 //            _bulbsFlow.value = RetrofitClient.apiService.getBulbs().map { it.toBulbData() }
@@ -138,6 +139,7 @@ class AuthViewModel : ViewModel() {
     }
 
     public fun startPolling() {
+        return // DO WYJEBANIA POTEM
         pollingJob = viewModelScope.launch {
             while (true) {
                 delay(3000)
@@ -238,6 +240,7 @@ class AuthViewModel : ViewModel() {
 
 
     fun changeRoomName(id: String, newName: String) {
+        return // do wywalenia
         Log.v("API_REQUEST_NAME", "Start")
         Log.d("API_CALL_ID",  id)
         Log.d("API_CALL_NEW_NAME",  newName)
@@ -261,6 +264,7 @@ class AuthViewModel : ViewModel() {
     }
 
     fun changeName(id: String, newName: String) {
+        return // do wywalenia
         Log.v("API_REQUEST_NAME", "Start")
         Log.d("API_CALL_ID",  id)
         Log.d("API_CALL_NEW_NAME",  newName)
@@ -284,6 +288,7 @@ class AuthViewModel : ViewModel() {
     }
 
     fun changePowerState( id: String, powerState: String) {
+        return // do wywalenia
         Log.v("API_REQUEST_POWER_STATE", "Start")
         Log.d("API_CALL_ID",  id)
         Log.d("API_CALL_STATE",  powerState)
@@ -306,6 +311,7 @@ class AuthViewModel : ViewModel() {
         }
     }
     fun changeBrightness(id: String, brightness: Int, duration: Int) {
+        return // do wywalenia
         Log.v("API_REQUEST_BULB_BRIGHTNESS", "Start")
         Log.d("API_CALL_ID",  id)
         Log.d("API_CALL_BRIGHTNESS", "$brightness %")

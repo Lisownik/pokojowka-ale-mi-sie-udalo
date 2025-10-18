@@ -8,27 +8,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.pokojowka_mobile.data.*
 import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.ui.components.PlantsSection
 import com.example.pokojowka_mobile.ui.components.SharedHeader
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-import com.example.pokojowka_mobile.data.samplePlantsGlobal
-import com.example.pokojowka_mobile.AppDestinations
-import com.example.pokojowka_mobile.data.UserData
-import com.example.pokojowka_mobile.data.EnvironmentData
-import com.example.pokojowka_mobile.data.SampleUserData
-
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.pokojowka_mobile.data.UserSettingsManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,10 +30,34 @@ fun PlantsScreen(navController: NavHostController, modifier: Modifier = Modifier
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
 
+    // --- POCZĄTEK ZMIAN ---
 
+    // 1. Pobieramy dane użytkownika ORAZ customizacje roślin
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
-        initialValue = UserData(userName = "", lastName = "", selectedHub = "", connectedDevices = emptyList())
+        initialValue = UserData("", "", "", emptyList())
     )
+    val allCustomizations by userSettingsManager.plantCustomizationsFlow.collectAsStateWithLifecycle(
+        initialValue = emptyMap()
+    )
+
+    // 2. Tworzymy listę roślin do wyświetlenia, łącząc dane domyślne z customizacjami
+    val displayPlants = remember(allCustomizations) {
+        samplePlantsGlobal.map { defaultPlant ->
+            val customization = allCustomizations[defaultPlant.id]
+            if (customization != null) {
+                // Jeśli jest customizacja, tworzymy nowy obiekt PlantData z podmienionymi danymi
+                defaultPlant.copy(
+                    name = customization.customName,
+                    icon = PlantIconMap.getIconByName(customization.iconName) ?: defaultPlant.icon
+                )
+            } else {
+                // Jeśli nie ma, używamy domyślnych danych
+                defaultPlant
+            }
+        }
+    }
+
+    // --- KONIEC ZMIAN ---
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
 
@@ -75,15 +91,15 @@ fun PlantsScreen(navController: NavHostController, modifier: Modifier = Modifier
                 userData = currentUserData,
                 environmentData = currentEnvironmentData,
                 onNotificationClick = {
-                    println("Powiadomienia kliknięte z [NazwaTwojegoEkranu]!")
+                    println("Powiadomienia kliknięte z PlantsScreen!")
                 }
             )
 
             PlantsSection(
-                plants = samplePlantsGlobal,
+                // Przekazujemy nową, dynamiczną listę `displayPlants` zamiast starej
+                plants = displayPlants,
                 onPlantClick = { plantId ->
                     Log.d("PlantsScreen", "Kliknięto roślinę o ID: $plantId. Nawigacja do PlantView.")
-
                     navController.navigate(
                         AppDestinations.PLANT_VIEW_SCREEN.replace(
                             oldValue = "{${AppDestinations.PLANT_ID_ARG}}",
@@ -107,4 +123,3 @@ fun PlantsScreenPreview() {
         PlantsScreen(navController = navController)
     }
 }
-

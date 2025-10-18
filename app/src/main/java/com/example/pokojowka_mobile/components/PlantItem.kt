@@ -113,12 +113,12 @@ fun PlantItem(
                 DataItem(
                     icon = Icons.Filled.Opacity,
                     value = plantData.soilMoisture,
-                    label = "Wilgotność"
+                    label = "Wilgotność gleby"
                 )
                 DataItem(
-                    icon = Icons.Filled.Spa,
-                    value = plantData.fertilizerLevel,
-                    label = "Nawóz"
+                    icon = Icons.Filled.Air,
+                    value = plantData.airHumidity,
+                    label = "Wilgotność powietrza"
                 )
             }
 
@@ -138,26 +138,6 @@ fun PlantItem(
 
 
 
-
-@Preview(showBackground = true, backgroundColor = 0xFFF7F7F7)
-@Composable
-fun PlantItemPreview() {
-    PokojowkamobileTheme {
-        val samplePlant = PlantData(
-            id = "p_prev1",
-            name = "Monstera Okazała",
-            species = "Deliciosa",
-            icon = Icons.Filled.Eco,
-            healthStatus = PlantHealthStatus.HEALTHY,
-            lightLevel = "Jasne",
-            soilMoisture = "65%",
-            fertilizerLevel = "W normie",
-            roomLocation = "Salon Kasi",
-            backgroundColor = RoomIconBackgroundBathroom
-        )
-        PlantItem(plantData = samplePlant, onPlantClick = {})
-    }
-}
 
 
 

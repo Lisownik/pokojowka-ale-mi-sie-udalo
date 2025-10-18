@@ -77,33 +77,3 @@ fun PlantsSection(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF7F7F7)
-@Composable
-fun PlantsSectionPreview() {
-    PokojowkamobileTheme {
-
-        val samplePlants = remember {
-            listOf(
-                PlantData("p1_prev", "Monstera", "Deliciosa", Icons.Filled.Eco, PlantHealthStatus.HEALTHY, "750 lux", "60%", "OK", "Salon", RoomIconBackgroundBathroom),
-                PlantData("p2_prev", "Fikus", "Benjamina", Icons.Filled.Grass, PlantHealthStatus.NEEDS_WATER, "500 lux", "25%", "OK", "Sypialnia",RoomIconBackgroundBathroom),
-                PlantData("p3_prev", "Storczyk", "Phalaenopsis", Icons.Filled.LocalFlorist, PlantHealthStatus.NEEDS_FERTILIZER, "400 lux", "50%", "Niski", "Parapet",RoomIconBackgroundBathroom)
-            )
-        }
-        PlantsSection(
-            plants = samplePlants,
-            onPlantClick = { plantId -> println("Clicked plant: $plantId") }
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFF7F7F7)
-@Composable
-fun EmptyPlantsSectionPreview() {
-    PokojowkamobileTheme {
-        PlantsSection(
-            plants = emptyList(),
-            onPlantClick = {}
-        )
-    }
-}
-
