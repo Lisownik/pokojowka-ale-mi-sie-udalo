@@ -39,7 +39,7 @@ import com.example.pokojowka_mobile.ui.components.SharedHeader
 import kotlinx.coroutines.launch
 import com.example.pokojowka_mobile.ui.components.PlantUIData
 
-// Definicje ikon specyficznych dla roślin
+
 private object PlantParameterIcons {
     val Light: ImageVector = Icons.Filled.WbSunny
     val Moisture: ImageVector = Icons.Filled.Opacity
@@ -78,7 +78,7 @@ fun PlantViewInternalHeader(
     }
 }
 
-// Komponent do wyświetlania AlertDialog z opcjami edycji
+
 @Composable
 fun EditPlantDialog(
     plant: PlantData,
@@ -108,7 +108,7 @@ fun EditPlantDialog(
 
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 56.dp),
-                    modifier = Modifier.heightIn(max = 200.dp), // Ograniczenie wysokości siatki
+                    modifier = Modifier.heightIn(max = 200.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -173,7 +173,7 @@ fun PlantView(
     val coroutineScope = rememberCoroutineScope()
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
-        initialValue = UserData("", "", "", emptyList())
+        initialValue = UserData(userName = "", lastName = "",  connectedDevices = emptyList())
     )
     val allCustomizations by userSettingsManager.plantCustomizationsFlow.collectAsStateWithLifecycle(initialValue = emptyMap())
     val defaultPlantData = samplePlantsGlobal.find { it.id == plantId }
@@ -237,7 +237,7 @@ fun PlantView(
                     .verticalScroll(scrollState)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                // Ta część wymaga ViewModel, na razie używamy pustych danych
+
                 val authViewModel: AuthViewModel = viewModel()
                 val currentEnvironmentData by authViewModel.getAvgRooms.collectAsStateWithLifecycle()
                 SharedHeader(

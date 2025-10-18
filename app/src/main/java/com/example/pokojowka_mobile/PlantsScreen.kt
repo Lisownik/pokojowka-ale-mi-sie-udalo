@@ -30,34 +30,32 @@ fun PlantsScreen(navController: NavHostController, modifier: Modifier = Modifier
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
 
-    // --- POCZĄTEK ZMIAN ---
 
-    // 1. Pobieramy dane użytkownika ORAZ customizacje roślin
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
-        initialValue = UserData("", "", "", emptyList())
+        initialValue = UserData(userName = "", lastName = "",  connectedDevices = emptyList())
     )
     val allCustomizations by userSettingsManager.plantCustomizationsFlow.collectAsStateWithLifecycle(
         initialValue = emptyMap()
     )
 
-    // 2. Tworzymy listę roślin do wyświetlenia, łącząc dane domyślne z customizacjami
+
     val displayPlants = remember(allCustomizations) {
         samplePlantsGlobal.map { defaultPlant ->
             val customization = allCustomizations[defaultPlant.id]
             if (customization != null) {
-                // Jeśli jest customizacja, tworzymy nowy obiekt PlantData z podmienionymi danymi
+
                 defaultPlant.copy(
                     name = customization.customName,
                     icon = PlantIconMap.getIconByName(customization.iconName) ?: defaultPlant.icon
                 )
             } else {
-                // Jeśli nie ma, używamy domyślnych danych
+
                 defaultPlant
             }
         }
     }
 
-    // --- KONIEC ZMIAN ---
+
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
 
@@ -96,7 +94,7 @@ fun PlantsScreen(navController: NavHostController, modifier: Modifier = Modifier
             )
 
             PlantsSection(
-                // Przekazujemy nową, dynamiczną listę `displayPlants` zamiast starej
+
                 plants = displayPlants,
                 onPlantClick = { plantId ->
                     Log.d("PlantsScreen", "Kliknięto roślinę o ID: $plantId. Nawigacja do PlantView.")

@@ -13,18 +13,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-/**
- * Klasa pomocnicza do przekazywania danych do sekcji.
- */
 data class PlantUIData(
     val label: String,
     val value: String,
     val icon: ImageVector,
 )
 
-/**
- * Komponent grupujący wiele kafelków `PlantViewItem` w jedną sekcję z tytułem.
- */
 @Composable
 fun PlantViewSection(
     modifier: Modifier = Modifier,
@@ -37,7 +31,7 @@ fun PlantViewSection(
             .fillMaxWidth()
             .padding(contentPadding)
     ) {
-        // Tytuł sekcji
+
         if (title.isNotBlank()) {
             Text(
                 text = title,
@@ -47,7 +41,7 @@ fun PlantViewSection(
             )
         }
 
-        // Komunikat, jeśli brak danych
+
         if (items.isEmpty()) {
             Text(
                 text = "Brak szczegółowych danych.",
@@ -57,7 +51,7 @@ fun PlantViewSection(
                     .fillMaxWidth()
             )
         } else {
-            // Lista kafelków z parametrami
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {

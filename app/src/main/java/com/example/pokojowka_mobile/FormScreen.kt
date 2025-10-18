@@ -27,13 +27,8 @@ fun DeviceForm(
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
 
-    var selectedHubState by remember { mutableStateOf<String?>(null) }
-    var expanded by remember { mutableStateOf(false) }
-
-    val hubs = listOf("Centrala 1", "Centrala 2", "Pokojówka", "Lodóweczka")
 
     val context = LocalContext.current
-
     val userSettingsManager = remember { UserSettingsManager(context) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -86,80 +81,37 @@ fun DeviceForm(
                     )
                 )
 
-
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    OutlinedTextField(
-                        value = selectedHubState ?: "Wybierz centralę",
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("Centrala") },
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                        },
-                        modifier = Modifier
-                            .menuAnchor()
-                            .fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                        )
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        hubs.forEach { hub ->
-                            DropdownMenuItem(
-                                text = { Text(hub) },
-                                onClick = {
-                                    selectedHubState = hub
-                                    expanded = false
-                                },
-                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                            )
-                        }
-                    }
-                }
+                // Usunięto cały komponent ExposedDropdownMenuBox
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
                     onClick = {
-                        val finalSelectedHub = selectedHubState ?: ""
-
-                        if (firstName.isNotBlank() && lastName.isNotBlank() && finalSelectedHub.isNotBlank()) {
-                            val initialConnectedDevices = emptyList<String>()
-
+                        // Sprawdzamy tylko imię i nazwisko
+                        if (firstName.isNotBlank() && lastName.isNotBlank()) {
                             val userData = UserData(
                                 userName = firstName,
                                 lastName = lastName,
-                                selectedHub = finalSelectedHub,
-                                connectedDevices = initialConnectedDevices
+                                connectedDevices = emptyList()
                             )
                             coroutineScope.launch {
                                 userSettingsManager.saveUserSettings(
                                     firstName = userData.userName,
                                     lastName = userData.lastName,
-                                    hub = userData.selectedHub,
                                     devices = userData.connectedDevices
                                 )
-                                println("Dane (z pustą listą urządzeń) zapisane przez DeviceForm: $userData")
-
+                                println("Dane zapisane przez DeviceForm: $userData")
                                 onFormSubmit(userData)
                             }
                         } else {
-
-                            println("Błąd: Wszystkie pola muszą być wypełnione.")
+                            println("Błąd: Imię i nazwisko muszą być wypełnione.")
                         }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
-                    enabled = firstName.isNotBlank() && lastName.isNotBlank() && selectedHubState != null,
+                    // Przycisk jest aktywny, gdy imię i nazwisko nie są puste
+                    enabled = firstName.isNotBlank() && lastName.isNotBlank(),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text("Zatwierdź", style = MaterialTheme.typography.labelLarge)

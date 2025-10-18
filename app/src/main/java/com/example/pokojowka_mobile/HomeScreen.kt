@@ -78,7 +78,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
 
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
-        initialValue = UserData(userName = "", lastName = "", selectedHub = "", connectedDevices = emptyList())
+        initialValue = UserData(userName = "", lastName = "",  connectedDevices = emptyList())
     )
 
     val currentEnvironmentData by authViewModel.getAvgRooms.collectAsStateWithLifecycle()

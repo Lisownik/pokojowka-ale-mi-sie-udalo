@@ -137,7 +137,7 @@ fun RoomView(
 
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
-        initialValue = UserData(userName = "", lastName = "", selectedHub = "", connectedDevices = emptyList())
+        initialValue = UserData(userName = "", lastName = "", connectedDevices = emptyList())
     )
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }

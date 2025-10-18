@@ -23,7 +23,7 @@ data class PlantData(
     val healthStatus: PlantHealthStatus,
     val lightLevel: String,
     val soilMoisture: String,
-    val airHumidity: String, // <<< ZMIENIONO Z fertilizerLevel
+    val airHumidity: String,
     val roomLocation: String,
     val backgroundColor: Color,
     val temperature: String
@@ -47,7 +47,7 @@ val samplePlantsGlobal: List<PlantData> = listOf(
         healthStatus = PlantHealthStatus.HEALTHY,
         lightLevel = "750 lux",
         soilMoisture = "60%",
-        airHumidity = "55%", // <<< ZMIENIONO
+        airHumidity = "55%",
         roomLocation = "Salon",
         backgroundColor = RoomIconBackgroundBed,
         temperature = "22.5°C"
@@ -60,7 +60,7 @@ val samplePlantsGlobal: List<PlantData> = listOf(
         healthStatus = PlantHealthStatus.NEEDS_WATER,
         lightLevel = "500 lux",
         soilMoisture = "25%",
-        airHumidity = "50%", // <<< ZMIENIONO
+        airHumidity = "50%",
         roomLocation = "Sypialnia",
         backgroundColor = RoomIconBackgroundLiving,
         temperature = "21.0°C"
@@ -73,7 +73,7 @@ val samplePlantsGlobal: List<PlantData> = listOf(
         healthStatus = PlantHealthStatus.NEEDS_FERTILIZER,
         lightLevel = "400 lux",
         soilMoisture = "50%",
-        airHumidity = "65%", // <<< ZMIENIONO
+        airHumidity = "65%",
         roomLocation = "Parapet",
         backgroundColor = RoomIconBackgroundKitchen,
         temperature = "23.1°C"
@@ -86,7 +86,7 @@ val samplePlantsGlobal: List<PlantData> = listOf(
         healthStatus = PlantHealthStatus.LOW_LIGHT,
         lightLevel = "200 lux",
         soilMoisture = "45%",
-        airHumidity = "45%", // <<< ZMIENIONO
+        airHumidity = "45%",
         roomLocation = "Biuro",
         backgroundColor = RoomIconBackgroundBathroom,
         temperature = "20.5°C"

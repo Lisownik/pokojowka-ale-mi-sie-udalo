@@ -5,7 +5,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material3.*
@@ -27,7 +26,6 @@ import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import kotlinx.coroutines.launch
 import com.example.pokojowka_mobile.ui.components.SharedHeader
 import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.data.EnvironmentData
 import com.example.pokojowka_mobile.data.SampleUserData
 import com.example.pokojowka_mobile.data.availableDeviceModels
 import com.example.pokojowka_mobile.ui.components.ProfileInfoItem
@@ -44,7 +42,7 @@ fun ProfileScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
-        initialValue = UserData("", "", "", emptyList())
+        initialValue = UserData("", "", emptyList())
     )
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
 
@@ -98,7 +96,7 @@ fun ProfileScreen(
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (currentUserData.userName.isNotBlank() || currentUserData.lastName.isNotBlank() || currentUserData.selectedHub.isNotBlank()) {
+                if (currentUserData.userName.isNotBlank() || currentUserData.lastName.isNotBlank()) {
                     ProfileSection(title = "Dane Osobowe") {
                         ProfileInfoItem(
                             label = "Imię",
@@ -109,11 +107,6 @@ fun ProfileScreen(
                             label = "Nazwisko",
                             value = currentUserData.lastName,
                             icon = Icons.Filled.Badge
-                        )
-                        ProfileInfoItem(
-                            label = "Wybrana Centrala",
-                            value = currentUserData.selectedHub,
-                            icon = Icons.Filled.Hub
                         )
                     }
 
@@ -188,10 +181,10 @@ fun ProfileScreen(
 fun ProfileScreenPreview() {
     PokojowkamobileTheme {
         val navController = rememberNavController()
+        // Zaktualizowano dane podglądu, usuwając selectedHub
         val sampleUserData = SampleUserData.defaultUser.copy(
             userName = "Anna",
-            lastName = "Projektantka",
-            selectedHub = "Kreatywna Centrala"
+            lastName = "Projektantka"
         )
         val sampleEnvData = SampleUserData.defaultEnvironment
         val previewConnectedDevices = listOf("Tablet Graficzny", "Lampa Studyjna LED", "Głośnik Smart")
@@ -224,7 +217,6 @@ fun ProfileScreenPreview() {
                     ProfileSection(title = "Dane Osobowe") {
                         ProfileInfoItem(label = "Imię", value = sampleUserData.userName, icon = Icons.Filled.Person)
                         ProfileInfoItem(label = "Nazwisko", value = sampleUserData.lastName, icon = Icons.Filled.Badge)
-                        ProfileInfoItem(label = "Centrala", value = sampleUserData.selectedHub, icon = Icons.Filled.Hub)
                     }
                     ProfileSection(title = "Połączone Urządzenia") {
                         if (previewConnectedDevices.isEmpty()) {
@@ -248,4 +240,3 @@ fun ProfileScreenPreview() {
         }
     }
 }
-

@@ -14,10 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.ui.theme.tlo
 
-/**
- * Komponent wyświetlający pojedynczy kafelek z parametrem rośliny.
- * Style i rozmiary czcionek zsynchronizowane z RoomViewItem.
- */
 @Composable
 fun PlantViewItem(
     modifier: Modifier = Modifier,
@@ -39,42 +35,42 @@ fun PlantViewItem(
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top // Wyrównanie do góry
+            verticalAlignment = Alignment.Top
         ) {
-            // Kolumna z nazwą i wartością parametru
+
             Column(
-                modifier = Modifier.weight(1f) // Pozwala kolumnie zająć dostępną przestrzeń
+                modifier = Modifier.weight(1f)
             ) {
-                // Nazwa parametru
+
                 Text(
                     text = itemName,
-                    style = MaterialTheme.typography.titleMedium, // <<< STYL Z ROOM_VIEW_ITEM
-                    fontWeight = FontWeight.Bold,                 // <<< STYL Z ROOM_VIEW_ITEM
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                     color = contentColor
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Wartość parametru
+
                 Text(
                     text = itemValue,
-                    style = MaterialTheme.typography.displaySmall, // <<< STYL Z ROOM_VIEW_ITEM
-                    fontWeight = FontWeight.SemiBold,              // <<< STYL Z ROOM_VIEW_ITEM
+                    style = MaterialTheme.typography.displaySmall,
+                    fontWeight = FontWeight.SemiBold,
                     color = contentColor
                 )
             }
 
-            // Ikona po prawej stronie
+
             Icon(
                 imageVector = itemIcon,
                 contentDescription = "$itemName icon",
                 modifier = Modifier.size(36.dp),
-                tint = contentColor.copy(alpha = 0.8f) // Szary, półprzezroczysty kolor
+                tint = contentColor.copy(alpha = 0.8f)
             )
         }
     }
 }
 
-// Podgląd do weryfikacji wyglądu
+
 @Preview(showBackground = true, widthDp = 360)
 @Composable
 fun PlantViewItemSyncedPreview() {
