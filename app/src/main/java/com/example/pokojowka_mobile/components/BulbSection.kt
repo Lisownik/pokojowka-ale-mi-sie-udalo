@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pokojowka_mobile.data.BulbData
-import com.example.pokojowka_mobile.data.sampleBulbsGlobalList
+import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.ui.theme.*
 
 @Composable
@@ -87,7 +87,7 @@ fun BulbsSectionPreview() {
         val sampleBulbsForPreview = remember {
 
             mutableStateListOf<BulbData>().apply {
-                addAll(sampleBulbsGlobalList.take(3).map { it.copy() })
+                addAll(GlobalBulbsList.take(3).map { it.copy() })
             }
         }
 

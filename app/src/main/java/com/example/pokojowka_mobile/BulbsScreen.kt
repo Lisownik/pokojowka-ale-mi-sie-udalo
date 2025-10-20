@@ -2,7 +2,6 @@
 package com.example.pokojowka_mobile.screens
 
 import android.util.Log
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -28,11 +27,7 @@ import com.example.pokojowka_mobile.ui.components.SharedHeader
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 
 
-import com.example.pokojowka_mobile.data.BulbData
-import com.example.pokojowka_mobile.data.sampleBulbsGlobalList
-
 import com.example.pokojowka_mobile.data.UserData
-import com.example.pokojowka_mobile.data.EnvironmentData
 import com.example.pokojowka_mobile.data.SampleUserData
 
 import androidx.compose.runtime.getValue
@@ -43,8 +38,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.network.AuthViewModel
 import com.example.pokojowka_mobile.network.RetrofitClient
-import kotlinx.coroutines.delay
-import kotlin.getValue
 
 @Composable
 fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -59,6 +52,12 @@ fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier)
 
     LaunchedEffect(Unit) {
         authViewModel.loadBulbs()
+    }
+
+    bulbsListState.forEach { it ->
+        LaunchedEffect(it, it.isSwitchedOn, it.brightnessPercentage) {
+
+        }
     }
 
     val context = LocalContext.current

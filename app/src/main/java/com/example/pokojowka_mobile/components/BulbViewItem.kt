@@ -248,7 +248,7 @@ fun BulbViewItemKelvinSliderPreview() {
             onSliderValueChange = { kelvinVal = it },
             sliderValueRange = minKelvin..maxKelvin,
             sliderSteps = ((maxKelvin - minKelvin) / stepKelvin).toInt() - 1,
-            sliderValueRepresentation = { "${it.roundToInt()}K" }
+            sliderValueRepresentation = { "${it.roundToInt()}K" },
         )
     }
 }

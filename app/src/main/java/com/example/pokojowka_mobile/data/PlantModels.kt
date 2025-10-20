@@ -38,7 +38,22 @@ data class PlantData(
         }
 }
 
-val samplePlantsGlobal: List<PlantData> = listOf(
+public fun NetworkPlantData.toPlantData(): PlantData {
+    return PlantData(
+        id = this.id,
+        name = this.name,
+        species = "nwm",
+        icon = Icons.Filled.Eco,
+        healthStatus = PlantHealthStatus.HEALTHY,
+        lightLevel = "${this.data.sun} lux",
+        soilMoisture = "${this.data.wet}%",
+        airHumidity = "${this.data.humidity}%",
+        roomLocation = "nwm",
+        backgroundColor = RoomIconBackgroundBed,
+        temperature = "${this.data.temperature}°C",
+    )
+}
+var GlobalPlantsList: MutableList<PlantData> = mutableListOf(
     PlantData(
         id = "p1",
         name = "Monstera",

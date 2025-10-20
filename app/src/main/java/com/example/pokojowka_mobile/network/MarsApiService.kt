@@ -4,10 +4,12 @@ import android.content.Context
 import android.widget.EditText
 import android.widget.Toast
 import com.example.pokojowka_mobile.data.NetworkBulbData
+import com.example.pokojowka_mobile.data.NetworkPlantData
 import com.example.pokojowka_mobile.data.NetworkRoomData
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -33,6 +35,12 @@ interface ApiService {
 
     @PUT("bulb/{id}/brightness")
     suspend fun changeBulbBrightness(@Path("id") id: String, @Query("brightness") brightness: Int, @Query("duration") duration: Int)
+
+    @GET("pot")
+    suspend fun getPlants(): Array<NetworkPlantData>
+
+    @PUT("pot/{id}/{name}")
+    suspend fun changePotName(@Path("id") id: String, @Path("name") name: String)
 }
 
 object RetrofitClient {

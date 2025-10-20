@@ -1,21 +1,17 @@
 package com.example.pokojowka_mobile
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pokojowka_mobile.ui.components.SharedHeader
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.ui.components.InfoTile
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import com.example.pokojowka_mobile.ui.theme.*
 import androidx.compose.material.icons.Icons
@@ -24,20 +20,15 @@ import androidx.compose.material.icons.filled.Eco
 import androidx.compose.runtime.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.pokojowka_mobile.ui.components.BulbsSection
-import com.example.pokojowka_mobile.data.BulbData
-import com.example.pokojowka_mobile.data.sampleBulbsGlobalList
 import com.example.pokojowka_mobile.ui.components.NotificationsSection
 import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.data.NotificationData
 import com.example.pokojowka_mobile.data.NotificationType
 import com.example.pokojowka_mobile.data.sampleGlobalNotificationsList
 import com.example.pokojowka_mobile.data.UserData
-import com.example.pokojowka_mobile.data.EnvironmentData
-import com.example.pokojowka_mobile.data.SampleUserData
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -45,10 +36,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.data.samplePlantsGlobal
-import com.example.pokojowka_mobile.data.sampleRoomsGlobal
+import com.example.pokojowka_mobile.data.GlobalPlantsList
+import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.network.AuthViewModel
-import kotlinx.coroutines.flow.subscribe
 
 
 @Composable
@@ -133,7 +123,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     gradientColors = listOf(RoomsGradientStart, RoomsGradientEnd),
                     icon = Icons.Filled.Home,
                     iconContentDescription = "Pokoje",
-                    chipText = "${sampleRoomsGlobal.count()} pokoje",
+                    chipText = "${GlobalRoomsList.count()} pokoje",
                     title = "Pokojówki",
                     subtitle = "Parametry w normie",
                     onTileClick = {
@@ -154,7 +144,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     gradientColors = listOf(PlantsGradientStart, PlantsGradientEnd),
                     icon = Icons.Filled.Eco,
                     iconContentDescription = "Rośliny",
-                    chipText = "${samplePlantsGlobal.count()} roślin",
+                    chipText = "${GlobalPlantsList.count()} roślin",
                     title = "Rośliny",
                     subtitle = "Wszystkie zdrowe",
                     onTileClick = {

@@ -12,15 +12,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.pokojowka_mobile.data.*
+import com.example.pokojowka_mobile.network.AuthViewModel
 import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.ui.components.PlantsSection
 import com.example.pokojowka_mobile.ui.components.SharedHeader
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,23 +42,16 @@ fun PlantsScreen(navController: NavHostController, modifier: Modifier = Modifier
     )
 
 
-    val displayPlants = remember(allCustomizations) {
-        samplePlantsGlobal.map { defaultPlant ->
-            val customization = allCustomizations[defaultPlant.id]
-            if (customization != null) {
+    val authViewModel: AuthViewModel = viewModel()
+    val displayPlants by authViewModel.plantsFlow.collectAsStateWithLifecycle()
 
-                defaultPlant.copy(
-                    name = customization.customName,
-                    icon = PlantIconMap.getIconByName(customization.iconName) ?: defaultPlant.icon
-                )
-            } else {
-
-                defaultPlant
-            }
-        }
+    LaunchedEffect(Unit) {
+        authViewModel.getRooms()
     }
 
-
+    LaunchedEffect(displayPlants) {
+        Log.d("API_PlantsScreen", "Plants updated: ${displayPlants.size}")
+    }
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
 

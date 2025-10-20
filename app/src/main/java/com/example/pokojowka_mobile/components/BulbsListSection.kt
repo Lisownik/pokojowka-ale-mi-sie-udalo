@@ -10,7 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pokojowka_mobile.data.BulbData
-import com.example.pokojowka_mobile.data.sampleBulbsGlobalList
+import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 
 
@@ -69,7 +69,7 @@ fun BulbsListSection(
 fun BulbsListSectionPreview() {
     PokojowkamobileTheme {
         BulbsListSection(
-            bulbs = sampleBulbsGlobalList.take(3),
+            bulbs = GlobalBulbsList.take(3),
             onSwitchToggle = { _, _ -> },
             onBrightnessChange = { _, _ -> },
             onItemClick = { }

@@ -22,7 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.pokojowka_mobile.data.BulbData
-import com.example.pokojowka_mobile.data.sampleBulbsGlobalList
+import com.example.pokojowka_mobile.data.GlobalBulbsList
 
 import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.ui.components.BulbViewItem
@@ -90,9 +90,9 @@ class BulbViewModel: ViewModel() {
         val currentBulb = _bulbState.value
         val id = originalBulbId
         if (currentBulb != null && id != null) {
-            val index = sampleBulbsGlobalList.indexOfFirst { it.id == id }
+            val index = GlobalBulbsList.indexOfFirst { it.id == id }
             if (index != -1) {
-                (sampleBulbsGlobalList as? MutableList<BulbData>)?.set(index, currentBulb.copy())
+                GlobalBulbsList?.set(index, currentBulb.copy())
                 Log.d("BulbViewModel", "Zaktualizowano żarówkę (symulacja zapisu) ID: $id -> $currentBulb")
             }
         }
@@ -126,6 +126,11 @@ fun BulbView(
     val bulb = bulbsListState.find { it.id == bulbId }
 //    val bulb by viewModel.bulbState
 
+
+    LaunchedEffect(bulb,bulb?.isSwitchedOn, bulb?.brightnessPercentage) {
+
+    }
+
     val scrollState = rememberScrollState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -155,7 +160,7 @@ fun BulbView(
             confirmButton = {
                 TextButton(onClick = {
                     if (newRoomName.isNotBlank()) {
-                        authViewModel.changeName(bulbId, newRoomName)
+                        authViewModel.changeBulbName(bulbId, newRoomName)
                         showRenameDialog = false
                     }
                 }) {
@@ -306,7 +311,7 @@ fun BulbView(
                         sliderValueRange = BulbData.MIN_KELVIN.toFloat()..BulbData.MAX_KELVIN.toFloat(),
                         sliderSteps = ((BulbData.MAX_KELVIN - BulbData.MIN_KELVIN) / 50) - 1,
                         sliderValueRepresentation = { "${it.roundToInt()}K" },
-                        enabled = currentBulb.isSwitchedOn
+                        enabled = false
                     )
                 }
 

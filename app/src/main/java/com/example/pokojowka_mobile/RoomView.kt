@@ -46,27 +46,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.derivedStateOf
 import com.example.pokojowka_mobile.ui.components.ThreatsTile
 import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.ui.components.RoomViewSection
 import com.example.pokojowka_mobile.ui.components.SectionItemUIData
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.data.RoomData
-import com.example.pokojowka_mobile.data.sampleRoomsGlobal
+import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.ui.components.SharedHeader
 
 import com.example.pokojowka_mobile.data.UserData
-import com.example.pokojowka_mobile.data.EnvironmentData
 import com.example.pokojowka_mobile.data.SampleUserData
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.Observer
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokojowka_mobile.data.UserSettingsManager
@@ -116,7 +108,7 @@ private object RoomParameterIcons {
 
 private fun getRoomById(roomId: String?): RoomData? {
     if (roomId == null) return null
-    return sampleRoomsGlobal.find { it.id == roomId }
+    return GlobalRoomsList.find { it.id == roomId }
 }
 
 @Composable

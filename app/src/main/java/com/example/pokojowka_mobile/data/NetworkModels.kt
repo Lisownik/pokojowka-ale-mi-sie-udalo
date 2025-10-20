@@ -27,4 +27,18 @@ data class NetworkRoomData(
     val data: InnerRoomData
 )
 
+data class InnerPlantData(
+    val date : String,
+    val temperature: Double,
+    val humidity: Double,
+    val wet: Double,
+    val sun: Double
+)
+
+data class NetworkPlantData(
+    val id: String,
+    val name: String,
+    val data: InnerPlantData
+)
+
 

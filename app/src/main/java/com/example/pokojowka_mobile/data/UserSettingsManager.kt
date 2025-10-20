@@ -10,6 +10,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pokojowka_mobile.network.AuthViewModel
+import com.example.pokojowka_mobile.network.RetrofitClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
@@ -78,6 +81,8 @@ class UserSettingsManager(private val context: Context) {
         }
 
     suspend fun savePlantCustomization(plantId: String, customName: String, iconName: String) {
+        RetrofitClient.apiService.changePotName(plantId, customName)
+
         context.dataStore.edit { settings ->
 
             val currentJson = settings[PLANT_CUSTOMIZATIONS_KEY]

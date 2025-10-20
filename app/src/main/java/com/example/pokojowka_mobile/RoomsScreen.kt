@@ -7,13 +7,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -22,9 +19,7 @@ import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.ui.components.RoomsSection
 import com.example.pokojowka_mobile.ui.components.SharedHeader
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-import com.example.pokojowka_mobile.data.sampleRoomsGlobal
 import com.example.pokojowka_mobile.data.UserData
-import com.example.pokojowka_mobile.data.EnvironmentData
 import com.example.pokojowka_mobile.data.SampleUserData
 
 import androidx.compose.runtime.getValue
@@ -32,10 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.pokojowka_mobile.data.RoomData
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.network.AuthViewModel
-import kotlinx.coroutines.delay
 
 @Composable
 fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier) {

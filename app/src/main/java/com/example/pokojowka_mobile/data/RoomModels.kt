@@ -59,7 +59,7 @@ data class RoomData(
         }
 }
 
-var sampleRoomsGlobal: MutableList<RoomData> = mutableListOf(
+var GlobalRoomsList: MutableList<RoomData> = mutableListOf(
     RoomData(
         id = "r1", name = "Sypialnia", icon = Icons.Filled.Bed, backgroundColor = RoomIconBackgroundBed,
         status = RoomStatus.GOOD, temperature = "22°C", humidity = "45%", airQuality = "Dobra", pressure = "1012 hPa",

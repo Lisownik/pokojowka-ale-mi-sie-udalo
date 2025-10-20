@@ -1,5 +1,6 @@
 package com.example.pokojowka_mobile
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +39,7 @@ import com.example.pokojowka_mobile.ui.components.PlantViewSection
 import com.example.pokojowka_mobile.ui.components.SharedHeader
 import kotlinx.coroutines.launch
 import com.example.pokojowka_mobile.ui.components.PlantUIData
+import kotlinx.coroutines.delay
 
 
 private object PlantParameterIcons {
@@ -176,13 +178,25 @@ fun PlantView(
         initialValue = UserData(userName = "", lastName = "",  connectedDevices = emptyList())
     )
     val allCustomizations by userSettingsManager.plantCustomizationsFlow.collectAsStateWithLifecycle(initialValue = emptyMap())
-    val defaultPlantData = samplePlantsGlobal.find { it.id == plantId }
+    val defaultPlantData = GlobalPlantsList.find { it.id == plantId }
 
     var showEditDialog by remember { mutableStateOf(false) }
 
     val customization = plantId?.let { allCustomizations[it] }
     val displayName = customization?.customName ?: defaultPlantData?.name
     val displayIcon = customization?.iconName?.let { PlantIconMap.getIconByName(it) } ?: defaultPlantData?.icon
+
+    val authViewModel: AuthViewModel = viewModel()
+    val plants by authViewModel.plantsFlow.collectAsStateWithLifecycle()
+
+    LaunchedEffect(plants) {
+        Log.d("API_PlantView_Debug", "Plants list: ${plants.joinToString { it.id + ":" + it.name }}")
+        delay(500)
+        plants.forEach { plant ->
+            Log.d("API_PlantView_Debug", "Plant ${plant.id}: ${plant.hashCode()}")
+            delay(250)
+        }
+    }
 
     Scaffold(
         bottomBar = {

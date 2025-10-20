@@ -4,20 +4,18 @@ import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bed
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokojowka_mobile.data.BulbData
 import com.example.pokojowka_mobile.data.EnvironmentData
-import com.example.pokojowka_mobile.data.NetworkBulbData
 import com.example.pokojowka_mobile.data.NetworkRoomData
+import com.example.pokojowka_mobile.data.PlantData
 import com.example.pokojowka_mobile.data.RoomData
 import com.example.pokojowka_mobile.data.RoomStatus
 import com.example.pokojowka_mobile.data.SampleUserData
-import com.example.pokojowka_mobile.data.TrendData
-import com.example.pokojowka_mobile.data.sampleBulbsGlobalList
-import com.example.pokojowka_mobile.data.sampleRoomsGlobal
+import com.example.pokojowka_mobile.data.GlobalBulbsList
+import com.example.pokojowka_mobile.data.GlobalPlantsList
+import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.ui.theme.RoomIconBackgroundBed
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -26,20 +24,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.example.pokojowka_mobile.data.ValueTrend
+import com.example.pokojowka_mobile.data.toBulbData
+import com.example.pokojowka_mobile.data.toPlantData
 
 class AuthViewModel : ViewModel() {
-    private val _bulbsResult = MutableLiveData<Array<NetworkBulbData>>()
-    public val getBulbsResult: LiveData<Array<NetworkBulbData>> = _bulbsResult
-    private val _roomsResult = MutableLiveData<Array<NetworkRoomData>>()
-    public val getRoomsResult: LiveData<Array<NetworkRoomData>> = _roomsResult
     private var pollingJob: Job? = null
-    private val _bulbsFlow = MutableStateFlow<List<BulbData>>(sampleBulbsGlobalList)
+    private val _bulbsFlow = MutableStateFlow<List<BulbData>>(emptyList())
     val bulbsFlow: StateFlow<List<BulbData>> = _bulbsFlow.asStateFlow()
     private val _roomsFlow = MutableStateFlow<List<RoomData>>(emptyList())
     val roomsFlow: StateFlow<List<RoomData>> = _roomsFlow.asStateFlow()
     private val _avgRooms = MutableStateFlow<EnvironmentData>(SampleUserData.defaultEnvironment)
     public val getAvgRooms: StateFlow<EnvironmentData> = _avgRooms
+    private val _plantsFlow = MutableStateFlow<List<PlantData>>(GlobalPlantsList)
+    val plantsFlow: StateFlow<List<PlantData>> = _plantsFlow.asStateFlow()
+
     public lateinit var publicOwner: LifecycleOwner
 
     init {
@@ -110,16 +108,6 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    private fun NetworkBulbData.toBulbData(): BulbData {
-        return BulbData(
-            id = this.id,
-            name = this.name,
-            brightnessPercentage = this.data.brightness,
-            isSwitchedOn = this.data.power == "on",
-            colorTemperatureKelvin = 2700,
-        )
-    }
-
     private fun NetworkRoomData.toRoomData(): RoomData {
         return RoomData(
             id = this.id,
@@ -145,6 +133,7 @@ class AuthViewModel : ViewModel() {
                     Log.d("API_Polling", "Fetching bulbs and rooms...")
                     getRooms()
                     getBulbs()
+                    getPlants()
                 } catch (e: Exception) {
                     Log.e("API_BulbPolling", "Error in polling", e)
                     pollingJob?.cancel()
@@ -169,14 +158,13 @@ class AuthViewModel : ViewModel() {
             try {
                 val response = RetrofitClient.apiService.getBulbs()
                 Log.i("API_RESULT /bulbs:", response.toString())
-                sampleBulbsGlobalList = mutableListOf()
+                GlobalBulbsList = mutableListOf()
                 response.forEach {bulb ->
                     Log.d("Init -> GetBulbs() -> Foreach -> Bulb ", bulb.name)
                     Log.d("API_bulbs_observe", "Added/Changed Bulbs")
-                    sampleBulbsGlobalList += bulb.toBulbData()
+                    GlobalBulbsList += bulb.toBulbData()
                 }
-                _bulbsResult.value = response
-                _bulbsFlow.value = sampleBulbsGlobalList
+                _bulbsFlow.value = GlobalBulbsList
             } catch (e: Exception) {
                 Log.e("API_ERROR /bulbs:", e.message ?: "Unknown error")
             }
@@ -211,8 +199,7 @@ class AuthViewModel : ViewModel() {
 //                        temperatureTrend = calcTempTrend(room)
                     )
                 }
-                sampleRoomsGlobal = newList.toMutableList()
-                _roomsResult.value = response
+                GlobalRoomsList = newList.toMutableList()
                 _roomsFlow.value = newList
                 Log.d("API_get_room_end", "new List: ${newList.count()}")
 
@@ -260,7 +247,7 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    fun changeName(id: String, newName: String) {
+    fun changeBulbName(id: String, newName: String) {
         Log.v("API_REQUEST_NAME", "Start")
         Log.d("API_CALL_ID",  id)
         Log.d("API_CALL_NEW_NAME",  newName)
@@ -327,6 +314,42 @@ class AuthViewModel : ViewModel() {
                 Log.v("API_REQUEST_BULB_BRIGHTNESS", "End")
             } catch (e: Exception) {
                 Log.e("API_ERROR /bulb/{id}/brightness:", e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun getPlants() {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.getPlants()
+                Log.i("API_RESULT /pot:", response.toString())
+
+                val newList = response.map { room ->
+                    room.toPlantData()
+                }
+                
+                GlobalPlantsList = newList.toMutableList()
+                _plantsFlow.value = newList.toMutableList()
+                Log.d("API_get_plant_end", "new List: ${newList.count()}")
+
+            } catch (e: Exception) {
+                Log.e("API_ERROR /pot:", e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun changePotName(id: String, name: String) {
+        Log.v("API_REQUEST_NAME", "Start")
+        Log.d("API_CALL_ID",  id)
+        Log.d("API_CALL_NEW_NAME",  name)
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.changePotName(id, name)
+
+                Log.i("API_RESULT /pot/{id}/{name}:", response.toString())
+                Log.v("API_REQUEST_NAME", "End")
+            } catch (e: Exception) {
+                Log.e("API_ERROR /bulb/{id}/{name}:", e.message ?: "Unknown error")
             }
         }
     }
