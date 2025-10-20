@@ -1,6 +1,6 @@
 import express, {Request, Response} from 'express';
 import {filters, Modules, PotManagment} from "./config";
-import {PowerState} from "./types";
+import {ModuleData, PowerState} from "./types";
 import cors from 'cors';
 import {GPTClient} from "./config";
 import {Parameters} from "./types";
@@ -54,6 +54,50 @@ app.put('/room/:id/name', (req: Request, res: Response) => {
         error_response(res, 500, 'Internal server error')
     }
 });
+
+app.get('/room/avg', (req: Request, res: Response) => {
+    let keys = Array.from(Modules.entries())
+    let objects: { keys: string[], values: ModuleData[] } = { keys: [], values: [] }
+    keys.forEach(([key, value]) => {
+        if (value.type === 'room') {
+            objects.keys.push(key)
+            objects.values.push(value)
+        }
+    })
+    const len = objects.values.length;
+    if(len === 0) {
+        send_response(res, 200, {
+            message: 'Room avg is none',
+            data: {
+                "temperature": 0,
+                "humidity": 0,
+                "pressure": 0,
+                "quality": 0,
+            }
+        })
+        return
+    }
+    let data = {
+        temperature: 0,
+        humidity: 0,
+        pressure: 0,
+        quality: 0,
+    }
+    objects.values.forEach((value) => {
+        data.temperature += value.params.temperature;
+        data.humidity += value.params.humidity;
+        data.pressure += value.params.pressure;
+        data.quality += value.params.quality;
+    })
+    data.temperature /= len;
+    data.humidity /= len;
+    data.pressure /= len;
+    data.quality /= len;
+    send_response(res, 200, {
+        message: "Room avg was calculated successfully!",
+        data
+    })
+})
 
 
 app.get('/bulbs', (req: Request, res: Response) => {
@@ -211,17 +255,17 @@ app.get('/pot/:id', (req, res) => {
 })
 
 app.post('/pot/:id', async (req, res) => {
-    const { id } = req.params;
-    const { data } = req.query;
-
-    if(!assert_requirement(res, [id, data], 'ID and data are required'))
-        return
-
     try{
+        const { id } = req.params;
+        const data = req.body;
+
+        if(!assert_requirement(res, [id, data], 'ID and data are required'))
+            return
         await PotManagment.updateData(id, data as Parameters)
         send_response(res, 201, {msg: "Successfully updated data!"})
     } catch (e) {
         send_response(res, 500, {e})
+        return
     }
 })
 
@@ -240,7 +284,7 @@ app.delete('/pot/:id', (req, res) => {
     }
 })
 
-app.post('/pot/:id/:name', async (req, res) => {
+app.put('/pot/:id/:name', async (req, res) => {
     const { id, name } = req.params;
 
     if(!assert_requirement(res, [id, name], 'ID and name are required'))

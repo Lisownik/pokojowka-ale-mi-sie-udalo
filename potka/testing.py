@@ -15,9 +15,9 @@ class WebSocketClient:
         # self.bme680 = None
 
     async def connect(self):
-        self.id = read_file_safe('./name.txt')
+        self.id = read_file_safe('./data.txt')
         if self.id == "":
-            self.id = requests.get(self.uri + "/pot/register").json()
+            self.id = requests.get((self.uri) + "/pot/register").json()
         print(self.id)
         overwrite_file("./data.txt", self.id)
         print(f"Current ID: {self.id}")
@@ -44,13 +44,11 @@ class WebSocketClient:
                             "date": datetime.datetime.now().isoformat(),
                             "temperature": temperature,
                             "humidity": humidity,
-                            "pressure": pressure,
-                            "quality": quality,
-                            "co": False,
-                            "gasses": False
+                            "wet": pressure,
+                            "sun": quality,
                 }
                 
-                requests.post(self.uri + "/pot/" + self.id, params=msg)
+                requests.post(self.uri + "/pot/" + self.id, json=msg)
                 print(f"> Sent: {msg}")
                 await asyncio.sleep(5)
         except:
