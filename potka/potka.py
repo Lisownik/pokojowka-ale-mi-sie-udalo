@@ -9,13 +9,11 @@ import time
 import board
 import busio
 import adafruit_ahtx0
-from machine import Pin, I2C
-import veml7700
+import adafruit_veml7700
 
-i2cveml = I2C(0)
-i2cveml = I2C(1, scl=Pin(5), sda=Pin(3), freq=10000)
-
-veml = veml7700.VEML7700(address=0x10, i2c=i2cveml, it=100, gain=1 / 8)
+# Create I2C connection
+i2cveml = busio.I2C(board.SCL, board.SDA)
+veml7700 = adafruit_veml7700.VEML7700(i2cveml)
 
 # Create I2C connection
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -55,7 +53,7 @@ class WebSocketClient:
                     "temperature": tempHumidSensor.temperature,
                     "humidity": tempHumidSensor.relative_humidity,
                     "wet": pressure,
-                    "sun": veml.read_lux(),
+                    "sun": veml7700.lux,
                 }
 
                 requests.post(self.uri + "/pot/" + self.id, json=msg)
