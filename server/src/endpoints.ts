@@ -205,7 +205,7 @@ app.get('/tts', async (req, res, next) => {
     })
     try {
         console.log(`Input: ${message}`)
-        console.log(`{Jeśli ten tekst/pytania będzie wspominało o warunkach w jakimś pokoju to są dane z pokojów jako JSON: ${JSON.stringify(filters["room"]["info"]())}} /* Krótko odpowiedz na: */` + message.toString())
+        console.log(`{Jeśli ten tekst/pytania będzie wspominało o warunkach w jakimś pokoju, doniczce/potce albo żarówce to to są dane z pokojów jako JSON: Pokoje: ${JSON.stringify(filters["room"]["info"]())}; Doniczki/Potki: ${JSON.stringify(PotManagment.info())}; Zarowki: ${JSON.stringify(filters["bulb"]["get"]())};} /* Krótko odpowiedz na: */` + message.toString())
         const text = (await GPTClient.responses.create({
             model: "gpt-4o-mini",
             input: `{Jeśli ten tekst/pytania będzie wspominało o warunkach w jakimś pokoju to są dane z pokojów jako JSON: ${JSON.stringify(filters["room"]["info"]())}} /* Krótko odpowiedz na: */` + message.toString()

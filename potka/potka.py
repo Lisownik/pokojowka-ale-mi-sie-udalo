@@ -5,8 +5,21 @@ import requests
 import json
 from dotenv import load_dotenv, dotenv_values
 import os
+import time
+import board
+import busio
+import adafruit_ahtx0
+from machine import Pin, I2C
+import veml7700
 
+i2cveml = I2C(0)
+i2cveml = I2C(1, scl=Pin(5), sda=Pin(3), freq=10000)
 
+veml = veml7700.VEML7700(address=0x10, i2c=i2cveml, it=100, gain=1 / 8)
+
+# Create I2C connection
+i2c = busio.I2C(board.SCL, board.SDA)
+tempHumidSensor = adafruit_ahtx0.AHTx0(i2c)
 
 class WebSocketClient:
     def __init__(self, uri="http://localhost:3333"):
@@ -35,19 +48,16 @@ class WebSocketClient:
     async def send_data(self):
         try:
             while True:
-                temperature = round(random.uniform(10.0, 35.0), 1)  # 15-35°C
-                humidity = random.randint(1, 100)  # 30-90%
                 pressure = round(random.uniform(1, 100), 1)  # 980-1040 hPa
-                quality = random.randint(1, 100)  # 1000-50000 ohms
 
                 msg = {
-                            "date": datetime.datetime.now().isoformat(),
-                            "temperature": temperature,
-                            "humidity": humidity,
-                            "wet": pressure,
-                            "sun": quality,
+                    "date": datetime.datetime.now().isoformat(),
+                    "temperature": tempHumidSensor.temperature,
+                    "humidity": tempHumidSensor.relative_humidity,
+                    "wet": pressure,
+                    "sun": veml.read_lux(),
                 }
-                
+
                 requests.post(self.uri + "/pot/" + self.id, json=msg)
                 print(f"> Sent: {msg}")
                 await asyncio.sleep(5)
