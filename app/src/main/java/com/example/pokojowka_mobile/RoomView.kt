@@ -59,6 +59,7 @@ import com.example.pokojowka_mobile.data.SampleUserData
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.repos.RoomsRepository
 
 
 @Composable
@@ -101,18 +102,12 @@ private object RoomParameterIcons {
     val AirQuality: ImageVector = Icons.Filled.Air
 }
 
-private fun getRoomById(roomId: String?): RoomData? {
-    if (roomId == null) return null
-    return GlobalRoomsList.find { it.id == roomId }
-}
-
 @Composable
 fun RoomView(
     navController: NavHostController,
     roomId: String?,
     modifier: Modifier = Modifier
 ) {
-//    var roomData by remember { mutableStateOf<RoomData?>(null) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
@@ -131,12 +126,8 @@ fun RoomView(
 
     var showRenameDialog by remember { mutableStateOf(false) }
     var newRoomName by remember { mutableStateOf("") }
-    val rooms = remember { GlobalRoomsList }
-//    val roomData = remember(rooms) {
-//        rooms.firstOrNull { it.id == roomId }
-//    }
 
-
+    val rooms by RoomsRepository.state.collectAsStateWithLifecycle()
     val roomData = rooms.firstOrNull { it.id == roomId }
 
     if (showRenameDialog && roomId != null) {
@@ -155,8 +146,9 @@ fun RoomView(
             confirmButton = {
                 TextButton(onClick = {
                     if (newRoomName.isNotBlank()) {
-                        // todo: change name
                         showRenameDialog = false
+
+                        RoomsRepository.setName(roomId, newRoomName)
                     }
                 }) {
                     Text("Zatwierdź")

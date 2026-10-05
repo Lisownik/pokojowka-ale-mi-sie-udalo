@@ -40,16 +40,13 @@ import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.data.GlobalPlantsList
 import com.example.pokojowka_mobile.data.GlobalRoomsList
+import com.example.pokojowka_mobile.repos.BulbsRepository
 
 
 @Composable
 fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
 
-    val bulbsList = remember {
-        mutableStateListOf<BulbData>().apply {
-            addAll(GlobalBulbsList.map { it.copy() })
-        }
-    }
+    val bulbsList by BulbsRepository.state.collectAsStateWithLifecycle()
 
     val notificationsList = remember {
         mutableStateListOf<NotificationData>().apply {
@@ -176,6 +173,8 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                         val updatedBulb = oldBulb.copy(
                             isSwitchedOn = newState
                         )
+
+                        BulbsRepository.setBulbState(bulbId, newState)
                         // todo: change bulb state mr wojtek
                     }
                 }

@@ -1,6 +1,5 @@
 package com.example.pokojowka_mobile
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,14 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.pokojowka_mobile.data.BulbData
-import com.example.pokojowka_mobile.data.GlobalBulbsList
 
 import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.components.BulbViewItem
@@ -40,69 +37,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.components.BulbViewSection
-
-class BulbViewModel: ViewModel() {
-    private val _bulbState = mutableStateOf<BulbData?>(null)
-    val bulbState: State<BulbData?> = _bulbState
-    private var originalBulbId: String? = null
-
-    fun updateBulbSwitched(newState: Boolean) {
-        _bulbState.value?.let { currentBulb ->
-            _bulbState.value = currentBulb.copy(isSwitchedOn = newState)
-            saveCurrentBulbState()
-
-//            authViewModel.changePowerState(currentBulb.id, if (newState) "on" else "off")
-        }
-    }
-
-    fun updateBulbBrightness(newBrightness: Int) {
-        _bulbState.value?.let { currentBulb ->
-            val clampedBrightness = newBrightness.coerceIn(0, 100)
-            _bulbState.value = currentBulb.copy(brightnessPercentage = clampedBrightness)
-            saveCurrentBulbState()
-
-//            authViewModel.changeBrightness(
-//                currentBulb.id,
-//                clampedBrightness,
-//                RetrofitClient.BULB_CHANGE_DURATION
-//            )
-        }
-    }
-
-    fun updateBulbColorTemperature(newTemperature: Int) {
-        val clampedTemp = newTemperature.coerceIn(BulbData.MIN_KELVIN, BulbData.MAX_KELVIN)
-        _bulbState.value = _bulbState.value?.copy(colorTemperatureKelvin = clampedTemp)
-        saveCurrentBulbState()
-    }
-
-    fun saveCurrentBulbState() {
-        val currentBulb = _bulbState.value
-        val id = originalBulbId
-        if (currentBulb != null && id != null) {
-            val index = GlobalBulbsList.indexOfFirst { it.id == id }
-            if (index != -1) {
-                GlobalBulbsList[index] = currentBulb.copy()
-                Log.d("BulbViewModel", "Zaktualizowano żarówkę (symulacja zapisu) ID: $id -> $currentBulb")
-            }
-        }
-    }
-}
-
+import com.example.pokojowka_mobile.repos.BulbsRepository
 
 
 @Composable
 fun BulbView(
     navController: NavHostController,
     bulbId: String,
-    viewModel: BulbViewModel = viewModel(key = bulbId)
 ) {
 
     var showRenameDialog by remember { mutableStateOf(false) }
     var newRoomName by remember { mutableStateOf("") }
 
-
-
-    val bulb by viewModel.bulbState
+    val bulbs by BulbsRepository.state.collectAsStateWithLifecycle()
+    val bulb = bulbs.firstOrNull { it.id == bulbId }
 
 
     val scrollState = rememberScrollState()
@@ -197,7 +145,7 @@ fun BulbView(
                     Text("Ładowanie danych żarówki...")
                 }
             } else {
-                val currentBulb = bulb!!
+                val currentBulb = bulb
 
 
                 Column(
@@ -250,7 +198,7 @@ fun BulbView(
                         itemType = BulbViewItemType.SWITCH,
                         isChecked = currentBulb.isSwitchedOn,
                         onCheckedChange = {
-                            viewModel.updateBulbSwitched(it)
+                            BulbsRepository.setBulbState(bulbId, it)
                         }
                     )
                 }
@@ -267,7 +215,7 @@ fun BulbView(
                         itemType = BulbViewItemType.SLIDER,
                         sliderValue = currentBulb.brightnessPercentage.toFloat(),
                         onSliderValueChange = {
-                            viewModel.updateBulbBrightness(it.roundToInt())
+                            BulbsRepository.setBulbBrightness(bulbId, it.roundToInt())
                                               },
                         sliderValueRange = 1f..100f,
                         sliderSteps = 99,
@@ -279,7 +227,9 @@ fun BulbView(
                         itemIcon = Icons.Filled.Thermostat,
                         itemType = BulbViewItemType.SLIDER,
                         sliderValue = currentBulb.colorTemperatureKelvin.toFloat(),
-                        onSliderValueChange = { viewModel.updateBulbColorTemperature(it.roundToInt()) },
+                        onSliderValueChange = {
+                            BulbsRepository.setBulbColor(bulbId, it.roundToInt())
+                                              },
                         sliderValueRange = BulbData.MIN_KELVIN.toFloat()..BulbData.MAX_KELVIN.toFloat(),
                         sliderSteps = ((BulbData.MAX_KELVIN - BulbData.MIN_KELVIN) / 50) - 1,
                         sliderValueRepresentation = { "${it.roundToInt()}K" },
@@ -309,8 +259,7 @@ fun BulbView(
 @Composable
 fun BulbViewPreview_Loaded() {
     PokojowkamobileTheme {
-        val previewViewModel = viewModel<BulbViewModel>(key = "preview_salon_main_loaded_v5")
-        BulbView(navController = rememberNavController(), bulbId = "salon_main", viewModel = previewViewModel)
+        BulbView(navController = rememberNavController(), bulbId = "salon_main")
     }
 }
 
@@ -318,8 +267,7 @@ fun BulbViewPreview_Loaded() {
 @Composable
 fun BulbViewPreview_Loading() {
     PokojowkamobileTheme {
-        val previewViewModel = viewModel<BulbViewModel>(key = "preview_loading_v5")
-        BulbView(navController = rememberNavController(), bulbId = "non_existent_id_for_loading_preview_v5", viewModel = previewViewModel)
+        BulbView(navController = rememberNavController(), bulbId = "non_existent_id_for_loading_preview_v5")
     }
 }
 
@@ -327,8 +275,7 @@ fun BulbViewPreview_Loading() {
 @Composable
 fun BulbViewPreview_BulbOff() {
     PokojowkamobileTheme {
-        val previewViewModel = viewModel<BulbViewModel>(key = "preview_bedroom_night_off_v5")
-        BulbView(navController = rememberNavController(), bulbId = "bedroom_night", viewModel = previewViewModel)
+        BulbView(navController = rememberNavController(), bulbId = "bedroom_night")
     }
 }
 

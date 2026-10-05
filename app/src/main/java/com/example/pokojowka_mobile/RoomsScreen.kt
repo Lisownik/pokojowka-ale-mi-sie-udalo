@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.repos.RoomsRepository
 
 @Composable
 fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -44,7 +45,7 @@ fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier)
     )
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
-    val rooms = remember { GlobalRoomsList }
+    val rooms by RoomsRepository.state.collectAsStateWithLifecycle()
 
 
     Scaffold(

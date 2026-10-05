@@ -35,15 +35,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.BulbData
 import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.repos.BulbsRepository
 
 @Composable
 fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
 
-    val bulbsListState = remember(GlobalBulbsList) {
-        mutableStateListOf<BulbData>().apply {
-            addAll(GlobalBulbsList.map { it.copy() })
-        }
-    }
+    val bulbsListState by BulbsRepository.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
 
@@ -99,10 +96,9 @@ fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier)
 
                     val index = bulbsListState.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-                        val oldBulb = bulbsListState[index]
-                        bulbsListState[index] = oldBulb.copy(
-                            isSwitchedOn = newState
-                        )
+                        // nowe
+                        BulbsRepository.setBulbState(bulbId, newState)
+
                         Log.d("Logging bulbsListState", bulbsListState.toString())
                     }
                     Log.d("BulbsScreen", "Żarówka $bulbId przełączona na: $newState")
@@ -110,7 +106,8 @@ fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier)
                 onBrightnessChange = { bulbId, newBrightness ->
                     val index = bulbsListState.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-                        bulbsListState[index] = bulbsListState[index].copy(brightnessPercentage = newBrightness)
+                        // nowe
+                        BulbsRepository.setBulbBrightness(bulbId, newBrightness)
                     }
                     Log.d("BulbsScreen", "Jasność żarówki $bulbId zmieniona na: $newBrightness%")
                 },
