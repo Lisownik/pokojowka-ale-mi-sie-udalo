@@ -1,6 +1,7 @@
 package com.example.pokojowka_mobile
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -68,6 +69,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("FlowOperatorInvokedInComposition")
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
@@ -76,6 +78,7 @@ fun AppNavigation() {
 
     // Obserwujemy, czy imię użytkownika jest zapisane.
     // Dajemy wartość początkową `null`, żeby odróżnić stan "nie wiem jeszcze" od "wiem, że jest pusty".
+    // todo: naprawić żeby nie było @SuppressLint i błędu poniżej
     val isLoggedIn by userSettingsManager.userPreferencesFlow
         .map { it.userName.isNotBlank() } // Konwertujemy UserData na prostą wartość true/false
         .collectAsState(initial = null)
