@@ -1,34 +1,17 @@
-package com.example.pokojowka_mobile.ui.components
+package com.example.pokojowka_mobile.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Eco
-import androidx.compose.material.icons.filled.Grass
-import androidx.compose.material.icons.filled.LocalFlorist
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.example.pokojowka_mobile.data.PlantData
-import com.example.pokojowka_mobile.data.PlantHealthStatus
-import com.example.pokojowka_mobile.network.AuthViewModel
-
-import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-import com.example.pokojowka_mobile.ui.theme.RoomIconBackgroundBathroom
-
 
 
 @Composable

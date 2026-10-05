@@ -1,5 +1,4 @@
-
-package com.example.pokojowka_mobile.screens
+package com.example.pokojowka_mobile
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -15,13 +14,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.pokojowka_mobile.AppDestinations
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
-import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.ui.components.BulbsListSection
-import com.example.pokojowka_mobile.ui.components.SharedHeader
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.components.BulbsListSection
+import com.example.pokojowka_mobile.components.SharedHeader
 
 
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
@@ -34,32 +32,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pokojowka_mobile.data.BulbData
+import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.AuthViewModel
-import com.example.pokojowka_mobile.network.RetrofitClient
 
 @Composable
 fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-    val authViewModel: AuthViewModel = viewModel()
 
-//    val bulbsListState = remember(sampleBulbsGlobalList) {
-//        mutableStateListOf<BulbData>().apply {
-//            addAll(sampleBulbsGlobalList.map { it.copy() })
-//        }
-//    }
-    val bulbsListState by authViewModel.bulbsFlow.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        authViewModel.loadBulbs()
-    }
-
-    bulbsListState.forEach { it ->
-        LaunchedEffect(it, it.isSwitchedOn, it.brightnessPercentage) {
-
+    val bulbsListState = remember(GlobalBulbsList) {
+        mutableStateListOf<BulbData>().apply {
+            addAll(GlobalBulbsList.map { it.copy() })
         }
     }
-
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
 
@@ -115,20 +99,18 @@ fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier)
 
                     val index = bulbsListState.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-//                        val oldBulb = bulbsListState[index]
-//                        bulbsListState[index] = oldBulb.copy(
-//                            isSwitchedOn = newState
-//                        )
+                        val oldBulb = bulbsListState[index]
+                        bulbsListState[index] = oldBulb.copy(
+                            isSwitchedOn = newState
+                        )
                         Log.d("Logging bulbsListState", bulbsListState.toString())
-                        authViewModel.changePowerState(bulbId, if(newState) "on" else "off")
                     }
                     Log.d("BulbsScreen", "Żarówka $bulbId przełączona na: $newState")
                 },
                 onBrightnessChange = { bulbId, newBrightness ->
                     val index = bulbsListState.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-//                        bulbsListState[index] = bulbsListState[index].copy(brightnessPercentage = newBrightness)
-                        authViewModel.changeBrightness(bulbId, newBrightness, RetrofitClient.BULB_CHANGE_DURATION)
+                        bulbsListState[index] = bulbsListState[index].copy(brightnessPercentage = newBrightness)
                     }
                     Log.d("BulbsScreen", "Jasność żarówki $bulbId zmieniona na: $newBrightness%")
                 },

@@ -1,5 +1,4 @@
-
-package com.example.pokojowka_mobile.ui.components
+package com.example.pokojowka_mobile.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

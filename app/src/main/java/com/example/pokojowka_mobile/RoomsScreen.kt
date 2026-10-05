@@ -15,9 +15,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.ui.components.RoomsSection
-import com.example.pokojowka_mobile.ui.components.SharedHeader
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.components.RoomsSection
+import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.SampleUserData
@@ -26,14 +26,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.AuthViewModel
 
 @Composable
 fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
 
-    val authViewModel: AuthViewModel = viewModel()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
@@ -46,15 +44,7 @@ fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier)
     )
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
-    val rooms by authViewModel.roomsFlow.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        authViewModel.getRooms()
-    }
-
-    LaunchedEffect(rooms) {
-        Log.d("API_RoomsScreen", "Rooms updated: ${rooms.size}")
-    }
+    val rooms = remember { GlobalRoomsList }
 
 
     Scaffold(

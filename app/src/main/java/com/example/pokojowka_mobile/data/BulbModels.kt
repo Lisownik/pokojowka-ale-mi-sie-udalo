@@ -27,7 +27,7 @@ data class BulbData(
     }
 }
 
-public fun NetworkBulbData.toBulbData(): BulbData {
+fun NetworkBulbData.toBulbData(): BulbData {
     return BulbData(
         id = this.id,
         name = this.name,

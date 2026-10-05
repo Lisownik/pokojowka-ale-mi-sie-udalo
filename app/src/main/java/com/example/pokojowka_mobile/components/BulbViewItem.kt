@@ -1,10 +1,9 @@
-package com.example.pokojowka_mobile.ui.components
+package com.example.pokojowka_mobile.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Info
@@ -18,8 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.semantics.disabled
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -218,7 +215,7 @@ fun BulbViewItemSwitchPreview() {
 @Composable
 fun BulbViewItemBrightnessSliderPreview() {
     PokojowkamobileTheme {
-        var sliderVal by remember { mutableStateOf(50f) }
+        var sliderVal by remember { mutableFloatStateOf(50f) }
         BulbViewItem(
             itemName = "Jasność",
             itemIcon = Icons.Filled.Brightness7,
@@ -236,7 +233,7 @@ fun BulbViewItemBrightnessSliderPreview() {
 @Composable
 fun BulbViewItemKelvinSliderPreview() {
     PokojowkamobileTheme {
-        var kelvinVal by remember { mutableStateOf(3500f) }
+        var kelvinVal by remember { mutableFloatStateOf(3500f) }
         val minKelvin = BulbData.MIN_KELVIN.toFloat()
         val maxKelvin = BulbData.MAX_KELVIN.toFloat()
         val stepKelvin = 50f

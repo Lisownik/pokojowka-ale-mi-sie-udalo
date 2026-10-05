@@ -1,4 +1,4 @@
-package com.example.pokojowka_mobile.screens
+package com.example.pokojowka_mobile
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -19,17 +19,16 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.pokojowka_mobile.AppDestinations
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import kotlinx.coroutines.launch
-import com.example.pokojowka_mobile.ui.components.SharedHeader
-import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.components.SharedHeader
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.data.SampleUserData
 import com.example.pokojowka_mobile.data.availableDeviceModels
-import com.example.pokojowka_mobile.ui.components.ProfileInfoItem
-import com.example.pokojowka_mobile.ui.components.ProfileSection
+import com.example.pokojowka_mobile.components.ProfileInfoItem
+import com.example.pokojowka_mobile.components.ProfileSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

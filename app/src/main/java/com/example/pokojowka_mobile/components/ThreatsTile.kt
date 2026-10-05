@@ -1,6 +1,5 @@
-package com.example.pokojowka_mobile.ui.components
+package com.example.pokojowka_mobile.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -16,7 +15,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.ui.theme.tlo
 

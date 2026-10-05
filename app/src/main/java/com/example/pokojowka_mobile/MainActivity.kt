@@ -28,9 +28,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.pokojowka_mobile.data.NotificationHelper
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.screens.BulbView
-import com.example.pokojowka_mobile.screens.BulbsScreen
-import com.example.pokojowka_mobile.screens.ProfileScreen
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import kotlinx.coroutines.flow.map
 

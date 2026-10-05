@@ -1,11 +1,8 @@
 package com.example.pokojowka_mobile
 
-import androidx.activity.viewModels
-import com.example.pokojowka_mobile.network.AuthViewModel
 import org.junit.Test
 
 import org.junit.Assert.*
-import kotlin.getValue
 
 /**
  * Example local unit test, which will execute on the development machine (host).

@@ -1,4 +1,4 @@
-package com.example.pokojowka_mobile.ui.components
+package com.example.pokojowka_mobile.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +37,7 @@ import kotlinx.coroutines.launch
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun InfoTile(
@@ -69,7 +68,7 @@ fun InfoTile(
                         isClickEnabled = false
                         onTileClick()
                         scope.launch {
-                            delay(clickCooldownMillis)
+                            delay(clickCooldownMillis.milliseconds)
                             isClickEnabled = true
                         }
                     }

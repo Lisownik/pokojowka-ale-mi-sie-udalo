@@ -1,6 +1,5 @@
 package com.example.pokojowka_mobile.data
 
-import androidx.lifecycle.LiveData
 
 data class UserData(
     val userName: String,

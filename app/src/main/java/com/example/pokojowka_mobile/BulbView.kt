@@ -1,4 +1,4 @@
-package com.example.pokojowka_mobile.screens
+package com.example.pokojowka_mobile
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,11 +25,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pokojowka_mobile.data.BulbData
 import com.example.pokojowka_mobile.data.GlobalBulbsList
 
-import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.ui.components.BulbViewItem
-import com.example.pokojowka_mobile.ui.components.BulbViewItemType
-import com.example.pokojowka_mobile.ui.components.BulbViewSection
-import com.example.pokojowka_mobile.ui.components.SharedHeader
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.components.BulbViewItem
+import com.example.pokojowka_mobile.components.BulbViewItemType
+import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import kotlin.math.roundToInt
 import com.example.pokojowka_mobile.data.UserData
@@ -39,23 +39,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.AuthViewModel
-import com.example.pokojowka_mobile.network.RetrofitClient
+import com.example.pokojowka_mobile.components.BulbViewSection
 
 class BulbViewModel: ViewModel() {
     private val _bulbState = mutableStateOf<BulbData?>(null)
     val bulbState: State<BulbData?> = _bulbState
     private var originalBulbId: String? = null
-
-    fun loadBulb(authViewModel: AuthViewModel, bulbId: String) {
-        authViewModel.loadBulbs()
-        originalBulbId = bulbId
-        val bulb = authViewModel.bulbsFlow.value.find { it.id == bulbId }
-        _bulbState.value = bulb
-        if (bulb == null) {
-            Log.e("BulbViewModel", "Nie znaleziono żarówki o ID: $bulbId")
-        }
-    }
 
     fun updateBulbSwitched(newState: Boolean) {
         _bulbState.value?.let { currentBulb ->
@@ -92,7 +81,7 @@ class BulbViewModel: ViewModel() {
         if (currentBulb != null && id != null) {
             val index = GlobalBulbsList.indexOfFirst { it.id == id }
             if (index != -1) {
-                GlobalBulbsList?.set(index, currentBulb.copy())
+                GlobalBulbsList[index] = currentBulb.copy()
                 Log.d("BulbViewModel", "Zaktualizowano żarówkę (symulacja zapisu) ID: $id -> $currentBulb")
             }
         }
@@ -111,25 +100,10 @@ fun BulbView(
     var showRenameDialog by remember { mutableStateOf(false) }
     var newRoomName by remember { mutableStateOf("") }
 
-    val authViewModel: AuthViewModel = viewModel()
-    LaunchedEffect(bulbId) {
-        authViewModel.loadBulbs()
-        viewModel.loadBulb(authViewModel, bulbId)
-    }
-
-    LaunchedEffect(Unit) {
-        authViewModel.loadBulbs()
-        viewModel.loadBulb(authViewModel, bulbId)
-    }
-
-    val bulbsListState by authViewModel.bulbsFlow.collectAsStateWithLifecycle()
-    val bulb = bulbsListState.find { it.id == bulbId }
-//    val bulb by viewModel.bulbState
 
 
-    LaunchedEffect(bulb,bulb?.isSwitchedOn, bulb?.brightnessPercentage) {
+    val bulb by viewModel.bulbState
 
-    }
 
     val scrollState = rememberScrollState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -160,7 +134,7 @@ fun BulbView(
             confirmButton = {
                 TextButton(onClick = {
                     if (newRoomName.isNotBlank()) {
-                        authViewModel.changeBulbName(bulbId, newRoomName)
+                        // Todo: Change name
                         showRenameDialog = false
                     }
                 }) {
@@ -264,7 +238,7 @@ fun BulbView(
                     BulbViewItem(
                         itemName = "Nazwa",
                         itemValueString = currentBulb.name,
-                        itemIcon = Icons.Filled.Label,
+                        itemIcon = Icons.AutoMirrored.Filled.Label,
                         onClick = {
                             newRoomName = currentBulb.name
                             showRenameDialog = true
@@ -277,7 +251,6 @@ fun BulbView(
                         isChecked = currentBulb.isSwitchedOn,
                         onCheckedChange = {
                             viewModel.updateBulbSwitched(it)
-                            authViewModel.changePowerState(currentBulb.id, if(it) "on" else "off")
                         }
                     )
                 }
@@ -295,7 +268,6 @@ fun BulbView(
                         sliderValue = currentBulb.brightnessPercentage.toFloat(),
                         onSliderValueChange = {
                             viewModel.updateBulbBrightness(it.roundToInt())
-                            authViewModel.changeBrightness(currentBulb.id, it.roundToInt(), RetrofitClient.BULB_CHANGE_DURATION)
                                               },
                         sliderValueRange = 1f..100f,
                         sliderSteps = 99,
@@ -336,12 +308,8 @@ fun BulbView(
 @Preview(showBackground = true, widthDp = 380, heightDp = 800)
 @Composable
 fun BulbViewPreview_Loaded() {
-    val authViewModel: AuthViewModel = viewModel()
     PokojowkamobileTheme {
         val previewViewModel = viewModel<BulbViewModel>(key = "preview_salon_main_loaded_v5")
-        LaunchedEffect(Unit) {
-            previewViewModel.loadBulb(authViewModel, "salon_main")
-        }
         BulbView(navController = rememberNavController(), bulbId = "salon_main", viewModel = previewViewModel)
     }
 }
@@ -349,12 +317,8 @@ fun BulbViewPreview_Loaded() {
 @Preview(showBackground = true, widthDp = 380, heightDp = 800)
 @Composable
 fun BulbViewPreview_Loading() {
-    val authViewModel: AuthViewModel = viewModel()
     PokojowkamobileTheme {
         val previewViewModel = viewModel<BulbViewModel>(key = "preview_loading_v5")
-        LaunchedEffect(Unit) {
-            previewViewModel.loadBulb(authViewModel, "non_existent_id_for_loading_preview_v5")
-        }
         BulbView(navController = rememberNavController(), bulbId = "non_existent_id_for_loading_preview_v5", viewModel = previewViewModel)
     }
 }
@@ -362,12 +326,8 @@ fun BulbViewPreview_Loading() {
 @Preview(showBackground = true, widthDp = 380, heightDp = 800)
 @Composable
 fun BulbViewPreview_BulbOff() {
-    val authViewModel: AuthViewModel = viewModel()
     PokojowkamobileTheme {
         val previewViewModel = viewModel<BulbViewModel>(key = "preview_bedroom_night_off_v5")
-        LaunchedEffect(Unit) {
-            previewViewModel.loadBulb(authViewModel, "bedroom_night")
-        }
         BulbView(navController = rememberNavController(), bulbId = "bedroom_night", viewModel = previewViewModel)
     }
 }

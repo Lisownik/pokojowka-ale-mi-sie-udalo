@@ -1,6 +1,5 @@
 package com.example.pokojowka_mobile
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,24 +44,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
-import com.example.pokojowka_mobile.ui.components.ThreatsTile
-import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.ui.components.RoomViewSection
-import com.example.pokojowka_mobile.ui.components.SectionItemUIData
+import com.example.pokojowka_mobile.components.ThreatsTile
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.components.RoomViewSection
+import com.example.pokojowka_mobile.components.SectionItemUIData
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.data.RoomData
 import com.example.pokojowka_mobile.data.GlobalRoomsList
-import com.example.pokojowka_mobile.ui.components.SharedHeader
+import com.example.pokojowka_mobile.components.SharedHeader
 
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.SampleUserData
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.AuthViewModel
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -123,7 +118,6 @@ fun RoomView(
     val scrollState = rememberScrollState()
 
 
-    val authViewModel: AuthViewModel = viewModel()
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
 
@@ -137,31 +131,13 @@ fun RoomView(
 
     var showRenameDialog by remember { mutableStateOf(false) }
     var newRoomName by remember { mutableStateOf("") }
-    val rooms by authViewModel.roomsFlow.collectAsStateWithLifecycle()
+    val rooms = remember { GlobalRoomsList }
 //    val roomData = remember(rooms) {
 //        rooms.firstOrNull { it.id == roomId }
 //    }
 
 
-    LaunchedEffect(rooms) {
-        Log.d("API_RoomView_Debug", "Rooms list: ${rooms.joinToString { it.id + ":" + it.name }}")
-        delay(500)
-        rooms.forEach { room ->
-            Log.d("API_RoomView_Debug", "Room ${room.id}: ${room.hashCode()}")
-            delay(250)
-        }
-    }
-
     val roomData = rooms.firstOrNull { it.id == roomId }
-
-    LaunchedEffect(roomData) {
-        if (roomData != null) {
-            delay(250)
-            Log.d("API_RoomView", "Room data reference: ${roomData.hashCode()}")
-            delay(250)
-            Log.d("API_RoomView", "Room data: $roomData")
-        }
-    }
 
     if (showRenameDialog && roomId != null) {
         AlertDialog(
@@ -179,7 +155,7 @@ fun RoomView(
             confirmButton = {
                 TextButton(onClick = {
                     if (newRoomName.isNotBlank()) {
-                        authViewModel.changeRoomName(roomId, newRoomName)
+                        // todo: change name
                         showRenameDialog = false
                     }
                 }) {
@@ -260,9 +236,9 @@ fun RoomView(
                     }
                 }
             } else {
-                val currentRoomData = roomData!!
+                val currentRoomData = roomData
                 val roomParameters =
-                    buildList<SectionItemUIData> {
+                    buildList {
                         add(
                             SectionItemUIData(
                                 label = "Temperatura",

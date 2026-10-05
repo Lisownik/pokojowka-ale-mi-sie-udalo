@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.pokojowka_mobile"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.pokojowka_mobile"
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.10.0")
+    implementation(libs.androidx.core.ktx.v1100)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -50,28 +50,25 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation("androidx.navigation:navigation-compose:2.9.2")
-    implementation("androidx.compose.material:material-icons-core:1.7.8")
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2")
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
-    implementation("androidx.navigation:navigation-compose:2.9.2")
-    implementation("androidx.compose.material:material-icons-core:1.7.8")
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.2")
-    implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.datastore.preferences.v117)
+    implementation(libs.androidx.navigation.compose.v292)
+    implementation(libs.datastore.preferences)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.listenablefuture)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.compiler)
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

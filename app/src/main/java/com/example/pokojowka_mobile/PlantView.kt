@@ -1,6 +1,5 @@
 package com.example.pokojowka_mobile
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,18 +27,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.pokojowka_mobile.data.*
-import com.example.pokojowka_mobile.network.AuthViewModel
-import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.ui.components.PlantViewSection
-import com.example.pokojowka_mobile.ui.components.SharedHeader
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.components.PlantViewSection
+import com.example.pokojowka_mobile.components.SharedHeader
 import kotlinx.coroutines.launch
-import com.example.pokojowka_mobile.ui.components.PlantUIData
-import kotlinx.coroutines.delay
+import com.example.pokojowka_mobile.components.PlantUIData
 
 
 private object PlantParameterIcons {
@@ -186,17 +182,8 @@ fun PlantView(
     val displayName = customization?.customName ?: defaultPlantData?.name
     val displayIcon = customization?.iconName?.let { PlantIconMap.getIconByName(it) } ?: defaultPlantData?.icon
 
-    val authViewModel: AuthViewModel = viewModel()
-    val plants by authViewModel.plantsFlow.collectAsStateWithLifecycle()
-
-    LaunchedEffect(plants) {
-        Log.d("API_PlantView_Debug", "Plants list: ${plants.joinToString { it.id + ":" + it.name }}")
-        delay(500)
-        plants.forEach { plant ->
-            Log.d("API_PlantView_Debug", "Plant ${plant.id}: ${plant.hashCode()}")
-            delay(250)
-        }
-    }
+    // na razie w sumie nie potrzebne
+    val plants = remember { GlobalPlantsList }
 
     Scaffold(
         bottomBar = {
@@ -252,8 +239,11 @@ fun PlantView(
                     .background(MaterialTheme.colorScheme.background)
             ) {
 
-                val authViewModel: AuthViewModel = viewModel()
-                val currentEnvironmentData by authViewModel.getAvgRooms.collectAsStateWithLifecycle()
+                val currentEnvironmentData = EnvironmentData(
+                "TODO",
+                "TODO"
+                )
+
                 SharedHeader(
                     userData = currentUserData,
                     environmentData = currentEnvironmentData,

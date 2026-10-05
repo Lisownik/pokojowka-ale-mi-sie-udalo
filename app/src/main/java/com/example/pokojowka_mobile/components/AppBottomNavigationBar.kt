@@ -1,9 +1,8 @@
-package com.example.pokojowka_mobile.ui.components
+package com.example.pokojowka_mobile.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.Weekend

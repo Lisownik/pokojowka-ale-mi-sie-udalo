@@ -38,7 +38,7 @@ data class PlantData(
         }
 }
 
-public fun NetworkPlantData.toPlantData(): PlantData {
+fun NetworkPlantData.toPlantData(): PlantData {
     return PlantData(
         id = this.id,
         name = this.name,

@@ -4,7 +4,6 @@ package com.example.pokojowka_mobile.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.dynamicLightColorScheme

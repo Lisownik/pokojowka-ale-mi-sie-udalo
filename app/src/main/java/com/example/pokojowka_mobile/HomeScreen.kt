@@ -9,9 +9,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.pokojowka_mobile.ui.components.SharedHeader
+import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-import com.example.pokojowka_mobile.ui.components.InfoTile
+import com.example.pokojowka_mobile.components.InfoTile
 import androidx.compose.material3.Scaffold
 import com.example.pokojowka_mobile.ui.theme.*
 import androidx.compose.material.icons.Icons
@@ -22,9 +22,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.pokojowka_mobile.ui.components.BulbsSection
-import com.example.pokojowka_mobile.ui.components.NotificationsSection
-import com.example.pokojowka_mobile.ui.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.components.BulbsSection
+import com.example.pokojowka_mobile.components.NotificationsSection
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.data.NotificationData
 import com.example.pokojowka_mobile.data.NotificationType
 import com.example.pokojowka_mobile.data.sampleGlobalNotificationsList
@@ -34,25 +34,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pokojowka_mobile.data.BulbData
+import com.example.pokojowka_mobile.data.EnvironmentData
+import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.data.GlobalPlantsList
 import com.example.pokojowka_mobile.data.GlobalRoomsList
-import com.example.pokojowka_mobile.network.AuthViewModel
 
 
 @Composable
 fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-    val authViewModel: AuthViewModel = viewModel()
 
-//    val bulbsList = remember {
-//        mutableStateListOf<BulbData>().apply {
-//            addAll(sampleBulbsGlobalList.map { it.copy() })
-//        }
-//    }
-    val bulbsList by authViewModel.bulbsFlow.collectAsStateWithLifecycle()
-    LaunchedEffect(Unit) {
-        authViewModel.loadBulbs()
+    val bulbsList = remember {
+        mutableStateListOf<BulbData>().apply {
+            addAll(GlobalBulbsList.map { it.copy() })
+        }
     }
 
     val notificationsList = remember {
@@ -71,7 +67,10 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         initialValue = UserData(userName = "", lastName = "",  connectedDevices = emptyList())
     )
 
-    val currentEnvironmentData by authViewModel.getAvgRooms.collectAsStateWithLifecycle()
+    val currentEnvironmentData = EnvironmentData(
+         "TODO",
+        "TODO"
+    )
 
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -177,8 +176,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                         val updatedBulb = oldBulb.copy(
                             isSwitchedOn = newState
                         )
-                        authViewModel.changePowerState(bulbId, if(newState) "on" else "off")
-
+                        // todo: change bulb state mr wojtek
                     }
                 }
             )
@@ -205,7 +203,7 @@ fun HomeScreenPreview() {
     PokojowkamobileTheme {
 
         val navController = rememberNavController()
-        HomeScreen(navController = navController as NavHostController)
+        HomeScreen(navController = navController)
     }
 }
 
