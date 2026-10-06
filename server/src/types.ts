@@ -1,45 +1,18 @@
-export type dataAgentType = 'room' | 'pot' | 'lightbulb';
-export type ActionType = 'request' | 'response';
-export type Parameters = { [key: string]: any };
+export type DeviceType = "room" | "window" | "yeelight" | "smart_ledzik"
 
-export type userInfo = {id: string, name: string, data: Parameters};
-
-export interface ServerData {
-    action: ActionType;
-    params: RequestPayload | IncomingResponsePayload | ResponsePayload;
+export interface DeviceState{
+  temperature?: number;
+  humidity?: number;
+  open?: boolean;
+  position?: number;
+  [key: string]: any;
 }
 
-export interface ResponsePayload {
-    variable: string;
-    value: any;
+export interface Device {
+  id: string;
+  name: string;
+  type: DeviceType;
+  online: boolean;
+  lastSeen: number;
+  state: DeviceState;
 }
-
-export interface IncomingResponsePayload {
-    method: string;
-    type?: dataAgentType;
-    value: Parameters;
-}
-
-export interface RequestPayload {
-    method: string;
-    params: Parameters;
-    responseVar?: string;
-}
-
-export interface ModuleData {
-    name: string;
-    type?: dataAgentType;
-    params: Parameters;
-    timeoutIt?: NodeJS.Timeout;
-    // websocket: WebSocket;
-}
-
-export interface QueryCategory {
-    [key: string]: Function;
-}
-
-export interface FiltersStructure {
-    [category: string]: QueryCategory;
-}
-
-export type PowerState = "on" | "off";
