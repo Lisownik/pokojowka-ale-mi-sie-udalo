@@ -1,4 +1,4 @@
-import useFetch from "./api";
+import {useFetch} from "./api";
 import { useEffect } from "react";
 import {useModulesStore} from "../Models/modulesStorage";
 
@@ -9,7 +9,7 @@ export function useModules() {
 
   useEffect(() => {
     if (error) {
-      console.warn("Network err: ", error);
+      // console.warn("Network err: ", error);
     }
     if (!loading && data) {
       console.log("jupi: ", data);
@@ -17,7 +17,7 @@ export function useModules() {
       setModules(data)
       setStatus("connected")
     }
-  }, [data, loading, error]);
+  }, [data, loading, error, setModules, setStatus]);
 
   return { data, loading, error, refetch };
 }

@@ -18,17 +18,24 @@ function OutputNode({data}) {
 
   const EOAOptions = static_module_types[module_type]?.actions ?? [];
 
-  useEffect(() => {
-    data['module_type'] = module_type
-    data['id'] = id
-    data['eventOrAction'] = eventOrAction
-  }, [data, eventOrAction, id, module_type]);
 
   const onTypeChange = (e) => {
+    data['module_type'] = e.target.value
     setModule_type(e.target.value);
     setId("");
     setEventOrAction("");
   };
+
+  const onEventChange = (e) => {
+    data['eventOrAction'] = e.target.value;
+    setEventOrAction(e.target.value);
+  }
+
+  const onIdChange = (e) => {
+    data['id'] = e.target.value;
+    setId(e.target.value);
+  }
+
 
   useEffect(() => {
     if (id && !modules.some((m) => m.id === id && m.type === module_type)) {
@@ -52,7 +59,7 @@ function OutputNode({data}) {
           className="select"
           value={id}
           disabled={(!module_type) || (!static_module_types[module_type]?.isIdNeeded)}
-          onChange={(e) => setId(e.target.value)}
+          onChange={(e) => onIdChange(e)}
         >
           <option value="" disabled>ID…</option>
           {idOptions.map((m) => (
@@ -63,7 +70,7 @@ function OutputNode({data}) {
           className="select"
           value={eventOrAction}
           disabled={!module_type}
-          onChange={(e) => setEventOrAction(e.target.value)}
+          onChange={(e) => onEventChange(e)}
         >
           <option value="" disabled>Action</option>
           {

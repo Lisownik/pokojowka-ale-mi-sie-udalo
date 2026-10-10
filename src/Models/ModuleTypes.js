@@ -1,17 +1,17 @@
 export const static_module_types = {
-  pokojowka: {
+  room: {
     isIdNeeded: true,
-    events: ["zimno", "ciepło", "bad_air"],
+    events: ["hot", "cold", "bad_air"],
     actions: []
   },
-  okno: {
+  window: {
     isIdNeeded: true,
     events: [],
     actions: ["open", "close"]
   },
   mobile: {
     isIdNeeded: false,
-    events: ["come-in", "come-out", "program-1"],
+    events: ["go-in", "go-out", "programmed"],
     actions: ["notify-byob"]
   },
   heater: {
@@ -22,6 +22,8 @@ export const static_module_types = {
 
 }
 
+export const anyID = "<any>"
+
 
 export const modules = [
   { id: "1234", type: "pokojowka" },
@@ -29,5 +31,5 @@ export const modules = [
   { id: "ABCD", type: "okno" },
   { id: "DCBA", type: "okno" },
   { id: "123asd", type: "okno" },
-  { id: "<any>", type: "mobile" },
+  { id: anyID, type: "mobile" },
 ]

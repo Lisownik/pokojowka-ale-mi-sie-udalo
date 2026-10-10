@@ -1,4 +1,5 @@
-import {static_module_types} from "../Models/ModuleTypes";
+import {anyID, static_module_types} from "../Models/ModuleTypes";
+import {sendConnections} from "./api";
 
 function getNode(nodes, id){
   console.log(`Check for ${id} in `, nodes)
@@ -8,6 +9,7 @@ function getNode(nodes, id){
 }
 
 function validateId(type, id){
+  console.log(`Check for ${id} in `, type)
   const neededId = static_module_types[type].isIdNeeded
   if(!neededId)
     return true
@@ -15,6 +17,7 @@ function validateId(type, id){
 }
 
 function validNode(node){
+
   const hasType = node.module_type !== "";
   const hasEoA =  node.eventOrAction !== ""
   const validId = validateId(node.module_type, node.id)
@@ -25,17 +28,18 @@ function validNode(node){
 }
 
 function validEdgeElements(source, target){
+  console.log(`Check source :`, source, `Check target :`, target);
   return validNode(source) && validNode(target)
 }
 
 function generateConnection(source, target){
   return {
     module_type: source.module_type,
-    id: source.module_type,
+    id: source.id ?? anyID,
     event: source.eventOrAction,
     slave: {
       module_type: target.module_type,
-      id: target.id,
+      id: target.id ?? anyID,
       action: target.eventOrAction
     }
   }
@@ -48,8 +52,11 @@ export function getViableConnections(nodes, edges){
   }
 
   console.log(nodes, edges)
+
+  let connections = []
   edges.forEach((edge) => {
     console.group("Edging")
+    console.log("edge: ", edge, " source: ", edge.source, " target: ", edge.target);
     const [node1, node2] = [
       getNode(nodes, edge.source),
       getNode(nodes, edge.target)
@@ -65,7 +72,15 @@ export function getViableConnections(nodes, edges){
     const connection = generateConnection(node1, node2)
     console.log("Testing connection", connection)
 
+    connections.push(connection)
+
+
+
     console.groupEnd()
 
+  })
+
+  sendConnections(connections).then(() => {
+    console.log("Connection sent")
   })
 }

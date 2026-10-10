@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3333"
+const BASE_URL = "http://localhost:1234"
 
-function useFetch(url) {
+export function useFetch(url) {
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -43,4 +43,22 @@ function useFetch(url) {
   return { data, loading, error, refetch };
 }
 
-export default useFetch;
+
+export async function sendConnections(payload) {
+  let url = BASE_URL + "/connections";
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      connections: JSON.stringify(payload),
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  return response;
+}

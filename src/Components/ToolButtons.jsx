@@ -2,17 +2,34 @@ import { useReactFlow } from "@xyflow/react";
 import { useModules } from "../Network/modules";
 import {getViableConnections} from "../Network/connCheck";
 
+
+function getId(){
+  const timestamp = Date.now();
+  const random = Math.floor(Math.random() * 10000);
+  return `node_${timestamp}_${random}`;
+}
+
+
 function NodeButtons() {
   const { addNodes, getNodes, getEdges } = useReactFlow();
   const { refetch } = useModules();
 
   const addNode = (type) => {
+    const offset = getNodes().length * 50;
     addNodes({
-      id: crypto.randomUUID(),
-      type,
-      position: { x: 0, y: 100 },
+      id: getId(),
+      type: type,
+      position: { x: offset, y: 100 + offset },
+      data: {
+        label: `${type} Node`,
+        module_type: "",
+        id: "",
+        eventOrAction: ""
+      }
     });
   };
+
+
 
   return (
     <div className="NodeButtons">
