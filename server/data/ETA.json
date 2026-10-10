@@ -1,0 +1,12 @@
+[
+    {
+        "module_type": "mobile",
+        "id": "<any>",
+        "event": "programmed",
+        "slave": {
+            "module_type": "window",
+            "id": "window-1",
+            "action": "open"
+        }
+    }
+]

@@ -1,5 +1,14 @@
 [
     {
-        "room-1": "pokojoweczka-no-2"
+        "room-1": "kamil_to_cwel_jebany"
+    },
+    {
+        "room-abcd": "template-name"
+    },
+    {
+        "bedroom_01": "template-name"
+    },
+    {
+        "window-1": "template-name"
     }
 ]

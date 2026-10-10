@@ -3,7 +3,6 @@ import datetime
 import random
 import websockets
 import json
-from dotenv import load_dotenv, dotenv_values
 import os
 # import board
 # import busio
@@ -12,7 +11,7 @@ import os
 
 
 class WebSocketClient:
-    def __init__(self, uri="ws://localhost:8000"):
+    def __init__(self, uri="ws://localhost:1234"):
         self.uri = uri
         self.ws = None
         # self.bme680 = None
@@ -31,7 +30,7 @@ class WebSocketClient:
         #     print("<UNK> BME680 not found on I2C bus.")
         #     return
 
-        asyncio.create_task(start_with_name(self.ws, name))
+        # asyncio.create_task(start_with_name(self.ws, name))
 
         asyncio.create_task(self.receive_loop())
         asyncio.create_task(self.send_data())
@@ -47,12 +46,12 @@ class WebSocketClient:
                 quality = random.randint(1000, 50000)  # 1000-50000 ohms
 
                 msg = {
-                    "action": "response",
+                    "action": "request",
                     "params": {
-                        "method": "room_data",
-                        "type": "room",
-                        "value": {
+                        "id": "room",
+                        "data": {
                             "date": datetime.datetime.now().isoformat(),
+                            "type": "room",
                             "temperature": temperature,
                             "humidity": humidity,
                             "pressure": pressure,
@@ -161,7 +160,7 @@ def read_file_safe(filename):
         return ""
 
 async def main():
-    client = WebSocketClient(os.getenv("API_URL"))
+    client = WebSocketClient()
     await client.connect()
     while True:
         await asyncio.sleep(1)
@@ -180,7 +179,6 @@ async def start_with_name(ws, name):
     await ws.send(json.dumps(msg))
 
 if __name__ == "__main__":
-    load_dotenv()
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

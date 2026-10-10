@@ -1,12 +1,13 @@
-import mqtt from 'mqtt';
+import mqtt, {MqttClient} from 'mqtt';
 import {DeviceManager} from "./deviceManager";
 import {DeviceType} from "./types";
 import {Environment} from "./environment";
 import { NameManager } from './nameManager';
+import { EventManager } from './eventManager';
 
 
 
-export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager) {
+export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager, eventManager: EventManager) {
   const client = mqtt.connect(Environment.MQTT_URL);
 
   client.on("connect", () => {
@@ -26,7 +27,7 @@ export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager
         return;
       }
 
-      const [none, type, deviceId, messageType] = parts;
+      const [_, type, deviceId, messageType, eventType] = parts;
 
 
       if (messageType === "status") {
@@ -43,7 +44,9 @@ export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager
           deviceManager,
           deviceId,
           type as DeviceType,
-          message
+          message,
+          eventManager,
+          client
         )
       }
     } catch (error) {
@@ -57,7 +60,7 @@ function handleStatus(
   deviceManager: DeviceManager,
   deviceId: string,
   type: DeviceType,
-  message: {online: boolean}
+  message: {online: boolean},
 ) {
   if(message.online) {
     const device = deviceManager.deviceOnline(deviceId, type);
@@ -78,7 +81,9 @@ function handleState(
   deviceManager: DeviceManager,
   deviceId: string,
   type: DeviceType,
-  state: Record<string, any>
+  state: Record<string, any>,
+  eventManager: EventManager,
+  client: MqttClient
 
 ) {
   const device = deviceManager.updateState(
@@ -87,12 +92,15 @@ function handleState(
     type
   );
 
+  eventManager.checkForEvents(device, client)
+
   if(!device){
     console.log(`
       Received state for unknown device ${deviceId}
       `);
     return;
   }
+
 
   console.log(`Updated ${deviceId}`, device.state)
 }

@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
+import {DeviceNames} from "./types";
 
-type DeviceNames = Array<Record<string, string>>;
 
 export class NameManager {
   private names: DeviceNames = [];

@@ -1,10 +1,45 @@
 import { NameManager } from "./nameManager";
-import { Device, DeviceState, DeviceType} from "./types";
+import {anyID, Device, DeviceState, DeviceType, ShortDevice} from "./types";
+
+export function DeviceToShortDevice(device: Device): ShortDevice {
+  return {
+    id: device.id,
+    type: device.type,
+  }
+}
 
 export class DeviceManager {
   private devices: Map<string, Device> = new Map();
+  private defaultDevices: ShortDevice[] = [
+    {
+      id: anyID,
+      type: "mobile"
+    },
+    {
+      id: "window-1",
+      type: "window",
+    }
+  ]
+
 
   constructor(public nameManager: NameManager) {
+  }
+
+
+  shortenDevices(): ShortDevice[] {
+    const newDevices: ShortDevice[] = [];
+    this.devices.forEach(device => {
+      newDevices.push(device);
+    })
+
+    return newDevices;
+  }
+
+  getShortDevices(): ShortDevice[] {
+    return [
+      ...this.defaultDevices,
+      ...this.shortenDevices()
+    ]
   }
 
   deviceOnline(
@@ -55,12 +90,12 @@ export class DeviceManager {
     return device;
   }
 
-  updateState(id: string, state: DeviceState, type: DeviceType): Device | undefined {
+  updateState(id: string, state: DeviceState, type: DeviceType): Device {
     let device = this.devices.get(id);
 
     if (!device) {
       device = this.deviceOnline(id, type, state)
-      return;
+      return device;
     }
 
 

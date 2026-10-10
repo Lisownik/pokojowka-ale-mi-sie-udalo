@@ -1,4 +1,4 @@
-export type DeviceType = "room" | "window" | "yeelight" | "smart_ledzik"
+export type DeviceType = "room" | "window" | "yeelight" | "smart_ledzik" | "mobile"
 
 export interface DeviceState{
   temperature?: number;
@@ -16,3 +16,29 @@ export interface Device {
   lastSeen: number;
   state: DeviceState;
 }
+
+export type EventType = "cold" | "hot" | "programmed" | "go-out" | "go-in" | "bad-air"
+export type ActionType = "close" | "open" | "heat-up" | "heat-down";
+export type DeviceNames = Array<Record<string, string>>;
+
+export const anyID = "<any>"
+
+export interface ActionSlave {
+  module_type: DeviceType;
+  id: string;
+  action: ActionType;
+}
+
+export interface EventToAction {
+  module_type: DeviceType,
+  id: string;
+  event: EventType;
+  slave: ActionSlave
+}
+
+export interface ShortDevice {
+  id: string;
+  type: string;
+}
+
+export type EventActionConnections = EventToAction[];

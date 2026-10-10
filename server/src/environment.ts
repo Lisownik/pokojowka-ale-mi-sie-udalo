@@ -1,10 +1,17 @@
 import {DeviceType} from "./types";
+import { z } from 'zod';
 
-export const Environment = {
-  WSS_PORT: Number(process.env.WSS_PORT) | 1234,
-  MQTT_URL: process.env.MQTT_URL as string | "mqtt://localhost:1883",
-  REST_PORT: Number(process.env.REST_PORT) | 3333,
-}
+
+const environmentSchema = z.object({
+  WSS_PORT: z.coerce.number().default(1234),
+  MQTT_URL: z.string().default('mqtt://localhost:1883'),
+  REST_PORT: z.coerce.number().default(1234),
+  TEMPERATURE_MIN: z.coerce.number().default(18.0),
+  TEMPERATURE_MAX: z.coerce.number().default(25.0),
+  EVENTS_BASE_URL: z.string().default('events')
+});
+
+export const Environment = environmentSchema.parse(process.env);
 
 export namespace Simple {
 
