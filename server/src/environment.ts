@@ -25,6 +25,6 @@ export namespace Simple {
   }
 
   export function name(type: DeviceType = "room"): string {
-    return `${type}_${random(0,256).toString(16)}_${random(0,256).toString(16)}`;
+    return `${type}_${random(0,65536).toString(16)}_${random(0,65536).toString(16)}`;
   }
 }

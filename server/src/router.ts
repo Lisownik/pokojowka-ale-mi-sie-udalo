@@ -4,8 +4,9 @@ import { DeviceManager } from "./deviceManager";
 import {NameManager} from "./nameManager";
 import {ActionManager} from "./actionManager";
 import {EventManager} from "./eventManager";
-import {anyID, EventActionConnections} from "./types";
+import {anyID, DeviceType, EventActionConnections, isDeviceType} from "./types";
 import {AiClient} from "./aiClient";
+import { Simple } from "./environment";
 
 export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager, aiClient: AiClient): Express {
   const app = express()
@@ -155,6 +156,18 @@ export function  createRouter(deviceManager: DeviceManager, nameManager: NameMan
     }
 
     res.status(200).json(gptRes);
+  })
+
+  app.post("/register/:type", async (req, res) => {
+    const type = req.params.type;
+
+    if(!isDeviceType(type))
+    {
+      res.status(400).send("bad type");
+      return
+    }
+
+    res.status(200).send(Simple.name(type as DeviceType))
   })
 
   app.use((req, res) => {

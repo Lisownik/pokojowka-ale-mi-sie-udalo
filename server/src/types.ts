@@ -1,5 +1,10 @@
 export type DeviceType = "room" | "window" | "yeelight" | "smart_ledzik" | "mobile"
 
+const validDeviceTypes: DeviceType[] = ["room", "window", "yeelight", "smart_ledzik", "mobile"];
+
+export const isDeviceType = (value: string): boolean => validDeviceTypes.includes(value as DeviceType);
+
+
 export interface DeviceState{
   temperature?: number;
   humidity?: number;

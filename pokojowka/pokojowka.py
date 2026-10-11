@@ -1,17 +1,48 @@
 import random
 from math import floor
+from pydoc_data.topics import topics
 from time import sleep
 
 import paho.mqtt.client as mqtt
 import json
 
+import requests
+
 import os
 
-MY_ID = os.environ["ROOM_ID"]
+MY_ID = "none"
 BROKER_HOST = os.getenv("API_URL", "localhost")
-BROKER_PORT = int(os.getenv("API_PORT", "1883"))
+BROKER_PORT = int(os.getenv("MQTT_PORT", "1883"))
+REST_PORT = int(os.getenv("API_PORT", "1234"))
+
+ID_FILEPATH = "./data/id.txt"
 
 STATIC = os.getenv("STATIC", "true") == "true"
+
+def register_my_id():
+    res = requests.post(url = f"http://{BROKER_HOST}:{REST_PORT}/register/room")
+    if not res.ok:
+        return None
+    return res.text
+
+def read_id_file():
+    try:
+        with open(ID_FILEPATH, 'r') as file:
+            text = file.read()
+            if text == "":
+                raise ValueError("Id not stored in id.txt")
+            return text
+    except FileNotFoundError or ValueError:
+        content = ''
+        reg_id = register_my_id()
+        if not reg_id:
+            raise Exception("No server no id file or id in file")
+        with open(ID_FILEPATH, 'w') as file:
+            file.write(reg_id)
+            return reg_id
+
+def get_my_id():
+    return read_id_file()
 
 def init_adafruit():
     import board
@@ -77,12 +108,20 @@ def on_message(client, _, msg):
     print("GOT THE WINDOW-1 CLOSE EVENT! YUPI")
     print(msg.topic, msg.payload.decode())
 
+def on_disconnect(client):
+    client.publish(f"devices/room/{MY_ID}/status", json.dumps({"online": False}), qos=1, retain=True)
 
 
 
 def main():
+    global MY_ID
     print(f"Starting with mode: {'STATIC (fake data)' if STATIC else 'REAL data'}")
     print(f"CONFIG DATA: uri: {BROKER_HOST}; port: {BROKER_PORT}")
+
+    MY_ID = get_my_id()
+
+    print(F"MY_ID configured at: {MY_ID}")
+
     sensor = None if STATIC else init_adafruit()
     if not STATIC and sensor is None:
         raise SystemExit("No sensor found, exiting.")
@@ -90,8 +129,11 @@ def main():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.will_set(f"devices/room/{MY_ID}/status", json.dumps({"online": False}), qos=1, retain=True)
 
+    client.on_disconnect = on_disconnect
+
     client.on_message = on_message
     client.connect(BROKER_HOST, BROKER_PORT)
+
 
     client.publish(f"devices/room/{MY_ID}/status", json.dumps({"online": True}), qos=1, retain=True)
     client.loop_start()
