@@ -42,7 +42,7 @@ export class DeviceManager {
     const existing = this.devices.get(id);
 
     if (!this.nameManager.has(id)){
-      this.nameManager.set(id, "template-name")
+      this.nameManager.set(id, `template-name-${type}`)
     }
 
     const newDevice: Device = {

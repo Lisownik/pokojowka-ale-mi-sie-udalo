@@ -11,7 +11,7 @@ export const Events: Record<DeviceType, EventType[]> = {
   ],
   "window": [],
   "yeelight": [],
-  "smart_ledzik": [],
+  "smart_led": [],
   "mobile": [
     "go-out",
     "go-in",

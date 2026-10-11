@@ -1,6 +1,6 @@
-export type DeviceType = "room" | "window" | "yeelight" | "smart_ledzik" | "mobile"
+export type DeviceType = "room" | "window" | "yeelight" | "smart_led" | "mobile"
 
-const validDeviceTypes: DeviceType[] = ["room", "window", "yeelight", "smart_ledzik", "mobile"];
+const validDeviceTypes: DeviceType[] = ["room", "window", "yeelight", "smart_led", "mobile"];
 
 export const isDeviceType = (value: string): boolean => validDeviceTypes.includes(value as DeviceType);
 

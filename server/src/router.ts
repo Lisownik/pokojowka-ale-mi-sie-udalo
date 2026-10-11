@@ -3,7 +3,6 @@ import cors from "cors";
 import { DeviceManager } from "./deviceManager";
 import {NameManager} from "./nameManager";
 import {ActionManager} from "./actionManager";
-import {EventManager} from "./eventManager";
 import {anyID, DeviceType, EventActionConnections, isDeviceType} from "./types";
 import {AiClient} from "./aiClient";
 import { Simple } from "./environment";
@@ -55,7 +54,7 @@ export function  createRouter(deviceManager: DeviceManager, nameManager: NameMan
       ...deviceManager
         .getOnlineType("yeelight"),
       ...deviceManager
-        .getOnlineType("smart_ledzik")
+        .getOnlineType("smart_led")
     ]
 
     res.status(200).json(bulbs);
@@ -66,7 +65,7 @@ export function  createRouter(deviceManager: DeviceManager, nameManager: NameMan
       ...deviceManager
         .getAllType("yeelight"),
       ...deviceManager
-        .getAllType("smart_ledzik")
+        .getAllType("smart_led")
     ]
 
     res.status(200).json(bulbs);
@@ -151,7 +150,7 @@ export function  createRouter(deviceManager: DeviceManager, nameManager: NameMan
     const gptRes = await aiClient.messageWithDevices(msg);
 
     if(!gptRes) {
-      res.status(500).send("bad gpt lalala")
+      res.status(400).send("bad gpt request")
       return
     }
 

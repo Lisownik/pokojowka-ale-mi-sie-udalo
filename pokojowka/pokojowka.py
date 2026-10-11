@@ -1,6 +1,5 @@
 import random
 from math import floor
-from pydoc_data.topics import topics
 from time import sleep
 
 import paho.mqtt.client as mqtt
