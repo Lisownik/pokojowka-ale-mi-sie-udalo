@@ -29,11 +29,14 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.1",
+    "@types/jest": "^30.0.0",
     "@types/jsonfile": "^6.1.4",
     "@types/multer": "^2.0.0",
     "@types/node": "^22.13.17",
     "@types/ws": "^8.18.1",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.14",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.9.3"
   }
 }

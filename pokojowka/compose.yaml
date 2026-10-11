@@ -1,0 +1,11 @@
+services:
+  room:
+    build: .
+    container_name: "pokojowka-pbl"
+    environment:
+      - API_URL=
+      - API_PORT=
+      - ROOM_ID=
+      - STATIC=
+    restart: always
+    network_mode: host

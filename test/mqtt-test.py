@@ -8,7 +8,7 @@ import time
 
 MY_ID = "room-1"
 
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client = mqtt.Client()
 client.will_set(f"devices/room/{MY_ID}/status", json.dumps({"online": False}), qos=1, retain=True)
 
 client.connect("localhost", 1883, 60)
