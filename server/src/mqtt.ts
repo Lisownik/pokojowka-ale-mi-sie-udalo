@@ -17,7 +17,7 @@ export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager
     client.subscribe("devices/+/+/state")
   })
 
-  client.on('message', (topic, payload, packet) => {
+  client.on('message', (topic, payload) => {
     try{
       const message = JSON.parse(payload.toString());
 
@@ -27,7 +27,7 @@ export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager
         return;
       }
 
-      const [_, type, deviceId, messageType, eventType] = parts;
+      const [_, type, deviceId, messageType] = parts;
 
 
       if (messageType === "status") {
@@ -63,7 +63,7 @@ function handleStatus(
   message: {online: boolean},
 ) {
   if(message.online) {
-    const device = deviceManager.deviceOnline(deviceId, type);
+    deviceManager.deviceOnline(deviceId, type);
 
     console.log(`${deviceId} is Online`);
 

@@ -8,7 +8,7 @@ import {ActionManager} from "./actionManager";
 
 
 const nameManager = new NameManager();
-nameManager.load().then(r => console.log("NameManager loaded name file"));
+nameManager.load().then(() => console.log("NameManager loaded name file"));
 
 const actionManager = new ActionManager();
 
@@ -23,13 +23,13 @@ actionManager.setClient(mqttClient);
 console.log("MQTT Client set for action manager")
 
 
-const expressApp = createRouter(deviceManager, nameManager, actionManager, eventManager);
+const expressApp = createRouter(deviceManager, nameManager, actionManager);
 
 
 expressApp.listen(Environment.REST_PORT, () => {
   console.log(`Listening on port ${Environment.REST_PORT} yo`);
-  setTimeout(() => {
-    actionManager.emit("room-1", "cold", {})
+  setTimeout(async () => {
+    await actionManager.emit("room-1", "cold", {})
   }, 5000)
 })
 

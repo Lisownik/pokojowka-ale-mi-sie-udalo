@@ -1,6 +1,6 @@
 import {MqttClient} from "mqtt";
 import {Environment} from "./environment";
-import {ActionSlave, ActionType, anyID, EventActionConnections, EventToAction, EventType, ShortDevice} from "./types";
+import {ActionSlave, ActionType, anyID, EventActionConnections, EventToAction, EventType} from "./types";
 import {readFile, writeFile} from "node:fs/promises";
 
 
@@ -66,7 +66,9 @@ export class ActionManager {
   }
 
   constructor() {
-    this.load()
+    this.load().then(() => {
+      console.log("Loaded ETA connections...")
+    })
   }
 
   private getAction(id: string, event: EventType): ActionSlave | null {

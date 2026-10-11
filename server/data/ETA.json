@@ -1,5 +1,15 @@
 [
     {
+        "module_type": "room",
+        "id": "room-1",
+        "event": "cold",
+        "slave": {
+            "module_type": "window",
+            "id": "window-1",
+            "action": "close"
+        }
+    },
+    {
         "module_type": "mobile",
         "id": "<any>",
         "event": "programmed",

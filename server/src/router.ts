@@ -6,7 +6,7 @@ import {ActionManager} from "./actionManager";
 import {EventManager} from "./eventManager";
 import {anyID, EventActionConnections} from "./types";
 
-export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager, eventManager: EventManager): Express {
+export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager): Express {
   const app = express()
     .use(cors())
     .use(express.json());

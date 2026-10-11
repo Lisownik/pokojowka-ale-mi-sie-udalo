@@ -1,13 +1,6 @@
 import { NameManager } from "./nameManager";
 import {anyID, Device, DeviceState, DeviceType, ShortDevice} from "./types";
 
-export function DeviceToShortDevice(device: Device): ShortDevice {
-  return {
-    id: device.id,
-    type: device.type,
-  }
-}
-
 export class DeviceManager {
   private devices: Map<string, Device> = new Map();
   private defaultDevices: ShortDevice[] = [
