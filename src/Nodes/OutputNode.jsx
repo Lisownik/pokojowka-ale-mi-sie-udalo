@@ -5,9 +5,11 @@ import LimitHandle from "../Handles/LimitHandle";
 import {Position} from "@xyflow/react";
 
 function OutputNode({data}) {
-  const [module_type, setModule_type] = useState("")
-  const [id, setId] = useState("")
-  const [eventOrAction, setEventOrAction] = useState("")
+  const [module_type, setModule_type] = useState(data.module_type ?? "")
+  const [id, setId] = useState(data.id ?? "")
+  const [eventOrAction, setEventOrAction] = useState(data.eventOrAction ?? "")
+
+  console.log("my output id", id);
 
   const modules = useModulesStore((s) => s.modules)
   const typeOptions = Object.keys(static_module_types).filter(
@@ -38,8 +40,10 @@ function OutputNode({data}) {
 
 
   useEffect(() => {
+    console.log("testing useeffect with modules output: ", modules, module_type, id)
     if (id && !modules.some((m) => m.id === id && m.type === module_type)) {
-      setId("");
+        // setId("");
+
     }
   }, [modules, id, module_type]);
 

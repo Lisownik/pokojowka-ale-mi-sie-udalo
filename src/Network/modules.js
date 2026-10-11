@@ -9,7 +9,7 @@ export function useModules() {
 
   useEffect(() => {
     if (error) {
-      // console.warn("Network err: ", error);
+      console.warn("Network err: ", error);
     }
     if (!loading && data) {
       console.log("jupi: ", data);

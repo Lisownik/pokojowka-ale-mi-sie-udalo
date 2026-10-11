@@ -62,3 +62,12 @@ export async function sendConnections(payload) {
 
   return response;
 }
+
+export async function getConnections(signal) {
+  let url = BASE_URL + "/action/all";
+  const res = await fetch(url, {signal})
+  if(!res.ok) throw new Error(`HTTP Request failed: ${res.status}`);
+  const data = await res.json();
+
+  return data;
+}

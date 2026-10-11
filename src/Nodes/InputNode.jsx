@@ -8,9 +8,10 @@ import LimitHandle from "../Handles/LimitHandle";
 import {Position} from "@xyflow/react";
 
 function InputNode({ data }) {
-  const [module_type, setModule_type, onChange] = useState("")
-  const [id, setId] = useState("")
-  const [eventOrAction, setEventOrAction] = useState("")
+  const [module_type, setModule_type] = useState(data.module_type ?? "")
+  const [id, setId] = useState(data.id ?? "")
+  const [eventOrAction, setEventOrAction] = useState(data.eventOrAction ?? "")
+  console.log("my input id", id);
 
   const modules = useModulesStore((s) => s.modules)
 
@@ -43,8 +44,9 @@ function InputNode({ data }) {
   }
 
   useEffect(() => {
+    console.log("testing useeffect with modules input: ", modules, module_type, id)
     if (id && !modules.some((m) => m.id === id && m.type === module_type)) {
-      setId("");
+      // setId("");
     }
   }, [modules, id, module_type]);
 
