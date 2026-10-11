@@ -5,8 +5,9 @@ import {NameManager} from "./nameManager";
 import {ActionManager} from "./actionManager";
 import {EventManager} from "./eventManager";
 import {anyID, EventActionConnections} from "./types";
+import {AiClient} from "./aiClient";
 
-export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager): Express {
+export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager, aiClient: AiClient): Express {
   const app = express()
     .use(cors())
     .use(express.json());
@@ -142,6 +143,18 @@ export function  createRouter(deviceManager: DeviceManager, nameManager: NameMan
 
   app.get("/action/all", (req, res) => {
     res.status(200).json(actionManager.ETAConnections);
+  })
+
+  app.get("/gpt/:msg", async (req, res) => {
+    const msg = req.params.msg;
+    const gptRes = await aiClient.messageWithDevices(msg);
+
+    if(!gptRes) {
+      res.status(500).send("bad gpt lalala")
+      return
+    }
+
+    res.status(200).json(gptRes);
   })
 
   app.use((req, res) => {

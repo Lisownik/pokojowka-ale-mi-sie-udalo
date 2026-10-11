@@ -5,6 +5,7 @@ import {Environment} from "./environment";
 import {NameManager} from "./nameManager";
 import { EventManager } from "./eventManager";
 import {ActionManager} from "./actionManager";
+import { AiClient } from "./aiClient";
 
 
 const nameManager = new NameManager();
@@ -17,20 +18,21 @@ const eventManager = new EventManager(actionManager);
 
 
 const deviceManager = new DeviceManager(nameManager);
+const aiClient = new AiClient(deviceManager);
 
 const mqttClient = startMqtt(deviceManager, nameManager, eventManager);
 actionManager.setClient(mqttClient);
 console.log("MQTT Client set for action manager")
 
 
-const expressApp = createRouter(deviceManager, nameManager, actionManager);
+const expressApp = createRouter(deviceManager, nameManager, actionManager, aiClient);
 
 
 expressApp.listen(Environment.REST_PORT, () => {
   console.log(`Listening on port ${Environment.REST_PORT} yo`);
-  setTimeout(async () => {
-    await actionManager.emit("room-1", "cold", {})
-  }, 5000)
+  // setTimeout(async () => {
+  //   await actionManager.emit("room-1", "cold", {})
+  // }, 5000)
 })
 
 console.log("Server started");
