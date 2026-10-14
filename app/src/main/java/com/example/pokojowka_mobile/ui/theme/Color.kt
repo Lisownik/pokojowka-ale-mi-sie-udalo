@@ -17,6 +17,9 @@ val RoomsGradientEnd = Color(0xFF2563EB)
 val PlantsGradientStart = Color(0xFF22C55E)
 val PlantsGradientEnd = Color(0xFF16A34A)
 
+val WindowsGradientStart = Color(0xFF0EA5E9)
+val WindowsGradientEnd = Color(0xFF0284C7)
+
 val LightBulbItemBackground = Color(0xFFF9FAFB)
 val BulbActiveColor = Color(0xFFFBBF24)
 val BulbInactiveColor = Color(0xFF9CA3AF)

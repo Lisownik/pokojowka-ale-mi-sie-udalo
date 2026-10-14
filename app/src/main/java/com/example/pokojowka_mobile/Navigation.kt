@@ -10,6 +10,7 @@ object AppDestinations {
     const val PLANTS_SCREEN = "plants_screen"
     const val BULBS_SCREEN = "bulbs_screen"
     const val PROFILE_SCREEN = "profile_screen"
+    const val WINDOWS_SCREEN = "windows_screen"
 
 //     Widoki - View's
     const val ROOM_VIEW_SCREEN_ROUTE = "room_view"
@@ -23,6 +24,10 @@ object AppDestinations {
     const val BULB_VIEW_SCREEN_ROUTE = "bulb_view"
     const val BULB_ID_ARG = "bulbId"
     const val BULB_VIEW_SCREEN = "$BULB_VIEW_SCREEN_ROUTE/{$BULB_ID_ARG}"
+
+    const val WINDOW_VIEW_SCREEN_ROUTE = "window_view"
+    const val WINDOW_ID_ARG = "windowId"
+    const val WINDOW_VIEW_SCREEN = "$WINDOW_VIEW_SCREEN_ROUTE/{$WINDOW_ID_ARG}"
 
 }
 

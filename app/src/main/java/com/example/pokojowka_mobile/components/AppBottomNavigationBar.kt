@@ -1,12 +1,12 @@
 package com.example.pokojowka_mobile.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Grass
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Weekend
-
+import androidx.compose.material.icons.filled.Window
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,14 +16,25 @@ import com.example.pokojowka_mobile.AppDestinations
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.ui.theme.RoomsGradientStart
 
-
-
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
     object Home : BottomNavItem(AppDestinations.HOME_SCREEN, Icons.Filled.Home, "Dom")
     object Rooms : BottomNavItem(AppDestinations.ROOMS_SCREEN, Icons.Filled.Weekend, "Pokoje")
+    object Windows : BottomNavItem(AppDestinations.WINDOWS_SCREEN, Icons.Filled.Window, "Okna")
     object Plants : BottomNavItem(AppDestinations.PLANTS_SCREEN, Icons.Filled.Grass, "Rośliny")
     object Bulbs : BottomNavItem(AppDestinations.BULBS_SCREEN, Icons.Filled.Lightbulb, "Żarówki")
     object Profile : BottomNavItem(AppDestinations.PROFILE_SCREEN, Icons.Filled.Person, "Profil")
+}
+
+private fun isBottomRouteSelected(itemRoute: String, currentRoute: String?): Boolean {
+    if (currentRoute == null) return false
+    if (currentRoute == itemRoute) return true
+    return when (itemRoute) {
+        AppDestinations.ROOMS_SCREEN -> currentRoute.startsWith(AppDestinations.ROOM_VIEW_SCREEN_ROUTE)
+        AppDestinations.WINDOWS_SCREEN -> currentRoute.startsWith(AppDestinations.WINDOW_VIEW_SCREEN_ROUTE)
+        AppDestinations.PLANTS_SCREEN -> currentRoute.startsWith(AppDestinations.PLANT_VIEW_SCREEN_ROUTE)
+        AppDestinations.BULBS_SCREEN -> currentRoute.startsWith(AppDestinations.BULB_VIEW_SCREEN_ROUTE)
+        else -> false
+    }
 }
 
 @Composable
@@ -35,6 +46,7 @@ fun AppBottomNavigationBar(
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Rooms,
+        BottomNavItem.Windows,
         BottomNavItem.Plants,
         BottomNavItem.Bulbs,
         BottomNavItem.Profile
@@ -46,15 +58,14 @@ fun AppBottomNavigationBar(
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     ) {
         items.forEach { screen ->
-            val isSelected = currentRoute == screen.route
+            val isSelected = isBottomRouteSelected(screen.route, currentRoute)
             NavigationBarItem(
                 icon = { Icon(screen.icon, contentDescription = screen.label) },
                 label = { Text(screen.label) },
                 selected = isSelected,
+                alwaysShowLabel = false, // Napis tylko pod obecnie aktyna karta - TODO: Wyładnienie tego czegoś bo mi nie siedzi
                 onClick = {
-                    if (!isSelected) {
-                        onItemSelected(screen.route)
-                    }
+                    onItemSelected(screen.route)
                 },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = RoomsGradientStart,
@@ -85,17 +96,6 @@ fun AppBottomNavigationBarPreviewRoomsSelected() {
     PokojowkamobileTheme {
         AppBottomNavigationBar(
             currentRoute = BottomNavItem.Rooms.route,
-            onItemSelected = { println("Wybrano: $it") }
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AppBottomNavigationBarPreviewPlantsSelected() {
-    PokojowkamobileTheme {
-        AppBottomNavigationBar(
-            currentRoute = BottomNavItem.Plants.route,
             onItemSelected = { println("Wybrano: $it") }
         )
     }

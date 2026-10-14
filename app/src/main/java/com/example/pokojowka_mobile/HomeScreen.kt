@@ -2,51 +2,45 @@ package com.example.pokojowka_mobile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.pokojowka_mobile.components.SharedHeader
-import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-import com.example.pokojowka_mobile.components.InfoTile
-import androidx.compose.material3.Scaffold
-import com.example.pokojowka_mobile.ui.theme.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Eco
-import androidx.compose.runtime.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.pokojowka_mobile.components.BulbsSection
-import com.example.pokojowka_mobile.components.NotificationsSection
-import com.example.pokojowka_mobile.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.data.NotificationData
-import com.example.pokojowka_mobile.data.NotificationType
-import com.example.pokojowka_mobile.data.sampleGlobalNotificationsList
-import com.example.pokojowka_mobile.data.UserData
-
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Window
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.pokojowka_mobile.data.BulbData
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.components.BulbsSection
+import com.example.pokojowka_mobile.components.InfoTile
+import com.example.pokojowka_mobile.components.NotificationsSection
+import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.data.EnvironmentData
-import com.example.pokojowka_mobile.data.GlobalBulbsList
-import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.data.GlobalPlantsList
 import com.example.pokojowka_mobile.data.GlobalRoomsList
+import com.example.pokojowka_mobile.data.NotificationData
+import com.example.pokojowka_mobile.data.NotificationType
+import com.example.pokojowka_mobile.data.UserData
+import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.data.sampleGlobalNotificationsList
 import com.example.pokojowka_mobile.repos.BulbsRepository
-
+import com.example.pokojowka_mobile.repos.WindowsRepository
+import com.example.pokojowka_mobile.ui.theme.*
 
 @Composable
 fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-
     val bulbsList by BulbsRepository.state.collectAsStateWithLifecycle()
+    val windowsList by WindowsRepository.state.collectAsStateWithLifecycle()
 
     val notificationsList = remember {
         mutableStateListOf<NotificationData>().apply {
@@ -59,20 +53,17 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
 
-
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
-        initialValue = UserData(userName = "", lastName = "",  connectedDevices = emptyList())
+        initialValue = UserData(userName = "", lastName = "", connectedDevices = emptyList())
     )
 
     val currentEnvironmentData = EnvironmentData(
-         "TODO",
+        "TODO",
         "TODO"
     )
 
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -80,7 +71,8 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
             AppBottomNavigationBar(
                 currentRoute = currentRoute,
                 onItemSelected = { selectedRoute ->
-                    if (currentRoute != selectedRoute) {
+                    val popped = navController.popBackStack(selectedRoute, inclusive = false)
+                    if (!popped) {
                         navController.navigate(selectedRoute) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
@@ -104,14 +96,15 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                 userData = currentUserData,
                 environmentData = currentEnvironmentData,
                 onNotificationClick = {
-                    println("Powiadomienia kliknięte z [NazwaTwojegoEkranu]!")
+                    println("Powiadomienia kliknięte z HomeScreen!")
                 }
             )
 
+            // Pierwszy rząd kafelków: Pokojówki & Rośliny
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 InfoTile(
@@ -123,15 +116,14 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     title = "Pokojówki",
                     subtitle = "Parametry w normie",
                     onTileClick = {
-                        println("Kafelek Pokoje kliknięty!")
-                        navController.navigate(AppDestinations.ROOMS_SCREEN) {
-
-                            popUpTo(AppDestinations.HOME_SCREEN) {
-                                saveState = true
-
+                        val popped = navController.popBackStack(AppDestinations.ROOMS_SCREEN, inclusive = false)
+                        if (!popped) {
+                            navController.navigate(AppDestinations.ROOMS_SCREEN) {
+                                popUpTo(AppDestinations.HOME_SCREEN) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
-
                         }
                     }
                 )
@@ -144,20 +136,53 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     title = "Rośliny",
                     subtitle = "Wszystkie zdrowe",
                     onTileClick = {
-                        println("Kafelek Rośliny kliknięty!")
-                        navController.navigate(AppDestinations.PLANTS_SCREEN) {
-
-                            popUpTo(AppDestinations.HOME_SCREEN) {
-                                saveState = true
-
+                        val popped = navController.popBackStack(AppDestinations.PLANTS_SCREEN, inclusive = false)
+                        if (!popped) {
+                            navController.navigate(AppDestinations.PLANTS_SCREEN) {
+                                popUpTo(AppDestinations.HOME_SCREEN) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
-
                         }
                     }
                 )
             }
 
+            // Drugi rząd kafelków: Smart Okna
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                val openWindowsCount = windowsList.count { it.isOpen }
+                val windowSubtitle = if (openWindowsCount == 0) "Wszystkie zamknięte" else "$openWindowsCount otwarte"
+
+                InfoTile(
+                    modifier = Modifier.weight(1f),
+                    gradientColors = listOf(WindowsGradientStart, WindowsGradientEnd),
+                    icon = Icons.Filled.Window,
+                    iconContentDescription = "Smart Okna",
+                    chipText = "${windowsList.count()} okna",
+                    title = "Smart Okna",
+                    subtitle = windowSubtitle,
+                    onTileClick = {
+                        val popped = navController.popBackStack(AppDestinations.WINDOWS_SCREEN, inclusive = false)
+                        if (!popped) {
+                            navController.navigate(AppDestinations.WINDOWS_SCREEN) {
+                                popUpTo(AppDestinations.HOME_SCREEN) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                )
+
+                // Pusty kafelek dla zachowania symetrii 2x2
+                Spacer(modifier = Modifier.weight(1f))
+            }
 
             BulbsSection(
                 modifier = Modifier
@@ -168,17 +193,11 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                 onBulbSwitchToggle = { bulbId, newState ->
                     val index = bulbsList.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-                        val oldBulb = bulbsList[index]
-
-                        val updatedBulb = oldBulb.copy(
-                            isSwitchedOn = newState
-                        )
-
                         BulbsRepository.setBulbState(bulbId, newState)
-                        // todo: change bulb state mr wojtek
                     }
                 }
             )
+
             NotificationsSection(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -191,7 +210,6 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
         }
     }
 }
@@ -200,9 +218,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
 @Composable
 fun HomeScreenPreview() {
     PokojowkamobileTheme {
-
         val navController = rememberNavController()
         HomeScreen(navController = navController)
     }
 }
-

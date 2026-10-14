@@ -190,7 +190,8 @@ fun PlantView(
             AppBottomNavigationBar(
                 currentRoute = currentRoute,
                 onItemSelected = { selectedRoute ->
-                    if (currentRoute != selectedRoute) {
+                    val popped = navController.popBackStack(selectedRoute, inclusive = false)
+                    if (!popped) {
                         navController.navigate(selectedRoute) {
                             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                             launchSingleTop = true

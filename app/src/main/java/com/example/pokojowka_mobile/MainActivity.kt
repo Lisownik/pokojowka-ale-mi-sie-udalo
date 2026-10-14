@@ -170,6 +170,24 @@ fun AppNavigation() {
                     Text("Błąd: Brak ID żarówki")
                 }
             }
+
+            composable(AppDestinations.WINDOWS_SCREEN) {
+                WindowsScreen(navController = navController)
+            }
+
+            composable(
+                route = AppDestinations.WINDOW_VIEW_SCREEN,
+                arguments = listOf(navArgument(AppDestinations.WINDOW_ID_ARG) {
+                    type = NavType.StringType
+                })
+            ) { backStackEntry ->
+                val windowId = backStackEntry.arguments?.getString(AppDestinations.WINDOW_ID_ARG)
+                if (windowId != null) {
+                    WindowView(navController = navController, windowId = windowId)
+                } else {
+                    Text("Błąd: Brak ID okna")
+                }
+            }
         }
     } else {
         // Opcjonalnie: Pokaż wskaźnik ładowania, dopóki `isLoggedIn` jest `null`.
