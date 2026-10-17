@@ -1,44 +1,101 @@
 package com.example.pokojowka_mobile.data
 
-data class InnerBulbData(
-    val power: String,
-    val brightness: Int
-)
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.RoomService
+import com.example.pokojowka_mobile.components.BottomNavItem.Rooms
+import com.example.pokojowka_mobile.network.repos.WindowsApi
+import com.example.pokojowka_mobile.ui.theme.RoomIconBackgroundBed
+import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
-data class NetworkBulbData(
-    val id: String,
-    val name: String,
-    val data: InnerBulbData
-)
+sealed interface ModuleData {
+    val id: String
+    val type: String
+    val online: Boolean
+    val lastSeen: Long
+    val name: String
+}
 
+@JsonClass(generateAdapter = true)
 data class InnerRoomData(
-    val date: String,
     val temperature: Double,
     val humidity: Double,
     val pressure: Double,
     val quality: Int,
-    val co: Boolean,
-    val gasses: Boolean
 )
 
+@JsonClass(generateAdapter = true)
 data class NetworkRoomData(
-    val id: String,
-    val name: String,
-    val data: InnerRoomData
+    override val id: String,
+    override val type: String,
+    override val online: Boolean,
+    override val lastSeen: Long,
+    val state: InnerRoomData,
+    override val name: String,
+) : ModuleData
+
+fun NetworkRoomData.toRoomData(): RoomData {
+    return RoomData(
+        id = this.id,
+        name = this.name,
+        icon = Icons.Outlined.RoomService,
+        backgroundColor = RoomIconBackgroundBed,
+        status = RoomStatus.MEDIUM,
+        temperature = this.state.temperature.toString(),
+        humidity = this.state.humidity.toString(),
+        airQuality = this.state.quality.toString(),
+        pressure = this.state.pressure.toString(),
+    )
+}
+
+@JsonClass(generateAdapter = true)
+data class InnerBulbData(
+    val power: String,
+    val brightness: Int,
+    val temperature: Int
 )
 
-data class InnerPlantData(
-    val date : String,
-    val temperature: Double,
-    val humidity: Double,
-    val wet: Double,
-    val sun: Double
+@JsonClass(generateAdapter = true)
+data class NetworkBulbData(
+    override val id: String,
+    override val type: String,
+    override val online: Boolean,
+    override val lastSeen: Long,
+    val state: InnerBulbData,
+    override val name: String,
+) : ModuleData
+
+fun NetworkBulbData.toBulbData(): BulbData {
+    return BulbData(
+        id = this.id,
+        name = this.name,
+        brightnessPercentage = this.state.brightness,
+        isSwitchedOn = this.state.power == "true",
+        colorTemperatureKelvin = this.state.temperature,
+    )
+}
+
+@JsonClass(generateAdapter = true)
+data class InnerWindowData(
+    val state: Boolean
 )
 
-data class NetworkPlantData(
-    val id: String,
-    val name: String,
-    val data: InnerPlantData
-)
+@JsonClass(generateAdapter = true)
+data class NetworkWindowData(
+    override val id: String,
+    override val type: String,
+    override val online: Boolean,
+    override val lastSeen: Long,
+    val state: InnerWindowData,
+    override val name: String,
+) : ModuleData
 
-
+fun NetworkWindowData.toWindowData(): WindowData {
+    return WindowData(
+        id = this.id,
+        name = this.name,
+        roomName = "idk",
+        isOpen = this.state.state,
+    )
+}

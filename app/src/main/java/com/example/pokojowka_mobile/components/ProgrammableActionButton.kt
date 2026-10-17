@@ -18,6 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.ProgramApi
+import com.example.pokojowka_mobile.network.repos.ProgramRepository
+import com.example.pokojowka_mobile.network.repos.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.WindowsRepository
+import com.example.pokojowka_mobile.notifications.Notifier
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.ui.theme.RoomsGradientEnd
 import com.example.pokojowka_mobile.ui.theme.RoomsGradientStart
@@ -56,7 +62,11 @@ fun ProgrammableActionButton(
         modifier = modifier
             .size(56.dp)
             .clip(CircleShape)
-            .clickable { showDialog = true },
+            .clickable {
+                showDialog = true;
+                Notifier.safeNotification("Programmable button", "Testowa wiadomość")
+                ProgramRepository.emitProgram()
+            },
         shape = CircleShape,
         shadowElevation = 10.dp,
         tonalElevation = 6.dp,

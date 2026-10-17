@@ -33,12 +33,14 @@ import com.example.pokojowka_mobile.data.NotificationType
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.data.sampleGlobalNotificationsList
-import com.example.pokojowka_mobile.repos.BulbsRepository
-import com.example.pokojowka_mobile.repos.WindowsRepository
+import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.*
 
 @Composable
 fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+    val roomsList by RoomsRepository.state.collectAsStateWithLifecycle()
     val bulbsList by BulbsRepository.state.collectAsStateWithLifecycle()
     val windowsList by WindowsRepository.state.collectAsStateWithLifecycle()
 
@@ -112,7 +114,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     gradientColors = listOf(RoomsGradientStart, RoomsGradientEnd),
                     icon = Icons.Filled.Home,
                     iconContentDescription = "Pokoje",
-                    chipText = "${GlobalRoomsList.count()} pokoje",
+                    chipText = "${roomsList.count()} pokoje",
                     title = "Pokojówki",
                     subtitle = "Parametry w normie",
                     onTileClick = {

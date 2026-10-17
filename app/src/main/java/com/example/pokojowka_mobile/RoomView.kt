@@ -49,8 +49,6 @@ import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.components.RoomViewSection
 import com.example.pokojowka_mobile.components.SectionItemUIData
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-import com.example.pokojowka_mobile.data.RoomData
-import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.components.SharedHeader
 
 import com.example.pokojowka_mobile.data.UserData
@@ -59,7 +57,7 @@ import com.example.pokojowka_mobile.data.SampleUserData
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.repos.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.RoomsRepository
 
 
 @Composable

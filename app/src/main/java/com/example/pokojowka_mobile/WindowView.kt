@@ -31,7 +31,7 @@ import com.example.pokojowka_mobile.components.WindowViewSection
 import com.example.pokojowka_mobile.data.SampleUserData
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.repos.WindowsRepository
+import com.example.pokojowka_mobile.network.repos.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 
 @Composable

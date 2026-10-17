@@ -1,7 +1,6 @@
 package com.example.pokojowka_mobile.data
 
 import android.Manifest
-import android.R
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
@@ -107,7 +106,6 @@ object NotificationHelper {
 
 
         val builder = NotificationCompat.Builder(context, URGENT_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_dialog_alert)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -120,7 +118,7 @@ object NotificationHelper {
 
 
         builder.addAction(
-            R.drawable.ic_menu_view,
+            android.R.drawable.ic_menu_view,
             "Otwórz",
             pendingIntent
         )
@@ -205,7 +203,7 @@ object NotificationHelper {
 
 
         val builder = NotificationCompat.Builder(context, URGENT_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_dialog_alert)
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setContentTitle("$alertType - $location")
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_MAX)

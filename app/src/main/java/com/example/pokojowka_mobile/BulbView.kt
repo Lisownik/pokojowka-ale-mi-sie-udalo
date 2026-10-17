@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -37,7 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.components.BulbViewSection
-import com.example.pokojowka_mobile.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.BulbsRepository
 
 
 @Composable
@@ -82,8 +81,8 @@ fun BulbView(
             confirmButton = {
                 TextButton(onClick = {
                     if (newRoomName.isNotBlank()) {
-                        // Todo: Change name
                         showRenameDialog = false
+                        BulbsRepository.setName(bulbId, newRoomName)
                     }
                 }) {
                     Text("Zatwierdź")

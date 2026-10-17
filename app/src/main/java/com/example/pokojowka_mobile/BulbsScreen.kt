@@ -32,10 +32,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.pokojowka_mobile.data.BulbData
-import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.BulbsRepository
 
 @Composable
 fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier) {

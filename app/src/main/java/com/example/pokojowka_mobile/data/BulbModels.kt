@@ -27,16 +27,6 @@ data class BulbData(
     }
 }
 
-fun NetworkBulbData.toBulbData(): BulbData {
-    return BulbData(
-        id = this.id,
-        name = this.name,
-        brightnessPercentage = this.data.brightness,
-        isSwitchedOn = this.data.power == "on",
-        colorTemperatureKelvin = 2700,
-    )
-}
-
 var GlobalBulbsList: MutableList<BulbData> = mutableListOf(
     BulbData(
         id = "salon_main",

@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,13 +34,31 @@ import androidx.navigation.navArgument
 import com.example.pokojowka_mobile.components.ProgrammableActionButton
 import com.example.pokojowka_mobile.data.NotificationHelper
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.WindowsRepository
+import com.example.pokojowka_mobile.notifications.Notifier
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        Notifier.init(this)
+
+        MainScope().launch {
+            while(true) {
+                RoomsRepository.refresh()
+                BulbsRepository.refresh()
+                delay(3000.milliseconds)
+            }
+        }
 
         NotificationHelper.createNotificationChannels(this)
         setContent {
@@ -116,6 +134,9 @@ fun AppNavigation() {
                 }
 
                 composable(AppDestinations.HOME_SCREEN) {
+                    RoomsRepository.refresh()
+                    BulbsRepository.refresh()
+                    WindowsRepository.refresh()
                     HomeScreen(navController = navController)
                 }
 

@@ -1,7 +1,12 @@
-package com.example.pokojowka_mobile.repos
+package com.example.pokojowka_mobile.network.repos
 
 import com.example.pokojowka_mobile.data.GlobalWindowsList
 import com.example.pokojowka_mobile.data.WindowData
+import com.example.pokojowka_mobile.data.toWindowData
+import com.example.pokojowka_mobile.debug.Debug
+import com.example.pokojowka_mobile.debug.LogClasses
+import com.example.pokojowka_mobile.network.Network
+import com.example.pokojowka_mobile.network.safeApiCall
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -12,6 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 object WindowsRepository : Repository<List<WindowData>> {
+    private val api: WindowsApi = Network.windowsApi
+
     private val scope = CoroutineScope(SupervisorJob())
 
     private val _state: MutableStateFlow<List<WindowData>> = MutableStateFlow(GlobalWindowsList)
@@ -19,17 +26,22 @@ object WindowsRepository : Repository<List<WindowData>> {
 
     private var refreshingJob: Job? = null
 
-    override suspend fun refresh() {
+    override fun refresh() {
         if (refreshingJob?.isActive == true)
             return
         refreshingJob = scope.launch {
-            // todo: implement fetching data from backend
+            safeApiCall { api.getWindows() }
+                .onSuccess { result ->
+                    _state.tryEmit(
+                        result.map { it ->
+                            it.toWindowData()
+                        }
+                    )
+                }
+            }
         }
-    }
 
     fun setWindowState(windowId: String, isOpen: Boolean) {
-        // todo: add network change
-
         _state.update { windows ->
             windows.map { window ->
                 if (window.id == windowId)
@@ -38,11 +50,17 @@ object WindowsRepository : Repository<List<WindowData>> {
                     window
             }
         }
+
+        scope.launch {
+            Debug.logDebug(LogClasses.NETWORK, "Trying to set window state")
+            safeApiCall { api.changeState(windowId, if (isOpen) "open" else "close") }
+                .onSuccess {
+                    Debug.logDebug(LogClasses.NETWORK, "Pomyślnie zmieniono stan okna $windowId na $isOpen")
+                }
+        }
     }
 
     fun setName(windowId: String, name: String) {
-        // todo: add network change
-
         _state.update { windows ->
             windows.map { window ->
                 if (window.id == windowId)
@@ -50,6 +68,13 @@ object WindowsRepository : Repository<List<WindowData>> {
                 else
                     window
             }
+        }
+
+        scope.launch {
+            safeApiCall { api.changeName(windowId, name) }
+                .onSuccess {
+                    Debug.logDebug(LogClasses.NETWORK, "pomyślnie zmieniono nazwę dla $windowId na $name")
+                }
         }
     }
 }

@@ -5,8 +5,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Sensors
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material.icons.outlined.Window
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,6 +33,11 @@ import com.example.pokojowka_mobile.data.SampleUserData
 import com.example.pokojowka_mobile.data.availableDeviceModels
 import com.example.pokojowka_mobile.components.ProfileInfoItem
 import com.example.pokojowka_mobile.components.ProfileSection
+import com.example.pokojowka_mobile.network.HealthState
+import com.example.pokojowka_mobile.network.ServerHealth
+import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.WindowsRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +48,12 @@ fun ProfileScreen(
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
     val coroutineScope = rememberCoroutineScope()
+
+    val connectedToServer by HealthState.healthState.collectAsStateWithLifecycle()
+    val bulbs by BulbsRepository.state.collectAsStateWithLifecycle()
+    val rooms by RoomsRepository.state.collectAsStateWithLifecycle()
+    val windows by WindowsRepository.state.collectAsStateWithLifecycle()
+
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
         initialValue = UserData("", "", emptyList())
@@ -118,14 +133,43 @@ fun ProfileScreen(
                                 icon = Icons.Filled.Sensors
                             )
                         } else {
-                            connectedDevicesList.forEach { deviceName ->
+//                            connectedDevicesList.forEach { deviceName ->
+//                                ProfileInfoItem(
+//                                    label = deviceName,
+//                                    value = "Online",
+//                                    icon = Icons.Filled.Sensors
+//                                )
+//                            }
+                            rooms.forEach { room ->
                                 ProfileInfoItem(
-                                    label = deviceName,
-                                    value = "Online",
+                                    label = room.name,
+                                    value = room.id,
                                     icon = Icons.Filled.Sensors
                                 )
                             }
+                            bulbs.forEach { bulb ->
+                                ProfileInfoItem(
+                                    label = bulb.name,
+                                    value = bulb.id,
+                                    icon = Icons.Filled.Lightbulb
+                                )
+                            }
+                            windows.forEach { window ->
+                                ProfileInfoItem(
+                                    label = window.name,
+                                    value = window.id,
+                                    icon = Icons.Outlined.Window
+                                )
+                            }
                         }
+                    }
+
+                    ProfileSection(title = "Dane Dewelopera") {
+                        ProfileInfoItem(
+                            label = "Stan połączenia z Serwerem",
+                            icon = if (connectedToServer == ServerHealth.HEALTHY) Icons.Filled.Wifi else Icons.Filled.WifiOff,
+                            value = if(connectedToServer == ServerHealth.HEALTHY) "Git" else if (connectedToServer == ServerHealth.UNHEALTHY) "Źle" else "unknown"
+                        )
                     }
 
                     Spacer(modifier = Modifier.weight(1f))

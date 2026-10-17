@@ -26,9 +26,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.repos.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.RoomsRepository
 
 @Composable
 fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
