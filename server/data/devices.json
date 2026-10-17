@@ -1,17 +1,7 @@
-[
-    {
-        "room-1": "kuchnia"
-    },
-    {
-        "room-abcd": "template-name"
-    },
-    {
-        "bedroom_01": "template-name"
-    },
-    {
-        "window-1": "template-name"
-    },
-    {
-        "room-asdfghjkl": "template-name"
-    }
-]
+{
+    "room-1":     { "name": "kuchnia",       "type": "room" },
+    "room-abcd":  { "name": "template-name", "type": "room" },
+    "bedroom_01": { "name": "template-name", "type": "room" },
+    "window-1":   { "name": "template-name", "type": "window" },
+    "bulb-1":     { "name": "cwelu",         "type": "smart_led" }
+}

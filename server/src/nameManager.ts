@@ -1,9 +1,9 @@
 import { readFile, writeFile } from "node:fs/promises";
-import {DeviceNames} from "./types";
+import {DeviceData, DeviceNames, DeviceType} from "./types";
 
 
 export class NameManager {
-  private names: DeviceNames = [];
+  private names: DeviceNames = {};
   private filepath: string = "./data/devices.json";
   constructor(
   ) {}
@@ -13,10 +13,6 @@ export class NameManager {
       const data = await readFile(this.filepath, "utf8");
       const parsed: unknown = JSON.parse(data);
 
-      if (!Array.isArray(parsed)) {
-        throw new Error("devices.json must contain an array");
-      }
-
       this.names = parsed as DeviceNames;
     } catch (error: unknown) {
       if (
@@ -24,7 +20,7 @@ export class NameManager {
         "code" in error &&
         error.code === "ENOENT"
       ) {
-        this.names = [];
+        this.names = {};
         await this.save();
         return;
       }
@@ -42,36 +38,32 @@ export class NameManager {
   }
 
   get(id: string): string {
-    const entry = this.names.find((entry) =>
-      Object.hasOwn(entry, id)
-    );
+    const entry = this.names[id];
 
-    return entry?.[id] ?? "no-name";
+    return entry?.name ?? "no-name";
   }
 
   has(id: string): boolean {
-    return this.names.some((entry) =>
-      Object.hasOwn(entry, id)
-    );
+    return id in this.names;
   }
 
-  async set(id: string, name: string): Promise<void> {
-    const entry = this.names.find((entry) =>
-      Object.hasOwn(entry, id)
-    );
+  async set(id: string, name: string, type: DeviceType): Promise<void> {
+    const entry = this.names[id];
 
     if (entry) {
-      entry[id] = name;
+      entry.name = name;
+      entry.type = type;
     } else {
-      this.names.push({
-        [id]: name,
-      });
+      this.names[id] = {
+          name,
+          type
+        }
     }
 
     await this.save();
   }
 
-  getAll(): DeviceNames {
-    return [...this.names];
+  getAll(): [string, DeviceData][] {
+    return Object.entries(this.names)
   }
 }

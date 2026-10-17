@@ -1,4 +1,4 @@
-export type DeviceType = "room" | "window" | "yeelight" | "smart_led" | "mobile"
+export type DeviceType = "room" | "window" | "yeelight" | "smart_led" | "mobile" | "heater"
 
 const validDeviceTypes: DeviceType[] = ["room", "window", "yeelight", "smart_led", "mobile"];
 
@@ -23,10 +23,23 @@ export interface Device {
 }
 
 export type EventType = "cold" | "hot" | "programmed" | "go-out" | "go-in" | "bad-air"
-export type ActionType = "close" | "open" | "heat-up" | "heat-down";
-export type DeviceNames = Array<Record<string, string>>;
+
+
+export type WindowActions = "close" | "open"
+export type HeaterActions = "heat-up" | "heat-down"
+export type BulbActions = "on" | "off" | "brightness"
+export type ActionType = WindowActions | HeaterActions | BulbActions
+export type WindowState = "close" | "open"
+
+export interface DeviceData{
+  type: DeviceType;
+  name: string;
+}
+
+export type DeviceNames = Record<string, DeviceData>;
 
 export const anyID = "<any>"
+export const everyID = "<every>"
 
 export interface ActionSlave {
   module_type: DeviceType;
@@ -43,7 +56,7 @@ export interface EventToAction {
 
 export interface ShortDevice {
   id: string;
-  type: string;
+  type: DeviceType;
 }
 
 export type EventActionConnections = EventToAction[];

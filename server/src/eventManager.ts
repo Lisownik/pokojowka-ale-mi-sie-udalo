@@ -16,7 +16,8 @@ export const Events: Record<DeviceType, EventType[]> = {
     "go-out",
     "go-in",
     "bad-air"
-  ]
+  ],
+  "heater": []
 }
 
 export class EventManager {

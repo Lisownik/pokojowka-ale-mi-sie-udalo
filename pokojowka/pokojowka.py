@@ -107,8 +107,14 @@ def on_message(client, _, msg):
     print("GOT THE WINDOW-1 CLOSE EVENT! YUPI")
     print(msg.topic, msg.payload.decode())
 
+def get_path_status():
+    return f"devices/room/{MY_ID}/status"
+
+def get_path_state():
+    return f"devices/room/{MY_ID}/state"
+
 def on_disconnect(client):
-    client.publish(f"devices/room/{MY_ID}/status", json.dumps({"online": False}), qos=1, retain=True)
+    client.publish(get_path_state(), json.dumps({"online": False}), qos=1, retain=True)
 
 
 
@@ -126,7 +132,7 @@ def main():
         raise SystemExit("No sensor found, exiting.")
 
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-    client.will_set(f"devices/room/{MY_ID}/status", json.dumps({"online": False}), qos=1, retain=True)
+    client.will_set(get_path_status(), json.dumps({"online": False}), qos=1, retain=True)
 
     client.on_disconnect = on_disconnect
 
@@ -134,14 +140,15 @@ def main():
     client.connect(BROKER_HOST, BROKER_PORT)
 
 
-    client.publish(f"devices/room/{MY_ID}/status", json.dumps({"online": True}), qos=1, retain=True)
+    client.publish(get_path_status(), json.dumps({"online": True}), qos=1, retain=True)
     client.loop_start()
 
     try:
         while True:
-            client.publish(f"devices/room/{MY_ID}/state", json.dumps(get_data(sensor)))
+            client.publish(get_path_state(), json.dumps(get_data(sensor)))
             sleep(5)
     except KeyboardInterrupt:
+        print("Keyboard Interrupt")
         pass
     finally:
         client.loop_stop()

@@ -1,6 +1,6 @@
 import {MqttClient} from "mqtt";
 import {Environment} from "./environment";
-import {ActionSlave, ActionType, anyID, EventActionConnections, EventToAction, EventType} from "./types";
+import {ActionSlave, ActionType, anyID, EventActionConnections, EventToAction, EventType, everyID} from "./types";
 import {readFile, writeFile} from "node:fs/promises";
 
 
@@ -78,6 +78,11 @@ export class ActionManager {
       return null;
     }
     console.log(`Action found: ${ETA.slave.id}, event: ${ETA.slave.action}; for event: ${event} and id: ${id}`);
+
+    if(ETA.slave.id === everyID){
+      ETA.slave.id = `${ETA.slave.module_type}-${everyID}`
+    }
+
     return ETA.slave;
   }
 
@@ -86,7 +91,7 @@ export class ActionManager {
     this.client = client;
   }
 
-  private eventUrl(id: string, action: ActionType): string {
+  private eventUrl(id: string, action: EventType | ActionType): string {
     return `${this.static_event_url}/${id}/${action}`;
   }
 
@@ -96,6 +101,13 @@ export class ActionManager {
     const action = this.getAction(id, event);
     if (action)
       await this.publishEvent<T>(this.eventUrl(action.id, action.action), payload);
+    console.groupEnd();
+  }
+
+  public async publishAction<T>(id: string, action: ActionType, payload: T) {
+    console.group("Emitting action");
+    console.log("Received action: ", id, action);
+    await this.publishEvent<T>(this.eventUrl(id, action), payload);
     console.groupEnd();
   }
 

@@ -1,5 +1,5 @@
 import { NameManager } from "./nameManager";
-import {anyID, Device, DeviceState, DeviceType, ShortDevice} from "./types";
+import {anyID, Device, DeviceState, DeviceType, everyID, ShortDevice} from "./types";
 
 export class DeviceManager {
   private devices: Map<string, Device> = new Map();
@@ -7,6 +7,18 @@ export class DeviceManager {
     {
       id: anyID,
       type: "mobile"
+    },
+    {
+      id: everyID,
+      type: "window"
+    },
+    {
+      id: everyID,
+      type: "smart_led"
+    },
+    {
+      id: everyID,
+      type: "heater"
     },
     {
       id: "window-1",
@@ -28,9 +40,19 @@ export class DeviceManager {
     return newDevices;
   }
 
+  savedDevices(): ShortDevice[] {
+    return this.nameManager.getAll().map(([key, value]) => ({
+      id: key.toString(),
+      type: value.type.toString(),
+      }) as ShortDevice
+
+    )
+  }
+
   getShortDevices(): ShortDevice[] {
     return [
       ...this.defaultDevices,
+      ...this.savedDevices(),
       ...this.shortenDevices()
     ]
   }
@@ -42,7 +64,7 @@ export class DeviceManager {
     const existing = this.devices.get(id);
 
     if (!this.nameManager.has(id)){
-      this.nameManager.set(id, `template-name-${type}`)
+      this.nameManager.set(id, `template-name-${type}`, type)
     }
 
     const newDevice: Device = {
