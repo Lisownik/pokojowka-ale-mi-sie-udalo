@@ -23,24 +23,6 @@ SUBSCRIPTIONS = [
     (f"events/{MY_ID}/brightness", 1),
 ]
 
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-
-
-time.sleep(1)
-
-
-client.publish(f"devices/{TYPE}/{MY_ID}/status", json.dumps({"online": True}))
-
-# client.publish(f"devices/{TYPE}/{MY_ID}/state", json.dumps({"temperature": 80}))
-client.subscribe(f"events/smart_led-{EVERY_ID}/off")
-client.subscribe(f"events/smart_led-{EVERY_ID}/on")
-client.subscribe(f"events/smart_led-{EVERY_ID}/brightness")
-
-client.subscribe(f"events/{MY_ID}/off")
-client.subscribe(f"events/{MY_ID}/on")
-client.subscribe(f"events/{MY_ID}/brightness")
-
-
 def on_disconnect(client, userdata, flags, reason_code, properties):
     print(f"Disconnected: {reason_code}")
 
@@ -77,13 +59,6 @@ def publish_state(client):
         "power": power,
         "temperature": getRandom(2700, 4000),
     }), qos=1)
-
-client.publish(f"devices/{TYPE}/{MY_ID}/state", json.dumps({
-        "brightness": getRandom(1, 100),
-        "power":  "true" if getRandom(0,2) else "false",
-        "temperature": getRandom(2700, 4000)
-    }))
-
 
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
