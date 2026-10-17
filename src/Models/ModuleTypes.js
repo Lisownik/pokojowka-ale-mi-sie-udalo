@@ -18,6 +18,11 @@ export const static_module_types = {
     isIdNeeded: true,
     events: ["start", "stop"],
     actions: ["start", "stop"]
+  },
+  smart_led: {
+    isIdNeeded: true,
+    events: [],
+    actions: ["on", "off"],
   }
 
 }
