@@ -113,7 +113,7 @@ def get_path_status():
 def get_path_state():
     return f"devices/room/{MY_ID}/state"
 
-def on_disconnect(client):
+def on_disconnect(client, userdata, disconnect_flags, reason_code, properties):
     client.publish(get_path_state(), json.dumps({"online": False}), qos=1, retain=True)
 
 
