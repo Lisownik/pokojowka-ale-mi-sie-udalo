@@ -1,5 +1,6 @@
 package com.example.pokojowka_mobile.network.repos
 
+import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.data.BulbData
 import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.data.toBulbData
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentMap
 
 
 object BulbsRepository: Repository<List<BulbData>> {
+    private val STATIC_MODE = BuildConfig.STATIC_MODE
     private val api: BulbsApi = Network.bulbsApi
 
     private val scope = CoroutineScope(SupervisorJob())
@@ -38,6 +40,8 @@ object BulbsRepository: Repository<List<BulbData>> {
     private fun isLocked() = System.currentTimeMillis() < lockedUntil
 
     override fun refresh(){
+        if(STATIC_MODE) return
+
         if (isLocked() || refreshingJob?.isActive == true) return
 
         refreshingJob = scope.launch {
@@ -57,7 +61,6 @@ object BulbsRepository: Repository<List<BulbData>> {
     }
 
     fun setBulbState(bulbId: String, isSwitchedOn: Boolean){
-        lock()
         _state.update { bulbs ->
             bulbs.map { bulb ->
                 if (bulb.id == bulbId)
@@ -67,6 +70,8 @@ object BulbsRepository: Repository<List<BulbData>> {
             }
         }
 
+        if(STATIC_MODE) return
+        lock()
         scope.launch {
             safeApiCall { api.changeState(bulbId, if (isSwitchedOn) "true" else "false") }
                 .onSuccess {
@@ -79,7 +84,6 @@ object BulbsRepository: Repository<List<BulbData>> {
     }
 
     fun setBulbBrightness(bulbId: String, brightnessPercentage: Int){
-        lock()
 
         _state.update { bulbs ->
             bulbs.map { bulb ->
@@ -90,6 +94,8 @@ object BulbsRepository: Repository<List<BulbData>> {
             }
         }
 
+        if(STATIC_MODE) return
+        lock()
         scope.launch {
             safeApiCall { api.changeBrightness(bulbId, brightnessPercentage) }
                 .onSuccess {
@@ -115,7 +121,6 @@ object BulbsRepository: Repository<List<BulbData>> {
     }
 
     fun setName(bulbId: String, name: String){
-        lock()
         _state.update { rooms ->
             rooms.map { room ->
                 if (room.id == bulbId)
@@ -125,6 +130,8 @@ object BulbsRepository: Repository<List<BulbData>> {
             }
         }
 
+        if(STATIC_MODE) return
+        lock()
         scope.launch {
             safeApiCall { api.changeName(bulbId, name) }
                 .onSuccess {

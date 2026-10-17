@@ -29,6 +29,7 @@ android {
     buildTypes {
         release {
             buildConfigField("String", "API_URL", "\"http://centrala.lokal:1234\"")
+            buildConfigField("boolean", "STATIC_MODE", "true")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -37,6 +38,7 @@ android {
         }
         debug {
             buildConfigField("String", "API_URL", "\"http://10.0.2.2:1234\"")
+            buildConfigField("boolean", "STATIC_MODE", "true")
         }
     }
 

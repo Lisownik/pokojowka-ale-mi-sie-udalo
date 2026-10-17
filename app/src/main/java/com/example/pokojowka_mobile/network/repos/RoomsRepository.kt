@@ -1,5 +1,6 @@
 package com.example.pokojowka_mobile.network.repos
 
+import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.data.RoomData
 import com.example.pokojowka_mobile.data.toRoomData
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 object RoomsRepository: Repository<List<RoomData>> {
+    private val STATIC_MODE = BuildConfig.STATIC_MODE
     private val api: RoomsApi = Network.roomsApi
 
 
@@ -37,6 +39,8 @@ object RoomsRepository: Repository<List<RoomData>> {
     private fun isLocked() = System.currentTimeMillis() < lockedUntil
 
     override fun refresh(){
+        if(STATIC_MODE) return
+
         if (isLocked() || refreshingJob?.isActive == true) return
 
         refreshingJob = scope.launch {
@@ -55,7 +59,6 @@ object RoomsRepository: Repository<List<RoomData>> {
     }
 
     fun setName(roomId: String, name: String){
-        lock()
         _state.update { rooms ->
             rooms.map { room ->
                 if (room.id == roomId)
@@ -65,6 +68,8 @@ object RoomsRepository: Repository<List<RoomData>> {
             }
         }
 
+        if(STATIC_MODE) return
+        lock()
         scope.launch {
             safeApiCall { api.changeName(roomId, name) }
                 .onSuccess {
