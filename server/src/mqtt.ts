@@ -101,6 +101,8 @@ function handleState(
     return;
   }
 
+  if(!device.online)
+    device.online = true;
 
   console.log(`Updated ${deviceId}`, device.state)
 }

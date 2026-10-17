@@ -58,7 +58,7 @@ def publish_state(client):
         "brightness": getRandom(1, 100),
         "power": power,
         "temperature": getRandom(2700, 4000),
-    }), qos=1)
+    }), qos=1, retain=True)
 
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
@@ -69,15 +69,13 @@ client.on_message = on_message
 client.will_set(STATUS_TOPIC, json.dumps({"online": False}), qos=1, retain=True)
 client.reconnect_delay_set(min_delay=1, max_delay=30)
 
-client.connect_async("localhost", 1883, keepalive=30)
+client.connect_async("localhost", 1883, keepalive=5)
 client.loop_forever()
-# while True:
-    # client.publish(f"devices/bulb/{MY_ID}/state", json.dumps({
-    #     "brightness": getRandom(1, 100),
-    #     "power":  "true" if getRandom(0,2) else "false",
-    #     "temperature": getRandom(2700, 4000)
-    # }))
-    # sleep(1)
-# time.sleep(10)
+
+publish_state(client)
 # client.loop_stop()
+# while True:
+#     publish_state(client)
+#     sleep(10)
+# time.sleep(10)
 # client.disconnect()
