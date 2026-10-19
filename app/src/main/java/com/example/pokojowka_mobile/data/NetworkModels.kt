@@ -1,13 +1,9 @@
 package com.example.pokojowka_mobile.data
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.RoomService
-import com.example.pokojowka_mobile.components.BottomNavItem.Rooms
-import com.example.pokojowka_mobile.network.repos.WindowsApi
 import com.example.pokojowka_mobile.ui.theme.RoomIconBackgroundBed
 import com.squareup.moshi.JsonClass
-import kotlinx.serialization.Serializable
 
 sealed interface ModuleData {
     val id: String

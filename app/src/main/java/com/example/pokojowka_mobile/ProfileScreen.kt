@@ -19,27 +19,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.pokojowka_mobile.data.UserData
-import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-import kotlinx.coroutines.launch
-import com.example.pokojowka_mobile.components.SharedHeader
-import com.example.pokojowka_mobile.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.data.SampleUserData
-import com.example.pokojowka_mobile.data.availableDeviceModels
 import com.example.pokojowka_mobile.components.ProfileInfoItem
 import com.example.pokojowka_mobile.components.ProfileSection
+import com.example.pokojowka_mobile.components.SharedHeader
+import com.example.pokojowka_mobile.data.SampleUserData
+import com.example.pokojowka_mobile.data.UserData
+import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.data.availableDeviceModels
 import com.example.pokojowka_mobile.network.HealthState
 import com.example.pokojowka_mobile.network.ServerHealth
 import com.example.pokojowka_mobile.network.repos.BulbsRepository
 import com.example.pokojowka_mobile.network.repos.RoomsRepository
 import com.example.pokojowka_mobile.network.repos.WindowsRepository
+import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
@@ -54,46 +50,22 @@ fun ProfileScreen(
     val rooms by RoomsRepository.state.collectAsStateWithLifecycle()
     val windows by WindowsRepository.state.collectAsStateWithLifecycle()
 
-
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
         initialValue = UserData("", "", emptyList())
     )
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
 
     val connectedDevicesList = remember { availableDeviceModels }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        bottomBar = {
-            AppBottomNavigationBar(
-                currentRoute = currentRoute,
-                onItemSelected = { selectedRoute ->
-                    val popped = navController.popBackStack(selectedRoute, inclusive = false)
-                    if (!popped) {
-                        navController.navigate(selectedRoute) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
-        },
+        modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    bottom = innerPadding.calculateBottomPadding()
-                )
+                .padding(bottom = innerPadding.calculateBottomPadding() + 80.dp)
                 .verticalScroll(scrollState)
-
         ) {
             SharedHeader(
                 userData = currentUserData,
@@ -102,7 +74,6 @@ fun ProfileScreen(
                     println("Powiadomienia kliknięte z ProfileScreen!")
                 }
             )
-
 
             Column(
                 modifier = Modifier
@@ -133,13 +104,6 @@ fun ProfileScreen(
                                 icon = Icons.Filled.Sensors
                             )
                         } else {
-//                            connectedDevicesList.forEach { deviceName ->
-//                                ProfileInfoItem(
-//                                    label = deviceName,
-//                                    value = "Online",
-//                                    icon = Icons.Filled.Sensors
-//                                )
-//                            }
                             rooms.forEach { room ->
                                 ProfileInfoItem(
                                     label = room.name,
@@ -168,7 +132,7 @@ fun ProfileScreen(
                         ProfileInfoItem(
                             label = "Stan połączenia z Serwerem",
                             icon = if (connectedToServer == ServerHealth.HEALTHY) Icons.Filled.Wifi else Icons.Filled.WifiOff,
-                            value = if(connectedToServer == ServerHealth.HEALTHY) "Git" else if (connectedToServer == ServerHealth.UNHEALTHY) "Źle" else "unknown"
+                            value = if (connectedToServer == ServerHealth.HEALTHY) "Git" else if (connectedToServer == ServerHealth.UNHEALTHY) "Źle" else "unknown"
                         )
                     }
 
@@ -225,19 +189,13 @@ fun ProfileScreen(
 fun ProfileScreenPreview() {
     PokojowkamobileTheme {
         val navController = rememberNavController()
-        // Zaktualizowano dane podglądu, usuwając selectedHub
         val sampleUserData = SampleUserData.defaultUser.copy(
             userName = "Anna",
             lastName = "Projektantka"
         )
         val sampleEnvData = SampleUserData.defaultEnvironment
-        val previewConnectedDevices = listOf("Tablet Graficzny", "Lampa Studyjna LED", "Głośnik Smart")
 
-        Scaffold(
-            bottomBar = {
-                AppBottomNavigationBar(currentRoute = AppDestinations.PROFILE_SCREEN, onItemSelected = {})
-            }
-        ) { innerPadding ->
+        Scaffold { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -261,15 +219,6 @@ fun ProfileScreenPreview() {
                     ProfileSection(title = "Dane Osobowe") {
                         ProfileInfoItem(label = "Imię", value = sampleUserData.userName, icon = Icons.Filled.Person)
                         ProfileInfoItem(label = "Nazwisko", value = sampleUserData.lastName, icon = Icons.Filled.Badge)
-                    }
-                    ProfileSection(title = "Połączone Urządzenia") {
-                        if (previewConnectedDevices.isEmpty()) {
-                            ProfileInfoItem(label = "Urządzenia", value = "Brak", icon = Icons.Filled.Sensors)
-                        } else {
-                            previewConnectedDevices.forEach { deviceName ->
-                                ProfileInfoItem(label = deviceName, value = "Aktywne", icon = Icons.Filled.Sensors)
-                            }
-                        }
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     OutlinedButton(

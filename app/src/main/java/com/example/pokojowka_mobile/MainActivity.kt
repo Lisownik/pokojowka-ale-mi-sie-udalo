@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,18 +19,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.pokojowka_mobile.components.ProgrammableActionButton
+import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.data.NotificationHelper
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.network.repos.BulbsRepository
@@ -102,7 +101,6 @@ fun AppNavigation() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Obserwujemy, czy imię użytkownika jest zapisane.
     val isLoggedIn by userSettingsManager.userPreferencesFlow
         .map { it.userName.isNotBlank() }
         .collectAsState(initial = null)
@@ -231,12 +229,23 @@ fun AppNavigation() {
                 }
             }
 
-//         Nad wszytsim
+            // Pływający AppDock z pionową pigułką ze szkicu, uniesiony bezpośrednio w głównym kontenerze!
             if (currentRoute != AppDestinations.FORM_SCREEN && isLoggedIn == true) {
-                ProgrammableActionButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = 104.dp, end = 10.dp)
+                AppBottomNavigationBar(
+                    currentRoute = currentRoute,
+                    onItemSelected = { selectedRoute ->
+                        val popped = navController.popBackStack(selectedRoute, inclusive = false)
+                        if (!popped) {
+                            navController.navigate(selectedRoute) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.BottomCenter)
                 )
             }
         }

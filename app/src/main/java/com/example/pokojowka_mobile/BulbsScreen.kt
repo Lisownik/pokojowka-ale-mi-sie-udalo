@@ -9,75 +9,42 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavGraph.Companion.findStartDestination
-
-import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.components.BulbsListSection
 import com.example.pokojowka_mobile.components.SharedHeader
-
-
-import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-
-
-import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.SampleUserData
-
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 
 @Composable
 fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-
     val bulbsListState by BulbsRepository.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
-
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
         initialValue = UserData(userName = "", lastName = "", connectedDevices = emptyList())
     )
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
 
     Scaffold(
         containerColor = Color.Transparent,
-        bottomBar = {
-            AppBottomNavigationBar(
-                currentRoute = currentRoute,
-                onItemSelected = { selectedRoute ->
-                    val popped = navController.popBackStack(selectedRoute, inclusive = false)
-                    if (!popped) {
-                        navController.navigate(selectedRoute) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
-        },
         modifier = modifier.fillMaxSize()
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding())
+                .padding(bottom = paddingValues.calculateBottomPadding() + 80.dp)
                 .verticalScroll(scrollState)
                 .background(MaterialTheme.colorScheme.background)
         ) {
@@ -85,19 +52,16 @@ fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier)
                 userData = currentUserData,
                 environmentData = currentEnvironmentData,
                 onNotificationClick = {
-                    println("Powiadomienia kliknięte z [NazwaTwojegoEkranu]!")
+                    println("Powiadomienia kliknięte z BulbsScreen!")
                 }
             )
 
             BulbsListSection(
                 bulbs = bulbsListState,
                 onSwitchToggle = { bulbId, newState ->
-
                     val index = bulbsListState.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-                        // nowe
                         BulbsRepository.setBulbState(bulbId, newState)
-
                         Log.d("Logging bulbsListState", bulbsListState.toString())
                     }
                     Log.d("BulbsScreen", "Żarówka $bulbId przełączona na: $newState")
@@ -105,17 +69,14 @@ fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier)
                 onBrightnessChange = { bulbId, newBrightness ->
                     val index = bulbsListState.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
-                        // nowe
                         BulbsRepository.setBulbBrightness(bulbId, newBrightness)
                     }
                     Log.d("BulbsScreen", "Jasność żarówki $bulbId zmieniona na: $newBrightness%")
                 },
-
                 onItemClick = { bulbId ->
                     Log.d("BulbsScreen", "Nawigacja do BulbView dla żarówki: $bulbId")
                     navController.navigate("${AppDestinations.BULB_VIEW_SCREEN_ROUTE}/$bulbId")
                 },
-
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -132,4 +93,3 @@ fun BulbsScreenPreview() {
         BulbsScreen(navController = navController)
     }
 }
-

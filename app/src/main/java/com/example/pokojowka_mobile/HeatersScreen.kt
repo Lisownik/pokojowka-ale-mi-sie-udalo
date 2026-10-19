@@ -15,11 +15,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.components.HeatersSection
 import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.data.SampleUserData
@@ -30,8 +27,6 @@ import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 
 @Composable
 fun HeatersScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
@@ -44,29 +39,12 @@ fun HeatersScreen(navController: NavHostController, modifier: Modifier = Modifie
     val heaters by HeatersRepository.state.collectAsStateWithLifecycle()
 
     Scaffold(
-        bottomBar = {
-            AppBottomNavigationBar(
-                currentRoute = currentRoute,
-                onItemSelected = { selectedRoute ->
-                    val popped = navController.popBackStack(selectedRoute, inclusive = false)
-                    if (!popped) {
-                        navController.navigate(selectedRoute) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
-        },
         modifier = modifier.fillMaxSize()
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding())
+                .padding(bottom = paddingValues.calculateBottomPadding() + 80.dp)
                 .verticalScroll(scrollState)
                 .background(MaterialTheme.colorScheme.background)
         ) {
