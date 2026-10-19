@@ -211,6 +211,24 @@ fun AppNavigation() {
                         Text("Błąd: Brak ID okna")
                     }
                 }
+
+                composable(AppDestinations.HEATERS_SCREEN) {
+                    HeatersScreen(navController = navController)
+                }
+
+                composable(
+                    route = AppDestinations.HEATER_VIEW_SCREEN,
+                    arguments = listOf(navArgument(AppDestinations.HEATER_ID_ARG) {
+                        type = NavType.StringType
+                    })
+                ) { backStackEntry ->
+                    val heaterId = backStackEntry.arguments?.getString(AppDestinations.HEATER_ID_ARG)
+                    if (heaterId != null) {
+                        HeaterView(navController = navController, heaterId = heaterId)
+                    } else {
+                        Text("Błąd: Brak ID grzejnika")
+                    }
+                }
             }
 
 //         Nad wszytsim

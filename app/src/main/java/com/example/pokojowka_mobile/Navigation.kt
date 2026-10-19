@@ -3,7 +3,6 @@ package com.example.pokojowka_mobile
 object AppDestinations {
     const val FORM_SCREEN = "form_screen"
 
-
 //    Główne Ekrany - SCREEN's
     const val HOME_SCREEN = "home_screen"
     const val ROOMS_SCREEN = "rooms_screen"
@@ -11,6 +10,7 @@ object AppDestinations {
     const val BULBS_SCREEN = "bulbs_screen"
     const val PROFILE_SCREEN = "profile_screen"
     const val WINDOWS_SCREEN = "windows_screen"
+    const val HEATERS_SCREEN = "heaters_screen"
 
 //     Widoki - View's
     const val ROOM_VIEW_SCREEN_ROUTE = "room_view"
@@ -29,5 +29,7 @@ object AppDestinations {
     const val WINDOW_ID_ARG = "windowId"
     const val WINDOW_VIEW_SCREEN = "$WINDOW_VIEW_SCREEN_ROUTE/{$WINDOW_ID_ARG}"
 
+    const val HEATER_VIEW_SCREEN_ROUTE = "heater_view"
+    const val HEATER_ID_ARG = "heaterId"
+    const val HEATER_VIEW_SCREEN = "$HEATER_VIEW_SCREEN_ROUTE/{$HEATER_ID_ARG}"
 }
-

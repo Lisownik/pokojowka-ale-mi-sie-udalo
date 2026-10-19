@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material.icons.filled.Window
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,13 +28,13 @@ import com.example.pokojowka_mobile.components.NotificationsSection
 import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.data.EnvironmentData
 import com.example.pokojowka_mobile.data.GlobalPlantsList
-import com.example.pokojowka_mobile.data.GlobalRoomsList
 import com.example.pokojowka_mobile.data.NotificationData
 import com.example.pokojowka_mobile.data.NotificationType
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.data.sampleGlobalNotificationsList
 import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.HeatersRepository
 import com.example.pokojowka_mobile.network.repos.RoomsRepository
 import com.example.pokojowka_mobile.network.repos.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.*
@@ -43,6 +44,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
     val roomsList by RoomsRepository.state.collectAsStateWithLifecycle()
     val bulbsList by BulbsRepository.state.collectAsStateWithLifecycle()
     val windowsList by WindowsRepository.state.collectAsStateWithLifecycle()
+    val heatersList by HeatersRepository.state.collectAsStateWithLifecycle()
 
     val notificationsList = remember {
         mutableStateListOf<NotificationData>().apply {
@@ -151,7 +153,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                 )
             }
 
-            // Drugi rząd kafelków: Smart Okna
+            // Drugi rząd kafelków: Smart Okna & Grzejniki
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -182,8 +184,29 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     }
                 )
 
-                // Pusty kafelek dla zachowania symetrii 2x2
-                Spacer(modifier = Modifier.weight(1f))
+                val activeHeatersCount = heatersList.count { it.isHeatingOn }
+                val heaterSubtitle = if (activeHeatersCount > 0) "Grzanie aktywne" else "Wyłączone"
+
+                InfoTile(
+                    modifier = Modifier.weight(1f),
+                    gradientColors = listOf(HeaterGradientStart, HeaterGradientEnd),
+                    icon = Icons.Filled.Whatshot,
+                    iconContentDescription = "Grzejniki",
+                    chipText = "${heatersList.count()} grzejniki",
+                    title = "Grzejniki",
+                    subtitle = heaterSubtitle,
+                    onTileClick = {
+                        val popped = navController.popBackStack(AppDestinations.HEATERS_SCREEN, inclusive = false)
+                        if (!popped) {
+                            navController.navigate(AppDestinations.HEATERS_SCREEN) {
+                                popUpTo(AppDestinations.HOME_SCREEN) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                )
             }
 
             BulbsSection(
