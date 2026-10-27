@@ -2,7 +2,10 @@
 
 # Zasada pierwsza
 
-Zenic nie posiada praw (do "ale mi sie udało")
+syf syf syf 
+
+
+retlih floda
 
 ## Zasada druga
 
@@ -15,4 +18,5 @@ Co tu robi Frąsiak i Tomek Skyrim
 #### Zasada Czwarta
 
 Jak się włącza:
-npm run dev ; npm star
+
+npm run dev ; npm start
