@@ -1,6 +1,7 @@
 import { DeviceManager } from "../deviceManager";
-import {DeviceData, DeviceType} from "../types";
+import {anyID, DeviceData, DeviceType} from "../types";
 import express, {Request, Response, Router} from "express";
+import {EventManager} from "../eventManager";
 
 
 
@@ -18,6 +19,7 @@ class Topic<T> {
     res.set({
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache, no-transform",
+      'Transfer-Encoding': 'chunked',
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
     });
@@ -69,8 +71,44 @@ export const roomsTopic = new Topic("/stream/rooms")
 export const windowsTopic = new Topic("/stream/windows")
 export const heatersTopic = new Topic("/stream/heaters")
 
-export function streamingRoutes(deviceManager: DeviceManager) {
+export function streamingRoutes(deviceManager: DeviceManager, eventManager: EventManager) {
   const router: Router = express.Router();
+
+  const connectedClients = new Set<Response>();
+  router.get("/activity", (req, res) => {
+    console.log(`Subscribed to activity stream`)
+    res.set({
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      'Transfer-Encoding': 'chunked',
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no",
+    });
+    res.flushHeaders();
+
+    if(connectedClients.size === 0){
+      eventManager.emit(anyID, "go-in")
+    }
+
+    connectedClients.add(res);
+
+    req.on("close", () => {
+      connectedClients.delete(res);
+      console.log(`Ended subscription to activity stream`)
+      res.end()
+
+      if(connectedClients.size === 0){
+        eventManager.emit(anyID, "go-out")
+      }
+    });
+  })
+
+  router.get("/activity/clients", (req, res) => {
+    console.log(connectedClients.size)
+    res.status(200).json(
+      connectedClients.size
+    )
+  })
 
   router.get("/rooms", (req, res) => {
     roomsTopic.subscribe(req, res)

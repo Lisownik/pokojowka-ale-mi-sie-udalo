@@ -25,7 +25,7 @@ actionManager.setClient(mqttClient);
 console.log("MQTT Client set for action manager")
 
 
-const expressApp = createRouter(deviceManager, nameManager, actionManager, aiClient);
+const expressApp = createRouter(deviceManager, nameManager, actionManager, aiClient, eventManager);
 
 
 expressApp.listen(Environment.REST_PORT, () => {

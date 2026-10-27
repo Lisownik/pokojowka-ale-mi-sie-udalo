@@ -16,8 +16,9 @@ import {gptRoutes} from "./routers/gpt.routes";
 import {rootRoutes} from "./routers/root.routes";
 import {streamingRoutes} from "./routers/streaming.routes";
 import {heatersRoutes} from "./routers/heaters.routes";
+import {EventManager} from "./eventManager";
 
-export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager, aiClient: AiClient): Express {
+export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager, aiClient: AiClient, eventManager: EventManager): Express {
   const app = express()
     .use(cors())
     .use(express.json())
@@ -33,7 +34,7 @@ export function  createRouter(deviceManager: DeviceManager, nameManager: NameMan
   app.use("/", eventsRoutes(actionManager))
   app.use("/register", registerRoutes())
   app.use("/gpt", gptRoutes(aiClient))
-  app.use("/stream", streamingRoutes(deviceManager))
+  app.use("/stream", streamingRoutes(deviceManager, eventManager))
 
   app.use((req, res) => {
     res.status(404).json({
