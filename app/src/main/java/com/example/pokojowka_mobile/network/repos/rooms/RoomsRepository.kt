@@ -1,14 +1,14 @@
-package com.example.pokojowka_mobile.network.repos
+package com.example.pokojowka_mobile.network.repos.rooms
 
 import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.data.GlobalRoomsList
-import com.example.pokojowka_mobile.data.NetworkBulbData
 import com.example.pokojowka_mobile.data.NetworkRoomData
 import com.example.pokojowka_mobile.data.RoomData
 import com.example.pokojowka_mobile.data.toRoomData
 import com.example.pokojowka_mobile.debug.Debug
 import com.example.pokojowka_mobile.debug.LogClasses
 import com.example.pokojowka_mobile.network.Network
+import com.example.pokojowka_mobile.network.repos.Repository
 import com.example.pokojowka_mobile.network.safeApiCall
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Types

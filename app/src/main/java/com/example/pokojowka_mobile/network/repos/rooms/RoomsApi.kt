@@ -1,4 +1,4 @@
-package com.example.pokojowka_mobile.network.repos
+package com.example.pokojowka_mobile.network.repos.rooms
 
 import com.example.pokojowka_mobile.data.NetworkRoomData
 import retrofit2.Response

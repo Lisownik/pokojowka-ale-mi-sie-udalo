@@ -1,16 +1,14 @@
-package com.example.pokojowka_mobile.network.repos
+package com.example.pokojowka_mobile.network.repos.heaters
 
 import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.data.GlobalHeatersList
 import com.example.pokojowka_mobile.data.HeaterData
-import com.example.pokojowka_mobile.data.NetworkBulbData
 import com.example.pokojowka_mobile.data.NetworkHeaterData
-import com.example.pokojowka_mobile.data.toBulbData
 import com.example.pokojowka_mobile.data.toHeaterData
-import com.example.pokojowka_mobile.data.toWindowData
 import com.example.pokojowka_mobile.debug.Debug
 import com.example.pokojowka_mobile.debug.LogClasses
 import com.example.pokojowka_mobile.network.Network
+import com.example.pokojowka_mobile.network.repos.Repository
 import com.example.pokojowka_mobile.network.safeApiCall
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Types

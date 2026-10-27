@@ -1,4 +1,4 @@
-package com.example.pokojowka_mobile.network.repos
+package com.example.pokojowka_mobile.network.repos.program
 
 import android.util.Log
 import com.example.pokojowka_mobile.BuildConfig

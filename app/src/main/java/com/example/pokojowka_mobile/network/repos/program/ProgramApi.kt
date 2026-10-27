@@ -1,4 +1,4 @@
-package com.example.pokojowka_mobile.network.repos
+package com.example.pokojowka_mobile.network.repos.program
 
 import retrofit2.Response
 import retrofit2.http.POST

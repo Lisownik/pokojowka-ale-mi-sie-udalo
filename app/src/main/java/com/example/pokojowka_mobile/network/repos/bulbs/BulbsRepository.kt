@@ -1,15 +1,14 @@
-package com.example.pokojowka_mobile.network.repos
+package com.example.pokojowka_mobile.network.repos.bulbs
 
 import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.data.BulbData
 import com.example.pokojowka_mobile.data.GlobalBulbsList
 import com.example.pokojowka_mobile.data.NetworkBulbData
-import com.example.pokojowka_mobile.data.NetworkRoomData
 import com.example.pokojowka_mobile.data.toBulbData
-import com.example.pokojowka_mobile.data.toRoomData
 import com.example.pokojowka_mobile.debug.Debug
 import com.example.pokojowka_mobile.debug.LogClasses
 import com.example.pokojowka_mobile.network.Network
+import com.example.pokojowka_mobile.network.repos.Repository
 import com.example.pokojowka_mobile.network.safeApiCall
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Types
@@ -21,8 +20,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
 
 object BulbsRepository: Repository<List<BulbData>> {
