@@ -3,11 +3,16 @@ package com.example.pokojowka_mobile.network.repos
 import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.data.BulbData
 import com.example.pokojowka_mobile.data.GlobalBulbsList
+import com.example.pokojowka_mobile.data.NetworkBulbData
+import com.example.pokojowka_mobile.data.NetworkRoomData
 import com.example.pokojowka_mobile.data.toBulbData
+import com.example.pokojowka_mobile.data.toRoomData
 import com.example.pokojowka_mobile.debug.Debug
 import com.example.pokojowka_mobile.debug.LogClasses
 import com.example.pokojowka_mobile.network.Network
 import com.example.pokojowka_mobile.network.safeApiCall
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Types
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -29,6 +34,12 @@ object BulbsRepository: Repository<List<BulbData>> {
     private val _state: MutableStateFlow<List<BulbData>> = MutableStateFlow(GlobalBulbsList)
     override val state: StateFlow<List<BulbData>> = _state.asStateFlow()
 
+    private val listAdapter: JsonAdapter<ArrayList<NetworkBulbData>> = Network.moshi.adapter(
+        Types.newParameterizedType(List::class.java, NetworkBulbData::class.java)
+    )
+
+    private var streamJob: Job? = null
+
     private var refreshingJob: Job? = null
     @Volatile private var lockedUntil = 0L;
 
@@ -38,6 +49,27 @@ object BulbsRepository: Repository<List<BulbData>> {
     }
 
     private fun isLocked() = System.currentTimeMillis() < lockedUntil
+
+    fun startStream() {
+        if (STATIC_MODE || streamJob?.isActive == true) return
+
+        streamJob = scope.launch {
+            Network.stream("stream/bulbs", listAdapter)
+                .collect { data ->
+                    Debug.logDebug(LogClasses.NETWORK, "Poprawnie odebrano pakiet od /stream/bulbs")
+                    _state.tryEmit(
+                        data.map {
+                            it.toBulbData()
+                        }
+                    )
+                }
+        }
+    }
+
+    fun stopStream(){
+        streamJob?.cancel()
+        streamJob = null
+    }
 
     override fun refresh(){
         if(STATIC_MODE) return
@@ -71,7 +103,7 @@ object BulbsRepository: Repository<List<BulbData>> {
         }
 
         if(STATIC_MODE) return
-        lock()
+//        lock()
         scope.launch {
             safeApiCall { api.changeState(bulbId, if (isSwitchedOn) "true" else "false") }
                 .onSuccess {
@@ -95,7 +127,7 @@ object BulbsRepository: Repository<List<BulbData>> {
         }
 
         if(STATIC_MODE) return
-        lock()
+//        lock()
         scope.launch {
             safeApiCall { api.changeBrightness(bulbId, brightnessPercentage) }
                 .onSuccess {
@@ -131,7 +163,7 @@ object BulbsRepository: Repository<List<BulbData>> {
         }
 
         if(STATIC_MODE) return
-        lock()
+//        lock()
         scope.launch {
             safeApiCall { api.changeName(bulbId, name) }
                 .onSuccess {

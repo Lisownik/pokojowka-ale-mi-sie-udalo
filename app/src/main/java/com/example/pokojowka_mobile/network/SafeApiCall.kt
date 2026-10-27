@@ -3,6 +3,7 @@ package com.example.pokojowka_mobile.network
 
 import android.util.Log
 import com.example.pokojowka_mobile.debug.Debug
+import com.example.pokojowka_mobile.debug.LogClasses
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import retrofit2.Response
@@ -10,6 +11,7 @@ import retrofit2.Response
 suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T> {
     return try {
         val response = apiCall()
+        Debug.logDebug(LogClasses.NETWORK, "API response: ${response.isSuccessful}")
         if (response.isSuccessful) {
             Result.success(response.body()!!)
         } else {

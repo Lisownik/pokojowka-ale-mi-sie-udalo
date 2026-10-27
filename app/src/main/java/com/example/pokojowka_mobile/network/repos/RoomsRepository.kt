@@ -2,12 +2,16 @@ package com.example.pokojowka_mobile.network.repos
 
 import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.data.GlobalRoomsList
+import com.example.pokojowka_mobile.data.NetworkBulbData
+import com.example.pokojowka_mobile.data.NetworkRoomData
 import com.example.pokojowka_mobile.data.RoomData
 import com.example.pokojowka_mobile.data.toRoomData
 import com.example.pokojowka_mobile.debug.Debug
 import com.example.pokojowka_mobile.debug.LogClasses
 import com.example.pokojowka_mobile.network.Network
 import com.example.pokojowka_mobile.network.safeApiCall
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Types
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -27,6 +31,13 @@ object RoomsRepository: Repository<List<RoomData>> {
     private val _state: MutableStateFlow<List<RoomData>> = MutableStateFlow(GlobalRoomsList)
     override val state: StateFlow<List<RoomData>> = _state.asStateFlow()
 
+
+    private val listAdapter: JsonAdapter<List<NetworkRoomData>> = Network.moshi.adapter(
+        Types.newParameterizedType(List::class.java, NetworkRoomData::class.java)
+    )
+
+    private var streamJob: Job? = null
+
     private var refreshingJob: Job? = null
 
     @Volatile private var lockedUntil = 0L;
@@ -37,6 +48,28 @@ object RoomsRepository: Repository<List<RoomData>> {
     }
 
     private fun isLocked() = System.currentTimeMillis() < lockedUntil
+
+    fun startStream() {
+        if (STATIC_MODE || streamJob?.isActive == true) return
+
+        streamJob = scope.launch {
+            Network.stream("stream/rooms", listAdapter)
+                .collect { data ->
+                    Debug.logDebug(LogClasses.NETWORK, "Poprawnie odebrano pakiet od /stream/Rooms")
+
+                    _state.tryEmit(
+                        data.map {
+                            it.toRoomData()
+                        }
+                    )
+                }
+        }
+    }
+
+    fun stopStream(){
+        streamJob?.cancel()
+        streamJob = null
+    }
 
     override fun refresh(){
         if(STATIC_MODE) return
@@ -69,7 +102,7 @@ object RoomsRepository: Repository<List<RoomData>> {
         }
 
         if(STATIC_MODE) return
-        lock()
+//        lock()
         scope.launch {
             safeApiCall { api.changeName(roomId, name) }
                 .onSuccess {

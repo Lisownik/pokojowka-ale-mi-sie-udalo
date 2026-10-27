@@ -31,13 +31,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.pokojowka_mobile.components.AppBottomNavigationBar
+import com.example.pokojowka_mobile.data.NetworkBulbData
 import com.example.pokojowka_mobile.data.NotificationHelper
 import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.network.Network
 import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.HeatersRepository
 import com.example.pokojowka_mobile.network.repos.RoomsRepository
 import com.example.pokojowka_mobile.network.repos.WindowsRepository
 import com.example.pokojowka_mobile.notifications.Notifier
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
+import com.squareup.moshi.Types
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
@@ -51,13 +55,16 @@ class MainActivity : ComponentActivity() {
 
         Notifier.init(this)
 
-        MainScope().launch {
-            while(true) {
-                RoomsRepository.refresh()
-                BulbsRepository.refresh()
-                delay(3000.milliseconds)
-            }
-        }
+        val json = """[{"id":"led-1","type":"smart_led","online":true,"lastSeen":1792506983154,"state":{"temperature":3920,"brightness":22,"power":"false"},"name":"x"}]"""
+        val result = Network.moshi.adapter<List<NetworkBulbData>>(
+            Types.newParameterizedType(List::class.java, NetworkBulbData::class.java)
+        ).fromJson(json)
+
+        RoomsRepository.startStream()
+        BulbsRepository.startStream()
+        WindowsRepository.startStream()
+        HeatersRepository.startStream()
+
 
         NotificationHelper.createNotificationChannels(this)
         setContent {
@@ -84,6 +91,13 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         checkNotificationPermission()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        RoomsRepository.stopStream()
+        BulbsRepository.stopStream()
+        WindowsRepository.stopStream()
     }
 
     companion object {
@@ -132,9 +146,6 @@ fun AppNavigation() {
                 }
 
                 composable(AppDestinations.HOME_SCREEN) {
-                    RoomsRepository.refresh()
-                    BulbsRepository.refresh()
-                    WindowsRepository.refresh()
                     HomeScreen(navController = navController)
                 }
 

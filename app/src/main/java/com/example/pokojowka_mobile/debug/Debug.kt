@@ -3,10 +3,11 @@ package com.example.pokojowka_mobile.debug
 import android.util.Log
 
 enum class LogClasses(var color: String){
-    NETWORK("NETWORK"),
+    NETWORK("DEBUG_NETWORK"),
     NOTHING("NOTHIN"),
     TEST("TEST"),
-    DEBUG("DEBUG")
+    DEBUG("DEBUG"),
+    NETWORK_ERROR("ERROR_NETWORK")
 }
 
 object Debug{
@@ -39,6 +40,11 @@ object Debug{
 
     fun logDebug(logClasses: LogClasses, text: String) {
         debug {
+            if(logClasses == LogClasses.NETWORK_ERROR){
+                Log.e(logClasses.color, text)
+                return@debug
+            }
+
             Log.i(logClasses.color, text)
         }
     }

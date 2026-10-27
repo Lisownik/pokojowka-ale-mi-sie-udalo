@@ -2,12 +2,17 @@ package com.example.pokojowka_mobile.network.repos
 
 import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.data.GlobalWindowsList
+import com.example.pokojowka_mobile.data.NetworkBulbData
+import com.example.pokojowka_mobile.data.NetworkWindowData
 import com.example.pokojowka_mobile.data.WindowData
+import com.example.pokojowka_mobile.data.toBulbData
 import com.example.pokojowka_mobile.data.toWindowData
 import com.example.pokojowka_mobile.debug.Debug
 import com.example.pokojowka_mobile.debug.LogClasses
 import com.example.pokojowka_mobile.network.Network
 import com.example.pokojowka_mobile.network.safeApiCall
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Types
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -26,6 +31,12 @@ object WindowsRepository : Repository<List<WindowData>> {
     private val _state: MutableStateFlow<List<WindowData>> = MutableStateFlow(GlobalWindowsList)
     override val state: StateFlow<List<WindowData>> = _state.asStateFlow()
 
+    private val listAdapter: JsonAdapter<List<NetworkWindowData>> = Network.moshi.adapter(
+        Types.newParameterizedType(List::class.java, NetworkWindowData::class.java)
+    )
+
+    private var streamJob: Job? = null
+
     @Volatile private var lockedUntil = 0L;
 
 
@@ -36,6 +47,28 @@ object WindowsRepository : Repository<List<WindowData>> {
     private fun isLocked() = System.currentTimeMillis() < lockedUntil
 
     private var refreshingJob: Job? = null
+
+    fun startStream() {
+        if (STATIC_MODE || streamJob?.isActive == true) return
+
+        streamJob = scope.launch {
+            Network.stream("stream/windows", listAdapter)
+                .collect { data ->
+                    Debug.logDebug(LogClasses.NETWORK, "Poprawnie odebrano pakiet od /stream/windows")
+                    _state.tryEmit(
+                        data.map {
+                            it.toWindowData()
+                        }
+                    )
+                }
+        }
+    }
+
+    fun stopStream(){
+        streamJob?.cancel()
+        streamJob = null
+    }
+
 
     override fun refresh() {
         if(STATIC_MODE) return

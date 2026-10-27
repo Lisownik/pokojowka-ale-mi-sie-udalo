@@ -6,6 +6,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Wifi
@@ -31,6 +32,7 @@ import com.example.pokojowka_mobile.data.availableDeviceModels
 import com.example.pokojowka_mobile.network.HealthState
 import com.example.pokojowka_mobile.network.ServerHealth
 import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.HeatersRepository
 import com.example.pokojowka_mobile.network.repos.RoomsRepository
 import com.example.pokojowka_mobile.network.repos.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
@@ -49,6 +51,7 @@ fun ProfileScreen(
     val bulbs by BulbsRepository.state.collectAsStateWithLifecycle()
     val rooms by RoomsRepository.state.collectAsStateWithLifecycle()
     val windows by WindowsRepository.state.collectAsStateWithLifecycle()
+    val heaters by HeatersRepository.state.collectAsStateWithLifecycle()
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
         initialValue = UserData("", "", emptyList())
@@ -123,6 +126,13 @@ fun ProfileScreen(
                                     label = window.name,
                                     value = window.id,
                                     icon = Icons.Outlined.Window
+                                )
+                            }
+                            heaters.forEach { heater ->
+                                ProfileInfoItem(
+                                    label = heater.name,
+                                    value = heater.id,
+                                    icon = Icons.Filled.LocalFireDepartment
                                 )
                             }
                         }

@@ -63,8 +63,8 @@ fun ProgrammableActionButton(
             .size(56.dp)
             .clip(CircleShape)
             .clickable {
-                showDialog = true;
-                Notifier.safeNotification("Programmable button", "Testowa wiadomość")
+//                showDialog = true
+//                Notifier.safeNotification("Programmable button", "Testowa wiadomość")
                 ProgramRepository.emitProgram()
             },
         shape = CircleShape,
