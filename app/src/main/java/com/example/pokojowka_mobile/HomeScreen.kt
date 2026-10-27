@@ -30,10 +30,10 @@ import com.example.pokojowka_mobile.data.NotificationType
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.data.sampleGlobalNotificationsList
-import com.example.pokojowka_mobile.network.repos.BulbsRepository
-import com.example.pokojowka_mobile.network.repos.HeatersRepository
-import com.example.pokojowka_mobile.network.repos.RoomsRepository
-import com.example.pokojowka_mobile.network.repos.WindowsRepository
+import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
+import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.windows.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.*
 
 @Composable

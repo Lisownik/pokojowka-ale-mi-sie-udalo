@@ -21,7 +21,7 @@ import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.data.SampleUserData
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 
 @Composable

@@ -36,7 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.components.BulbViewSection
-import com.example.pokojowka_mobile.network.repos.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
 
 
 @Composable

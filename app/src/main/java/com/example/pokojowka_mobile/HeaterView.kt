@@ -7,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.*
@@ -32,7 +31,7 @@ import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.data.SampleUserData
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.repos.HeatersRepository
+import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 
 @Composable

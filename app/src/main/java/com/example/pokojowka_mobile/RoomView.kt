@@ -57,7 +57,7 @@ import com.example.pokojowka_mobile.data.SampleUserData
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.repos.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
 
 
 @Composable
