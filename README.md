@@ -2,7 +2,10 @@
 
 # Zasada pierwsza
 
-Zenic nie posiada praw (do "ale mi sie udało")
+syf syf syf 
+
+
+retlih floda
 
 ## Zasada druga
 
