@@ -5,12 +5,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material.icons.outlined.Cloud
 import androidx.compose.material.icons.outlined.Window
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,10 +35,10 @@ import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.data.availableDeviceModels
 import com.example.pokojowka_mobile.network.HealthState
 import com.example.pokojowka_mobile.network.ServerHealth
-import com.example.pokojowka_mobile.network.repos.BulbsRepository
-import com.example.pokojowka_mobile.network.repos.HeatersRepository
-import com.example.pokojowka_mobile.network.repos.RoomsRepository
-import com.example.pokojowka_mobile.network.repos.WindowsRepository
+import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
+import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.windows.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import kotlinx.coroutines.launch
 
@@ -52,7 +56,8 @@ fun ProfileScreen(
     val rooms by RoomsRepository.state.collectAsStateWithLifecycle()
     val windows by WindowsRepository.state.collectAsStateWithLifecycle()
     val heaters by HeatersRepository.state.collectAsStateWithLifecycle()
-
+    val API_URL = BuildConfig.API_URL
+    val STATIC_MODE = BuildConfig.STATIC_MODE
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
         initialValue = UserData("", "", emptyList())
     )
@@ -140,9 +145,19 @@ fun ProfileScreen(
 
                     ProfileSection(title = "Dane Dewelopera") {
                         ProfileInfoItem(
+                            label = "DATA MODE",
+                            icon = if (STATIC_MODE) Icons.Filled.CloudOff else Icons.Outlined.Cloud,
+                            value = if (STATIC_MODE) "STATIC" else "NETWORK"
+                        )
+                        ProfileInfoItem(
                             label = "Stan połączenia z Serwerem",
                             icon = if (connectedToServer == ServerHealth.HEALTHY) Icons.Filled.Wifi else Icons.Filled.WifiOff,
                             value = if (connectedToServer == ServerHealth.HEALTHY) "Git" else if (connectedToServer == ServerHealth.UNHEALTHY) "Źle" else "unknown"
+                        )
+                        ProfileInfoItem(
+                            label = "API URI",
+                            icon = Icons.Filled.Route,
+                            value = API_URL
                         )
                     }
 
