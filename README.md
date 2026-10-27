@@ -13,9 +13,10 @@ System OKO bad
 
 ### Zasada trzecia
 
-Co tu robi Benjamin
+Co tu robi Frąsiak i Tomek Skyrim
 
 #### Zasada Czwarta
 
 Jak się włącza:
+
 npm run dev ; npm start
