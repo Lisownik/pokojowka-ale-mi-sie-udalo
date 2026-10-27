@@ -2,6 +2,7 @@ import { DeviceManager } from "../deviceManager";
 import {anyID, DeviceData, DeviceType} from "../types";
 import express, {Request, Response, Router} from "express";
 import {EventManager} from "../eventManager";
+import {clearInterval} from "node:timers";
 
 
 
@@ -25,6 +26,7 @@ class Topic<T> {
     });
     res.flushHeaders();
 
+    req.socket.setKeepAlive(true, 1_000);
     this.clients.add(res);
 
     req.on("close", () => {
@@ -92,10 +94,13 @@ export function streamingRoutes(deviceManager: DeviceManager, eventManager: Even
 
     connectedClients.add(res);
 
+    req.socket.setKeepAlive(true, 1_000);
+
     req.on("close", () => {
       connectedClients.delete(res);
       console.log(`Ended subscription to activity stream`)
       res.end()
+
 
       if(connectedClients.size === 0){
         eventManager.emit(anyID, "go-out")
