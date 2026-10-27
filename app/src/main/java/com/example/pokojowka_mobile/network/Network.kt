@@ -3,11 +3,11 @@ package com.example.pokojowka_mobile.network
 import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.debug.Debug
 import com.example.pokojowka_mobile.debug.LogClasses
-import com.example.pokojowka_mobile.network.repos.BulbsApi
-import com.example.pokojowka_mobile.network.repos.HeatersApi
-import com.example.pokojowka_mobile.network.repos.ProgramApi
-import com.example.pokojowka_mobile.network.repos.RoomsApi
-import com.example.pokojowka_mobile.network.repos.WindowsApi
+import com.example.pokojowka_mobile.network.repos.bulbs.BulbsApi
+import com.example.pokojowka_mobile.network.repos.heaters.HeatersApi
+import com.example.pokojowka_mobile.network.repos.program.ProgramApi
+import com.example.pokojowka_mobile.network.repos.rooms.RoomsApi
+import com.example.pokojowka_mobile.network.repos.windows.WindowsApi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import okhttp3.Dispatcher
 import okio.IOException
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -36,6 +37,10 @@ object Network{
         .build()
 
     private val sseHttpClient = client.newBuilder()
+        .dispatcher(Dispatcher().apply {
+            maxRequests = 64
+            maxRequestsPerHost = 32
+        })
         .readTimeout(0, TimeUnit.MILLISECONDS)
         .writeTimeout(0, TimeUnit.MILLISECONDS)
         .build()
@@ -76,7 +81,7 @@ object Network{
                 }
 
             delay(backoff.milliseconds)
-            backoff = (backoff * 2).coerceAtMost(30_000L)
+            backoff = (backoff * 2).coerceAtMost(1_000L)
         }
     }
 

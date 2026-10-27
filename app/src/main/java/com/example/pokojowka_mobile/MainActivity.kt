@@ -2,6 +2,8 @@ package com.example.pokojowka_mobile
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -19,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -31,22 +32,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.pokojowka_mobile.components.AppBottomNavigationBar
-import com.example.pokojowka_mobile.data.NetworkBulbData
 import com.example.pokojowka_mobile.data.NotificationHelper
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.Network
-import com.example.pokojowka_mobile.network.repos.BulbsRepository
-import com.example.pokojowka_mobile.network.repos.HeatersRepository
-import com.example.pokojowka_mobile.network.repos.RoomsRepository
-import com.example.pokojowka_mobile.network.repos.WindowsRepository
+import com.example.pokojowka_mobile.network.repos.activity.ActivityRepository
+import com.example.pokojowka_mobile.network.repos.activity.ActivityService
+import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
+import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
+import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
+import com.example.pokojowka_mobile.network.repos.windows.WindowsRepository
 import com.example.pokojowka_mobile.notifications.Notifier
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
-import com.squareup.moshi.Types
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,16 +51,13 @@ class MainActivity : ComponentActivity() {
 
         Notifier.init(this)
 
-        val json = """[{"id":"led-1","type":"smart_led","online":true,"lastSeen":1792506983154,"state":{"temperature":3920,"brightness":22,"power":"false"},"name":"x"}]"""
-        val result = Network.moshi.adapter<List<NetworkBulbData>>(
-            Types.newParameterizedType(List::class.java, NetworkBulbData::class.java)
-        ).fromJson(json)
-
         RoomsRepository.startStream()
         BulbsRepository.startStream()
         WindowsRepository.startStream()
         HeatersRepository.startStream()
+//        ActivityRepository.startStream()
 
+        startActivityService(this)
 
         NotificationHelper.createNotificationChannels(this)
         setContent {
@@ -91,6 +84,13 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         checkNotificationPermission()
+
+        RoomsRepository.startStream()
+        BulbsRepository.startStream()
+        WindowsRepository.startStream()
+        HeatersRepository.startStream()
+
+//        ActivityRepository.startStream()
     }
 
     override fun onStop() {
@@ -98,11 +98,22 @@ class MainActivity : ComponentActivity() {
         RoomsRepository.stopStream()
         BulbsRepository.stopStream()
         WindowsRepository.stopStream()
+        HeatersRepository.stopStream()
     }
 
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
     }
+}
+
+fun startActivityService(context: Context) {
+    ContextCompat.startForegroundService(
+        context, Intent(context, ActivityService::class.java)
+    )
+}
+
+fun stopActivityService(context: Context) {
+    context.stopService(Intent(context, ActivityService::class.java))
 }
 
 @SuppressLint("FlowOperatorInvokedInComposition")
