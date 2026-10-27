@@ -4,6 +4,7 @@ import {DeviceType} from "./types";
 import {Environment} from "./environment";
 import { NameManager } from './nameManager';
 import { EventManager } from './eventManager';
+import {publish} from "./routers/streaming.routes";
 
 
 
@@ -17,7 +18,7 @@ export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager
     client.subscribe("devices/+/+/state")
   })
 
-  client.on('message', (topic, payload) => {
+  client.on('message', (topic, payload, packet) => {
     try{
       const message = JSON.parse(payload.toString());
 
@@ -28,7 +29,6 @@ export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager
       }
 
       const [_, type, deviceId, messageType] = parts;
-
 
       if (messageType === "status") {
         handleStatus(
@@ -46,6 +46,7 @@ export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager
           type as DeviceType,
           message,
           eventManager,
+          packet.retain,
           client
         )
       }
@@ -63,10 +64,11 @@ function handleStatus(
   message: {online: boolean},
 ) {
   if(message.online) {
-    deviceManager.deviceOnline(deviceId, type);
+    deviceManager.deviceState(deviceId, type, message.online);
 
     console.log(`${deviceId} is Online`);
 
+    publish(deviceManager, type);
     return;
   }
 
@@ -75,6 +77,7 @@ function handleStatus(
   if(device){
     console.log(`${deviceId} Device Offline`);
   }
+  publish(deviceManager, type);
 }
 
 function handleState(
@@ -83,6 +86,7 @@ function handleState(
   type: DeviceType,
   state: Record<string, any>,
   eventManager: EventManager,
+  isRetained: boolean,
   client: MqttClient
 
 ) {
@@ -101,8 +105,9 @@ function handleState(
     return;
   }
 
-  if(!device.online)
+  if(!isRetained)
     device.online = true;
 
   console.log(`Updated ${deviceId}`, device.state)
+  publish(deviceManager, type);
 }

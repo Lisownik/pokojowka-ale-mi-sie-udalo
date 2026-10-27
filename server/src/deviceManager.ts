@@ -1,5 +1,6 @@
 import { NameManager } from "./nameManager";
 import {anyID, Device, DeviceState, DeviceType, everyID, ShortDevice} from "./types";
+import {Simple} from "./environment";
 
 export class DeviceManager {
   private devices: Map<string, Device> = new Map();
@@ -34,7 +35,10 @@ export class DeviceManager {
   shortenDevices(): ShortDevice[] {
     const newDevices: ShortDevice[] = [];
     this.devices.forEach(device => {
-      newDevices.push(device);
+      newDevices.push({
+        id: device.id,
+        type: device.type
+      });
     })
 
     return newDevices;
@@ -50,27 +54,36 @@ export class DeviceManager {
   }
 
   getShortDevices(): ShortDevice[] {
-    return [
+
+    const data = [
       ...this.defaultDevices,
       ...this.savedDevices(),
-      ...this.shortenDevices()
     ]
+
+    this.shortenDevices().forEach(device => {
+      if(!data.some(item => item.id === device.id)) {
+        data.push(device);
+      }
+    })
+
+    return [...new Set(data)]
   }
 
-  deviceOnline(
+  deviceState(
     id: string,
     type: DeviceType,
+    online: boolean,
     state: DeviceState = {}): Device {
     const existing = this.devices.get(id);
 
     if (!this.nameManager.has(id)){
-      this.nameManager.set(id, `template-name-${type}`, type)
+      this.nameManager.set(id, Simple.name(type), type)
     }
 
     const newDevice: Device = {
       id,
       type,
-      online: true,
+      online: online,
       lastSeen: Date.now(),
       state: {
         ...existing?.state,
@@ -109,7 +122,7 @@ export class DeviceManager {
     let device = this.devices.get(id);
 
     if (!device) {
-      device = this.deviceOnline(id, type, state)
+      device = this.deviceState(id, type, false, state)
       return device;
     }
 
@@ -128,6 +141,10 @@ export class DeviceManager {
 
   get(id: string): Device | undefined {
     return this.devices.get(id);
+  }
+
+  has(id: string): boolean {
+    return this.devices.has(id);
   }
 
   getById(id: string): Device | undefined {

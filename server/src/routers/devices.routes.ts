@@ -1,6 +1,7 @@
 import { DeviceManager } from "../deviceManager";
 import {NameManager} from "../nameManager";
 import {Router} from "express";
+import {publish} from "./streaming.routes";
 
 export function devicesRoutes(deviceManager: DeviceManager, nameManager: NameManager) {
   const router: Router = Router()
@@ -37,6 +38,7 @@ export function devicesRoutes(deviceManager: DeviceManager, nameManager: NameMan
     }
 
     await nameManager.set(id, name, type)
+    publish(deviceManager, type);
 
     res.status(200)
       .json({

@@ -16,6 +16,39 @@ export const Environment = environmentSchema.parse(process.env);
 
 export namespace Simple {
 
+  const names = [
+    "Aligator",
+    "Bear",
+    "Cat",
+    "Deer",
+    "Elephant",
+    "Fox",
+    "Gecko",
+    "Hippo",
+    "Impala",
+    "Jellyfish",
+    "Koala",
+    "Lion",
+    "Monkey",
+    "Nighthawk",
+    "Octopus",
+    "Panda",
+    "Quail",
+    "Rabbit",
+    "Salmon",
+    "Tiger",
+    "Unicorn",
+    "Vegesalmon",
+    "Wuzek",
+    "X-Ray",
+    "Yak",
+    "Zebra"
+  ]
+
+  function getRandomAnimalName(){
+    return names[random(0, names.length)];
+  }
+
   function random(min: number, max: number) {
     return Math.floor(Math.random() * (max - min)) + min;
   }
@@ -25,6 +58,6 @@ export namespace Simple {
   }
 
   export function name(type: DeviceType = "room"): string {
-    return `${type}_${random(0,65536).toString(16)}_${random(0,65536).toString(16)}`;
+    return `${type}_${getRandomAnimalName()}_${random(0,65536).toString(16)}`;
   }
 }

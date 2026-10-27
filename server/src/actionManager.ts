@@ -72,7 +72,12 @@ export class ActionManager {
   }
 
   private getAction(id: string, event: EventType): ActionSlave | null {
-    const ETA = this.ETAConnections.find((e) => e.id === id && e.event === event);
+    const ETA = this.ETAConnections.find(
+      (e) =>
+        ((e.id === id) || (e.id === anyID) || (e.id === everyID))
+        &&
+        e.event === event
+    );
     if (!ETA) {
       console.log(`Action for id: ${id} and event: ${event} not found :(`)
       return null;

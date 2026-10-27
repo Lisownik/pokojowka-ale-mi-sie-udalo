@@ -53,7 +53,7 @@ export class EventManager {
   checkForEvents(device: Device, client: MqttClient) {
     if(!this.client)
       this.client = client;
-    console.group("CHECKING EVENTS FOR: ", device.id);
+    // console.group("CHECKING EVENTS FOR: ", device.id);
     switch (device.type) {
       case "room":
         this.checkRoom(device);
@@ -62,9 +62,9 @@ export class EventManager {
         console.warn("Checking mobile - this shouldn't happen");
         break;
       default:
-        console.log("No events found for " + device.type);
+        // console.log("No events found for " + device.type);
     }
-    console.groupEnd();
+    // console.groupEnd();
   }
 
 }

@@ -1,5 +1,5 @@
 import random
-from math import floor
+from math import floor, isnan
 from time import sleep
 
 import paho.mqtt.client as mqtt
@@ -10,6 +10,7 @@ EVERY_ID = "<every>"
 MY_ID = "bulb-1"
 TYPE = "smart_led"
 power = "true"
+brightness = 80
 
 STATUS_TOPIC = f"devices/{TYPE}/{MY_ID}/status"
 STATE_TOPIC = f"devices/{TYPE}/{MY_ID}/state"
@@ -29,6 +30,7 @@ def on_disconnect(client, userdata, flags, reason_code, properties):
 
 def on_message(client, userdata, msg):
     global power
+    global brightness
     print(msg.topic, msg.payload.decode())
     _, _, event = msg.topic.split("/")
 
@@ -37,6 +39,13 @@ def on_message(client, userdata, msg):
             power = "false"
         case "on":
             power = "true"
+        case "brightness":
+            new =  json.loads(msg.payload.decode())["brightness"]
+            if not isnan(new):
+                brightness = new
+
+    publish_state(client)
+
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -55,7 +64,7 @@ def getRandom(min, max):
 
 def publish_state(client):
     client.publish(STATE_TOPIC, json.dumps({
-        "brightness": getRandom(1, 100),
+        "brightness": brightness,
         "power": power,
         "temperature": getRandom(2700, 4000),
     }), qos=1, retain=True)

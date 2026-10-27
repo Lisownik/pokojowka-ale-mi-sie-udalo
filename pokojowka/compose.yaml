@@ -3,9 +3,9 @@ services:
     build: .
     container_name: "pokojowka-pbl"
     environment:
-      - API_URL=
-      - MQTT_PORT=
-      - REST_PORT=
-      - STATIC=
+      - API_URL=0.0.0.0
+      - MQTT_PORT=1883
+      - REST_PORT=1234
+      - STATIC=true
     restart: always
     network_mode: host

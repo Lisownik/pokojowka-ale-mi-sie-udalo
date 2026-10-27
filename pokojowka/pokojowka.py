@@ -1,3 +1,4 @@
+import math
 import random
 from math import floor
 from time import sleep
@@ -8,6 +9,8 @@ import json
 import requests
 
 import os
+
+LOG_CHAR_CNT = 60
 
 MY_ID = "none"
 BROKER_HOST = os.getenv("API_URL", "localhost")
@@ -23,6 +26,16 @@ def register_my_id():
     if not res.ok:
         return None
     return res.text
+
+def publish_state(client, sensor):
+    data = get_data(sensor)
+    print("Publishing state:")
+    print(f"\ttemperature: {data['temperature']}")
+    print(f"\thumidity: {data['humidity']}")
+    print(f"\tpressure: {data['pressure']}")
+    print(f"\tquality: {data['quality']}")
+    client.publish(get_path_state(), json.dumps(data), qos=1, retain=True)
+
 
 def read_id_file():
     try:
@@ -104,8 +117,7 @@ def get_data(bme680):
         return get_adafruit_data(bme680)
 
 def on_message(client, _, msg):
-    print("GOT THE WINDOW-1 CLOSE EVENT! YUPI")
-    print(msg.topic, msg.payload.decode())
+    print("Message incoming: ", msg.topic, msg.payload.decode())
 
 def get_path_status():
     return f"devices/room/{MY_ID}/status"
@@ -116,16 +128,39 @@ def get_path_state():
 def on_disconnect(client, userdata, disconnect_flags, reason_code, properties):
     client.publish(get_path_state(), json.dumps({"online": False}), qos=1, retain=True)
 
+def print_with_style(text):
+    text = text.strip()
+    char = '-'
+    chars = math.floor((LOG_CHAR_CNT - len(text) - 2)/2)
+    print(char * chars + " " + text + " " + char * chars)
+
+def print_configuration():
+    print("Starting Pokojówka firmware")
+    print_with_style("CONFIGURATION DATA")
+    print("MQTT BROKER and REST HOST: " + BROKER_HOST)
+    print("MQTT BROKER PORT: " + str(BROKER_PORT))
+    print("REST PORT: " + str(REST_PORT))
+    print("ID FILE PATH: " +  ID_FILEPATH)
+    print("STATIC MODE: " + "true" if STATIC else "false")
+    print("-" * LOG_CHAR_CNT)
+
+def print_id_config():
+    print("MY ID: " + MY_ID)
+    print("STATUS PATH: " + get_path_status())
+    print("STATE PATH: " + get_path_state())
+    print("-"*LOG_CHAR_CNT)
+
+def print_goodbye():
+    print("Stopping Pokojówka firmware")
+    print_with_style("GOODBYE")
 
 
 def main():
     global MY_ID
-    print(f"Starting with mode: {'STATIC (fake data)' if STATIC else 'REAL data'}")
-    print(f"CONFIG DATA: uri: {BROKER_HOST}; port: {BROKER_PORT}")
+    print_configuration()
 
     MY_ID = get_my_id()
-
-    print(F"MY_ID configured at: {MY_ID}")
+    print_id_config()
 
     sensor = None if STATIC else init_adafruit()
     if not STATIC and sensor is None:
@@ -140,12 +175,12 @@ def main():
     client.connect(BROKER_HOST, BROKER_PORT)
 
 
-    client.publish(get_path_status(), json.dumps({"online": True}), qos=1, retain=True)
     client.loop_start()
+    client.publish(get_path_status(), json.dumps({"online": True}), qos=1, retain=True)
 
     try:
         while True:
-            client.publish(get_path_state(), json.dumps(get_data(sensor)))
+            publish_state(client, sensor)
             sleep(5)
     except KeyboardInterrupt:
         print("Keyboard Interrupt")
@@ -153,6 +188,7 @@ def main():
     finally:
         client.loop_stop()
         client.disconnect()
+        print_goodbye()
 
 
 if __name__ == "__main__":

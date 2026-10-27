@@ -38,6 +38,11 @@ export function bulbsRoutes(deviceManager: DeviceManager, actionManager: ActionM
     const state: boolean = state_string == "true"
     console.log(`spoko nowy stan żarówki ${id} na ${state} brightness`);
 
+    if(!deviceManager.has(id))
+      return res.status(200).send("Device not found");
+
+    deviceManager.get(id)!.state.power = state_string
+
     await actionManager.publishAction(id, state ? "on" : "off", {})
 
     res.status(200).send({state});
@@ -56,6 +61,11 @@ export function bulbsRoutes(deviceManager: DeviceManager, actionManager: ActionM
       res.status(400).send("brightness should be a number");
       return
     }
+
+    if(!deviceManager.has(id))
+      return res.status(200).send("Device not found");
+
+    deviceManager.get(id)!.state.brightness = brightness;
 
     console.log(`spoko nowa jasność żarówki ${id} na ${brightness} brightness`);
 
