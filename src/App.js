@@ -69,13 +69,13 @@ const CustomNodeFlow = () => {
         const newNodes = []
         const newEdges = []
         console.log("Data from server", arrData);
-        arrData.forEach(node => {
+        arrData.forEach((node, index) => {
           const id1 = toId(node.id, node.module_type, node.event)
           const id2 = toId(node.slave.id, node.slave.module_type, node.slave.action)
 
           newNodes.push({
             id: id1,
-            position: { x: 0 + random(-100,100), y: 250 + random(-100,100), },
+            position: { x: 0, y: 250 + index*300, },
             type: "input",
             data: {
               label: 'Node',
@@ -87,7 +87,7 @@ const CustomNodeFlow = () => {
 
           newNodes.push({
             id: id2,
-            position: { x: 0 + random(-100,100), y: 250 + random(-100,100), },
+            position: { x: 500, y: 250 + index*300, },
             type: "output",
             data: {
               label: 'Node',
