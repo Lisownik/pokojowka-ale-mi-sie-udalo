@@ -17,6 +17,7 @@ import {rootRoutes} from "./routers/root.routes";
 import {streamingRoutes} from "./routers/streaming.routes";
 import {heatersRoutes} from "./routers/heaters.routes";
 import {EventManager} from "./eventManager";
+import {roofRoutes} from "./routers/roof.routes";
 
 export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager, aiClient: AiClient, eventManager: EventManager): Express {
   const app = express()
@@ -30,10 +31,11 @@ export function  createRouter(deviceManager: DeviceManager, nameManager: NameMan
   app.use("/devices/window", windowsRoutes(deviceManager, actionManager))
   app.use("/devices/bulb", bulbsRoutes(deviceManager, actionManager))
   app.use("/devices/heater", heatersRoutes(deviceManager, actionManager))
+  app.use("/devices/roof", roofRoutes(deviceManager))
   app.use("/names", namesRoutes(nameManager))
   app.use("/", eventsRoutes(actionManager))
   app.use("/register", registerRoutes())
-  app.use("/gpt", gptRoutes(aiClient))
+  app.use("/gpt", gptRoutes(aiClient, actionManager))
   app.use("/stream", streamingRoutes(deviceManager, eventManager))
 
   app.use((req, res) => {

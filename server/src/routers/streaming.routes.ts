@@ -1,8 +1,7 @@
 import { DeviceManager } from "../deviceManager";
-import {anyID, DeviceData, DeviceType} from "../types";
+import {anyID, DeviceType} from "../types";
 import express, {Request, Response, Router} from "express";
 import {EventManager} from "../eventManager";
-import {clearInterval} from "node:timers";
 
 
 
