@@ -9,25 +9,42 @@ export class AiClient {
     apiKey: Environment.GPT_API_KEY
   })
 
+
+
   model = "gpt-5.5"
 
-  constructor(public deviceManager: DeviceManager) {}
+  isOk: boolean = true;
+
+  constructor(public deviceManager: DeviceManager) {
+
+  }
 
   private async useChatCompletion(systemTopic: string, userTopic: string): Promise<string | null>{
-    console.log("useChatCompletion", systemTopic);
-    const res = await this.client.chat.completions.create({
-      model: this.model,
-      messages: [
-        {
-          role: "system", content: systemTopic,
-        },
-        {
-          role: "user", content: userTopic,
-        }
-      ]
-    })
+    if(!this.isOk)
+      return "nothing..."
 
-    return res.choices[0].message.content
+    console.log("useChatCompletion", systemTopic);
+    try{
+      const res = await this.client.chat.completions.create({
+        model: this.model,
+        messages: [
+          {
+            role: "system", content: systemTopic,
+          },
+          {
+            role: "user", content: userTopic,
+          }
+        ]
+      })
+      this.isOk = true;
+      return res.choices[0].message.content
+    } catch (e: any) {
+      console.error(e)
+      this.isOk = false;
+      return "nothing..."
+    }
+
+
   }
 
 
