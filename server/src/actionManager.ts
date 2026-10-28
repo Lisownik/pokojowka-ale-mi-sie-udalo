@@ -1,6 +1,15 @@
 import {MqttClient} from "mqtt";
 import {Environment} from "./environment";
-import {ActionSlave, ActionType, anyID, EventActionConnections, EventToAction, EventType, everyID} from "./types";
+import {
+  ActionSlave,
+  ActionType,
+  anyID,
+  DeviceType,
+  EventActionConnections,
+  EventToAction,
+  EventType,
+  everyID
+} from "./types";
 import {readFile, writeFile} from "node:fs/promises";
 
 
@@ -71,6 +80,10 @@ export class ActionManager {
     })
   }
 
+  static everyIDForModule(moduleType: DeviceType): string{
+    return `${moduleType}-${everyID}`
+  }
+
   private getAction(id: string, event: EventType): ActionSlave | null {
     const ETA = this.ETAConnections.find(
       (e) =>
@@ -85,7 +98,7 @@ export class ActionManager {
     console.log(`Action found: ${ETA.slave.id}, event: ${ETA.slave.action}; for event: ${event} and id: ${id}`);
 
     if(ETA.slave.id === everyID){
-      ETA.slave.id = `${ETA.slave.module_type}-${everyID}`
+      ETA.slave.id = ActionManager.everyIDForModule(ETA.slave.module_type)
     }
 
     return ETA.slave;

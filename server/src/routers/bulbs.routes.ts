@@ -1,6 +1,7 @@
 import {DeviceManager} from "../deviceManager";
 import {Router} from "express";
 import {ActionManager} from "../actionManager";
+import {enforceData} from "../data";
 
 export function bulbsRoutes(deviceManager: DeviceManager, actionManager: ActionManager) {
   const router: Router = Router();
@@ -11,7 +12,7 @@ export function bulbsRoutes(deviceManager: DeviceManager, actionManager: ActionM
         .getOnlineType("yeelight"),
       ...deviceManager
         .getOnlineType("smart_led")
-    ]
+    ].map(device => enforceData(device, "smart_led"))
 
     res.status(200).json(bulbs);
   })
@@ -22,7 +23,7 @@ export function bulbsRoutes(deviceManager: DeviceManager, actionManager: ActionM
         .getAllType("yeelight"),
       ...deviceManager
         .getAllType("smart_led")
-    ]
+    ].map(device => enforceData(device, "smart_led"))
 
     res.status(200).json(bulbs);
   })

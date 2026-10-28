@@ -3,6 +3,7 @@ import {Router} from "express";
 import {isWindowState, WindowState} from "../types";
 import {ActionManager} from "../actionManager";
 import {publish} from "./streaming.routes";
+import { enforceData } from "../data";
 
 export function windowsRoutes(deviceManager: DeviceManager, actionManager: ActionManager) {
   const router: Router = Router()
@@ -10,6 +11,7 @@ export function windowsRoutes(deviceManager: DeviceManager, actionManager: Actio
   router.get("/", (req, res) => {
     const okna = deviceManager
       .getOnlineType("window")
+      .map(device => enforceData(device, "window"))
 
     res.status(200)
       .json(okna)
@@ -49,6 +51,7 @@ export function windowsRoutes(deviceManager: DeviceManager, actionManager: Actio
   router.get("/raw", (req, res) => {
     const okna = deviceManager
       .getAllType("window")
+      .map(device => enforceData(device, "window"))
 
     res.status(200).json(okna);
   })

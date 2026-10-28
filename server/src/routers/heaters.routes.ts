@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { DeviceManager } from "../deviceManager";
 import {ActionManager} from "../actionManager";
+import { enforceData } from "../data";
 
 export function heatersRoutes(deviceManager: DeviceManager, actionManager: ActionManager) {
   const router: Router = Router();
 
   router.get('/', (req, res) => {
     const heaters = deviceManager
-        .getOnlineType("heater")
+      .getOnlineType("heater")
+      .map(device => enforceData(device, "heater"))
 
     res.status(200)
       .json(heaters);
@@ -16,6 +18,7 @@ export function heatersRoutes(deviceManager: DeviceManager, actionManager: Actio
   router.get("/raw", (req, res) => {
     const heaters = deviceManager
       .getAllType("heater")
+      .map(device => enforceData(device, "heater"))
 
     res.status(200)
       .json(heaters);
