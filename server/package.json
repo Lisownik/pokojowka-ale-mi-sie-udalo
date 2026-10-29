@@ -4,11 +4,11 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node --env-file=.env dist/index.js",
+    "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "prod": "tsc && node dist/index.js",
     "watch-build": "tsc --watch",
-    "watch-run":  "node --watch dist/index.js"
+    "watch-run": "node --watch dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -23,10 +23,10 @@
     "mqtt": "^5.16.0",
     "multer": "3.0.0-alpha.2",
     "node-arp": "^1.0.6",
-    "openai": "^5.15.0",
+    "openai": "^7.45.1",
     "ws": "8.21.0",
     "yeelight-service": "^1.0.2",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

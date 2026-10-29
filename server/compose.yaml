@@ -1,0 +1,11 @@
+services:
+  server:
+    build: .
+    container_name: "pokojowka-server"
+    environment:
+      - MQTT_URL=mqtt://localhost:1883
+      - REST_PORT=1234
+      - GPT_API_KEY=${GPT_API_KEY}
+      - DEVELOPER_MODE=false
+    restart: always
+    network_mode: host
