@@ -113,7 +113,7 @@ export class ActionManager {
     return `${this.static_event_url}/${id}/${action}`;
   }
 
-  public async emit<T>(id: string, event: EventType, payload: T) {
+  public async tryEmit<T>(id: string, event: EventType, payload: T): Promise<void> {
     console.group("Emitting event");
     console.log("Received event: ", id, event, payload);
     const action = this.getAction(id, event);
@@ -122,7 +122,7 @@ export class ActionManager {
     console.groupEnd();
   }
 
-  public async publishAction<T>(id: string, action: ActionType, payload: T) {
+  public async publishAction<T>(id: string, action: ActionType, payload: T): Promise<void> {
     console.group("Emitting action");
     console.log("Received action: ", id, action);
     await this.publishEvent<T>(this.eventUrl(id, action), payload);

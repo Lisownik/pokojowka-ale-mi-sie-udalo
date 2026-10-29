@@ -6,7 +6,7 @@ export function eventsRoutes(actionManager: ActionManager) {
   const router: Router = Router();
 
   router.post("/event/program", async (req, res) => {
-    await actionManager.emit(anyID, "programmed", {})
+    await actionManager.tryEmit(anyID, "programmed", {})
     res.status(200).json({
       msg: "success",
       defaultID: anyID

@@ -37,7 +37,7 @@ export class EventManager {
     console.log(`[${id}] ${event}`);
 
     if(this.client instanceof MqttClient)
-      this.actionManager.emit(id, event, "test").then();
+      this.actionManager.tryEmit(id, event, "test").then();
   }
 
 
