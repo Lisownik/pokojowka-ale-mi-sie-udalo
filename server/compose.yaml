@@ -2,10 +2,14 @@ services:
   server:
     build: .
     container_name: "pokojowka-server"
+    ports:
+      - "1234:1234"
     environment:
       - MQTT_URL=mqtt://localhost:1883
       - REST_PORT=1234
       - GPT_API_KEY=${GPT_API_KEY}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
       - DEVELOPER_MODE=false
     restart: always
-    network_mode: host
+    network_mode: host 

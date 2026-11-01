@@ -6,6 +6,7 @@ import {NameManager} from "./nameManager";
 import { EventManager } from "./eventManager";
 import {ActionManager} from "./actionManager";
 import { AiClient } from "./aiClient";
+import { DiscordBot } from "./discordBot";
 
 
 const nameManager = new NameManager();
@@ -18,6 +19,11 @@ const eventManager = new EventManager(actionManager);
 
 
 const deviceManager = new DeviceManager(nameManager);
+const discordBot = new DiscordBot(actionManager);
+
+discordBot.login().then((result) => {
+  console.log(`Logged in as ${result} and is git: ${discordBot.isClientGit()}`);
+})
 const aiClient = new AiClient(deviceManager);
 
 const mqttClient = startMqtt(deviceManager, nameManager, eventManager);

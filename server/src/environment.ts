@@ -12,6 +12,8 @@ const environmentSchema = z.object({
   GPT_BASE_URL: z.string().default("http://localhost:11434/v1"),
   GPT_API_KEY: z.string().default(""),
   DEVELOPER_MODE: z.stringbool().default(true),
+  DISCORD_TOKEN: z.string().default("Not needed"),
+  DISCORD_CLIENT_ID: z.string().default("Not needed"),
 });
 
 export const Environment = environmentSchema.parse(process.env);
