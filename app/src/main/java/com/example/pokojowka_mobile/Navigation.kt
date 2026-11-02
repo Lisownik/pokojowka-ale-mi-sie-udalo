@@ -11,6 +11,7 @@ object AppDestinations {
     const val PROFILE_SCREEN = "profile_screen"
     const val WINDOWS_SCREEN = "windows_screen"
     const val HEATERS_SCREEN = "heaters_screen"
+    const val CHATBOT_SCREEN = "chatbot_screen"
 
 //     Widoki - View's
     const val ROOM_VIEW_SCREEN_ROUTE = "room_view"

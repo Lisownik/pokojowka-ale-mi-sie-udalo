@@ -37,14 +37,15 @@ fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier)
     val rooms by RoomsRepository.state.collectAsStateWithLifecycle()
 
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding() + 80.dp)
-                .verticalScroll(scrollState)
                 .background(MaterialTheme.colorScheme.background)
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(scrollState)
         ) {
             SharedHeader(
                 userData = currentUserData,
@@ -63,7 +64,7 @@ fun RoomsScreen(navController: NavHostController, modifier: Modifier = Modifier)
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }

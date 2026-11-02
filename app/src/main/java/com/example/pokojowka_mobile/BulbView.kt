@@ -12,59 +12,48 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.pokojowka_mobile.data.BulbData
-
-import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.components.BulbViewItem
 import com.example.pokojowka_mobile.components.BulbViewItemType
+import com.example.pokojowka_mobile.components.BulbViewSection
 import com.example.pokojowka_mobile.components.SharedHeader
+import com.example.pokojowka_mobile.data.BulbData
+import com.example.pokojowka_mobile.data.SampleUserData
+import com.example.pokojowka_mobile.data.UserData
+import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import kotlin.math.roundToInt
-import com.example.pokojowka_mobile.data.UserData
-import com.example.pokojowka_mobile.data.SampleUserData
-
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.components.BulbViewSection
-import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
-
 
 @Composable
 fun BulbView(
     navController: NavHostController,
     bulbId: String,
 ) {
-
     var showRenameDialog by remember { mutableStateOf(false) }
     var newRoomName by remember { mutableStateOf("") }
 
     val bulbs by BulbsRepository.state.collectAsStateWithLifecycle()
     val bulb = bulbs.firstOrNull { it.id == bulbId }
 
-
     val scrollState = rememberScrollState()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
 
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
-
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
         initialValue = UserData(userName = "", lastName = "", connectedDevices = emptyList())
     )
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
+
     if (showRenameDialog && bulb != null) {
         AlertDialog(
             onDismissRequest = { showRenameDialog = false },
@@ -95,34 +84,18 @@ fun BulbView(
             }
         )
     }
+
     Scaffold(
-        bottomBar = {
-            AppBottomNavigationBar(
-                currentRoute = currentRoute,
-                onItemSelected = { selectedRoute ->
-                    val popped = navController.popBackStack(selectedRoute, inclusive = false)
-                    if (!popped) {
-                        navController.navigate(selectedRoute) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background
+        modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding())
-                .verticalScroll(scrollState)
                 .background(MaterialTheme.colorScheme.background)
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(scrollState)
         ) {
-
             SharedHeader(
                 userData = currentUserData,
                 environmentData = currentEnvironmentData,
@@ -147,7 +120,6 @@ fun BulbView(
             } else {
                 val currentBulb = bulb
 
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -162,7 +134,6 @@ fun BulbView(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             IconButton(
                                 onClick = { navController.popBackStack() },
-
                                 modifier = Modifier.size(40.dp)
                             ) {
                                 Icon(
@@ -177,11 +148,9 @@ fun BulbView(
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
-
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
-
 
                     BulbViewItem(
                         itemName = "Nazwa",
@@ -203,11 +172,8 @@ fun BulbView(
                     )
                 }
 
-
-
                 BulbViewSection(
                     title = "Parametry Światła",
-
                 ) {
                     BulbViewItem(
                         itemName = "Jasność",
@@ -216,7 +182,7 @@ fun BulbView(
                         sliderValue = currentBulb.brightnessPercentage.toFloat(),
                         onSliderValueChange = {
                             BulbsRepository.setBulbBrightness(bulbId, it.roundToInt())
-                                              },
+                        },
                         sliderValueRange = 1f..100f,
                         sliderSteps = 99,
                         sliderValueRepresentation = { "${it.roundToInt()}%" },
@@ -229,7 +195,7 @@ fun BulbView(
                         sliderValue = currentBulb.colorTemperatureKelvin.toFloat(),
                         onSliderValueChange = {
                             BulbsRepository.setBulbColor(bulbId, it.roundToInt())
-                                              },
+                        },
                         sliderValueRange = BulbData.MIN_KELVIN.toFloat()..BulbData.MAX_KELVIN.toFloat(),
                         sliderSteps = ((BulbData.MAX_KELVIN - BulbData.MIN_KELVIN) / 50) - 1,
                         sliderValueRepresentation = { "${it.roundToInt()}K" },
@@ -237,10 +203,8 @@ fun BulbView(
                     )
                 }
 
-
                 BulbViewSection(
                     title = "Informacje Dodatkowe",
-
                 ) {
                     BulbViewItem(
                         itemName = "ID Urządzenia",
@@ -248,12 +212,11 @@ fun BulbView(
                         itemIcon = Icons.Filled.Fingerprint
                     )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }
 }
-
 
 @Preview(showBackground = true, widthDp = 380, heightDp = 800)
 @Composable
@@ -278,4 +241,3 @@ fun BulbViewPreview_BulbOff() {
         BulbView(navController = rememberNavController(), bulbId = "bedroom_night")
     }
 }
-

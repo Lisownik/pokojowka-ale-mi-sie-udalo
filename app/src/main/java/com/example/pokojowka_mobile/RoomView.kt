@@ -2,9 +2,11 @@ package com.example.pokojowka_mobile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,12 +20,14 @@ import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.Opacity
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Thermostat
-
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,33 +36,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextButton
-import com.example.pokojowka_mobile.components.ThreatsTile
-import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.components.RoomViewSection
 import com.example.pokojowka_mobile.components.SectionItemUIData
-import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.components.SharedHeader
-
-import com.example.pokojowka_mobile.data.UserData
+import com.example.pokojowka_mobile.components.ThreatsTile
 import com.example.pokojowka_mobile.data.SampleUserData
-
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
-
+import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 
 @Composable
 fun RoomViewInternalHeader(
@@ -87,11 +81,8 @@ fun RoomViewInternalHeader(
             ),
             modifier = Modifier.weight(1f)
         )
-
     }
 }
-
-
 
 private object RoomParameterIcons {
     val Temperature: ImageVector = Icons.Filled.Thermostat
@@ -106,21 +97,16 @@ fun RoomView(
     roomId: String?,
     modifier: Modifier = Modifier
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
-
 
     val context = LocalContext.current
     val userSettingsManager = remember { UserSettingsManager(context) }
-
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
         initialValue = UserData(userName = "", lastName = "", connectedDevices = emptyList())
     )
 
     val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
-
 
     var showRenameDialog by remember { mutableStateOf(false) }
     var newRoomName by remember { mutableStateOf("") }
@@ -145,7 +131,6 @@ fun RoomView(
                 TextButton(onClick = {
                     if (newRoomName.isNotBlank()) {
                         showRenameDialog = false
-
                         RoomsRepository.setName(roomId, newRoomName)
                     }
                 }) {
@@ -161,49 +146,32 @@ fun RoomView(
     }
 
     Scaffold(
-
-        bottomBar = {
-            AppBottomNavigationBar(
-                currentRoute = currentRoute,
-                onItemSelected = { selectedRoute ->
-                    val popped = navController.popBackStack(selectedRoute, inclusive = false)
-                    if (!popped) {
-                        navController.navigate(selectedRoute) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
-        },
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding())
-                .verticalScroll(scrollState)
                 .background(MaterialTheme.colorScheme.background)
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(scrollState)
         ) {
             SharedHeader(
                 userData = currentUserData,
                 environmentData = currentEnvironmentData,
                 onNotificationClick = {
-                    println("Powiadomienia kliknięte z [NazwaTwojegoEkranu]!")
-
+                    println("Powiadomienia kliknięte z RoomView!")
                 }
             )
             RoomViewInternalHeader(
                 roomName = roomData?.name ?: "Szczegóły Pokoju",
                 onNavigateUp = { navController.popBackStack() },
-                modifier = Modifier.padding(top = 8.dp).clickable(onClick = {
-                    newRoomName = roomData?.name ?: "Nie ma"
-                    showRenameDialog = true
-                }),
-
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .clickable(onClick = {
+                        newRoomName = roomData?.name ?: "Nie ma"
+                        showRenameDialog = true
+                    })
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -263,13 +231,11 @@ fun RoomView(
                         }
                     }
 
-
                 RoomViewSection(
                     title = "Parametry Pomieszczenia",
                     items = roomParameters,
                     modifier = Modifier.fillMaxWidth()
                 )
-
 
                 ThreatsTile(
                     coDetected = currentRoomData.coDetected,
@@ -278,8 +244,7 @@ fun RoomView(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }
@@ -310,4 +275,3 @@ fun RoomViewPreview_NullRoomId_CorrectLayout() {
         RoomView(navController = navController, roomId = null)
     }
 }
-

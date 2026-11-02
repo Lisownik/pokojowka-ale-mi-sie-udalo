@@ -23,6 +23,7 @@ import com.example.pokojowka_mobile.components.BulbsSection
 import com.example.pokojowka_mobile.components.InfoTile
 import com.example.pokojowka_mobile.components.NotificationsSection
 import com.example.pokojowka_mobile.components.SharedHeader
+import com.example.pokojowka_mobile.components.SmartHouseCard
 import com.example.pokojowka_mobile.data.EnvironmentData
 import com.example.pokojowka_mobile.data.GlobalPlantsList
 import com.example.pokojowka_mobile.data.NotificationData
@@ -35,9 +36,11 @@ import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
 import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
 import com.example.pokojowka_mobile.network.repos.windows.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.*
+import com.example.pokojowka_mobile.network.repos.HouseRepository
 
 @Composable
 fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+    val houseData by HouseRepository.state.collectAsStateWithLifecycle()
     val roomsList by RoomsRepository.state.collectAsStateWithLifecycle()
     val bulbsList by BulbsRepository.state.collectAsStateWithLifecycle()
     val windowsList by WindowsRepository.state.collectAsStateWithLifecycle()
@@ -82,11 +85,19 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                 }
             )
 
+            // Wirtualny Domek - Wskaźniki Stanu Domu (Stacja Pogodowa, Deszcz & Drzwi)
+            SmartHouseCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                houseData = houseData
+            )
+
             // Pierwszy rząd kafelków: Pokojówki & Rośliny
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 12.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 InfoTile(
@@ -197,6 +208,17 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     val index = bulbsList.indexOfFirst { it.id == bulbId }
                     if (index != -1) {
                         BulbsRepository.setBulbState(bulbId, newState)
+                    }
+                },
+                onHeaderClick = {
+                    val popped = navController.popBackStack(AppDestinations.BULBS_SCREEN, inclusive = false)
+                    if (!popped) {
+                        navController.navigate(AppDestinations.BULBS_SCREEN) {
+                            popUpTo(AppDestinations.HOME_SCREEN) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 }
             )
