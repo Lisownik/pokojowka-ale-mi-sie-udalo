@@ -173,7 +173,6 @@ fun AppBottomNavigationBar(
             }
         }
 
-        // 3-POZYCYJNY GŁÓWNY DOCK
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(28.dp),
@@ -188,7 +187,6 @@ fun AppBottomNavigationBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // LEWY PRZYCISK: DYNAMICZNY WYBÓR EKRANU (STAŁA SZEROKOŚĆ 84.dp)
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -222,10 +220,13 @@ fun AppBottomNavigationBar(
                     )
                 }
 
-                // ŚRODKOWY PRZYCISK: ZINTEGROWANY PRZYCISK AKCJI (FAB)
-                ProgrammableActionButton()
+                ProgrammableActionButton(
+                    onChatClick = {
+                        isMenuExpanded = false
+                        onItemSelected(AppDestinations.CHATBOT_SCREEN)
+                    }
+                )
 
-                // PRAWY PRZYCISK: PROFIL (STAŁA SZEROKOŚĆ 84.dp)
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,

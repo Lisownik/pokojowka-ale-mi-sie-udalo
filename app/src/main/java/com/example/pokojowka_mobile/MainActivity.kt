@@ -154,6 +154,10 @@ fun AppNavigation() {
                     ProfileScreen(navController = navController)
                 }
 
+                composable(AppDestinations.CHATBOT_SCREEN) {
+                    ChatbotScreen(navController = navController)
+                }
+
                 composable(
                     route = AppDestinations.ROOM_VIEW_SCREEN,
                     arguments = listOf(navArgument(AppDestinations.ROOM_ID_ARG) {

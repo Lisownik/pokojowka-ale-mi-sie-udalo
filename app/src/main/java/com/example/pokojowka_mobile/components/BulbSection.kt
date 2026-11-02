@@ -1,5 +1,6 @@
 package com.example.pokojowka_mobile.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -19,18 +20,26 @@ fun BulbsSection(
     modifier: Modifier = Modifier,
     activeBulbsCount: Int,
     bulbs: List<BulbData>,
-    onBulbSwitchToggle: (bulbId: String, newState: Boolean) -> Unit
+    onBulbSwitchToggle: (bulbId: String, newState: Boolean) -> Unit,
+    onHeaderClick: (() -> Unit)? = null
 ) {
     Surface(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (onHeaderClick != null) {
+                            Modifier.clickable { onHeaderClick() }
+                        } else {
+                            Modifier
+                        }
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -84,7 +93,6 @@ fun BulbsSection(
 fun BulbsSectionPreview() {
     PokojowkamobileTheme {
         val sampleBulbsForPreview = remember {
-
             mutableStateListOf<BulbData>().apply {
                 addAll(GlobalBulbsList.take(3).map { it.copy() })
             }
@@ -98,7 +106,6 @@ fun BulbsSectionPreview() {
             onBulbSwitchToggle = { id, newState ->
                 val bulb = sampleBulbsForPreview.find { it.id == id }
                 bulb?.let {
-
                     it.isSwitchedOn = newState
                     if (!newState) {
                         it.brightnessPercentage = 0

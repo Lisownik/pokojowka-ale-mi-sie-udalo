@@ -39,14 +39,15 @@ fun WindowsScreen(navController: NavHostController, modifier: Modifier = Modifie
     val windows by WindowsRepository.state.collectAsStateWithLifecycle()
 
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding() + 80.dp)
-                .verticalScroll(scrollState)
                 .background(MaterialTheme.colorScheme.background)
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(scrollState)
         ) {
             SharedHeader(
                 userData = currentUserData,
@@ -68,7 +69,7 @@ fun WindowsScreen(navController: NavHostController, modifier: Modifier = Modifie
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }

@@ -15,8 +15,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,16 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.pokojowka_mobile.data.*
-import com.example.pokojowka_mobile.components.AppBottomNavigationBar
+import androidx.navigation.compose.rememberNavController
+import com.example.pokojowka_mobile.components.PlantUIData
 import com.example.pokojowka_mobile.components.PlantViewSection
 import com.example.pokojowka_mobile.components.SharedHeader
+import com.example.pokojowka_mobile.data.*
+import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import kotlinx.coroutines.launch
-import com.example.pokojowka_mobile.components.PlantUIData
-
 
 private object PlantParameterIcons {
     val Light: ImageVector = Icons.Filled.WbSunny
@@ -75,7 +71,6 @@ fun PlantViewInternalHeader(
         )
     }
 }
-
 
 @Composable
 fun EditPlantDialog(
@@ -162,8 +157,6 @@ fun PlantView(
     plantId: String?,
     modifier: Modifier = Modifier
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
     val scrollState = rememberScrollState()
 
     val context = LocalContext.current
@@ -171,7 +164,7 @@ fun PlantView(
     val coroutineScope = rememberCoroutineScope()
 
     val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
-        initialValue = UserData(userName = "", lastName = "",  connectedDevices = emptyList())
+        initialValue = UserData(userName = "", lastName = "", connectedDevices = emptyList())
     )
     val allCustomizations by userSettingsManager.plantCustomizationsFlow.collectAsStateWithLifecycle(initialValue = emptyMap())
     val defaultPlantData = GlobalPlantsList.find { it.id == plantId }
@@ -182,26 +175,9 @@ fun PlantView(
     val displayName = customization?.customName ?: defaultPlantData?.name
     val displayIcon = customization?.iconName?.let { PlantIconMap.getIconByName(it) } ?: defaultPlantData?.icon
 
-    // na razie w sumie nie potrzebne
-    val plants = remember { GlobalPlantsList }
-
     Scaffold(
-        bottomBar = {
-            AppBottomNavigationBar(
-                currentRoute = currentRoute,
-                onItemSelected = { selectedRoute ->
-                    val popped = navController.popBackStack(selectedRoute, inclusive = false)
-                    if (!popped) {
-                        navController.navigate(selectedRoute) {
-                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-            )
-        },
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         if (defaultPlantData == null) {
             Box(
@@ -235,14 +211,13 @@ fun PlantView(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = paddingValues.calculateBottomPadding())
-                    .verticalScroll(scrollState)
                     .background(MaterialTheme.colorScheme.background)
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .verticalScroll(scrollState)
             ) {
-
                 val currentEnvironmentData = EnvironmentData(
-                "TODO",
-                "TODO"
+                    "TODO",
+                    "TODO"
                 )
 
                 SharedHeader(
@@ -329,7 +304,7 @@ fun PlantView(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }

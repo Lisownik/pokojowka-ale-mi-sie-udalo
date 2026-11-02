@@ -1,5 +1,6 @@
 package com.example.pokojowka_mobile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -59,12 +60,14 @@ fun ProfileScreen(
     val connectedDevicesList = remember { availableDeviceModels }
 
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding() + 80.dp)
+                .background(MaterialTheme.colorScheme.background)
+                .padding(top = innerPadding.calculateTopPadding())
                 .verticalScroll(scrollState)
         ) {
             SharedHeader(
@@ -178,7 +181,7 @@ fun ProfileScreen(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }
