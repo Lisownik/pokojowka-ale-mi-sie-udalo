@@ -36,7 +36,7 @@ import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
 import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
 import com.example.pokojowka_mobile.network.repos.windows.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.*
-import com.example.pokojowka_mobile.network.repos.HouseRepository
+import com.example.pokojowka_mobile.network.repos.house.HouseRepository
 
 @Composable
 fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -45,6 +45,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
     val bulbsList by BulbsRepository.state.collectAsStateWithLifecycle()
     val windowsList by WindowsRepository.state.collectAsStateWithLifecycle()
     val heatersList by HeatersRepository.state.collectAsStateWithLifecycle()
+    val avgRoom by RoomsRepository.avgState.collectAsStateWithLifecycle()
 
     val notificationsList = remember {
         mutableStateListOf<NotificationData>().apply {
@@ -62,8 +63,8 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
     )
 
     val currentEnvironmentData = EnvironmentData(
-        "TODO",
-        "TODO"
+        avgRoom.temperature + ".0 C",
+        avgRoom.humidity + ".0 %"
     )
 
     Scaffold(

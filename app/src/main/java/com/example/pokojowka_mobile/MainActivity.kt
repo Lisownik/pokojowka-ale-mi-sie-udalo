@@ -89,8 +89,6 @@ class MainActivity : ComponentActivity() {
         BulbsRepository.startStream()
         WindowsRepository.startStream()
         HeatersRepository.startStream()
-
-//        ActivityRepository.startStream()
     }
 
     override fun onStop() {

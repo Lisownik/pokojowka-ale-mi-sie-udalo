@@ -29,6 +29,20 @@ data class TrendData (
     val difference: String
 )
 
+data class AvgRoomData(
+    val temperature: String,
+    val humidity: String,
+    val pressure: String,
+    val airQuality: String,
+)
+
+val NullAvgRoom: AvgRoomData = AvgRoomData(
+    temperature = "N/A",
+    humidity = "N/A",
+    pressure = "N/A",
+    airQuality = "N/A"
+)
+
 data class RoomData(
     val id: String,
     val name: String,

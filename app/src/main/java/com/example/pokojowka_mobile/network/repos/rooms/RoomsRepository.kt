@@ -20,6 +20,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.example.pokojowka_mobile.data.AvgRoomData
+import com.example.pokojowka_mobile.data.NullAvgRoom
+
 
 object RoomsRepository: Repository<List<RoomData>> {
     private val STATIC_MODE = BuildConfig.STATIC_MODE
@@ -30,6 +33,12 @@ object RoomsRepository: Repository<List<RoomData>> {
 
     private val _state: MutableStateFlow<List<RoomData>> = MutableStateFlow(GlobalRoomsList)
     override val state: StateFlow<List<RoomData>> = _state.asStateFlow()
+
+
+    private val _avg_state: MutableStateFlow<AvgRoomData> = MutableStateFlow(
+        value = NullAvgRoom
+    )
+    val avgState: StateFlow<AvgRoomData> = _avg_state.asStateFlow()
 
 
     private val listAdapter: JsonAdapter<List<NetworkRoomData>> = Network.moshi.adapter(
@@ -62,6 +71,37 @@ object RoomsRepository: Repository<List<RoomData>> {
                             it.toRoomData()
                         }
                     )
+
+                    val size = data.size
+
+                    if (size == 0){
+                        _avg_state.tryEmit(NullAvgRoom)
+                        return@collect
+                    }
+
+                    var temperatureSum: Double = 0.0
+                    var humiditySum: Double = 0.0
+                    var pressureSum: Double = 0.0
+                    var qualitySum: Double = 0.0
+
+                    data.forEach { it ->
+                        temperatureSum += it.state.temperature
+                        humiditySum += it.state.humidity
+                        pressureSum += it.state.pressure
+                        qualitySum += it.state.quality
+                    }
+
+                    val avgRoom: AvgRoomData = AvgRoomData(
+                        temperature = (temperatureSum/size).toLong().toString(),
+                        humidity = (humiditySum/size).toLong().toString(),
+                        pressure = (pressureSum/size).toLong().toString(),
+                        airQuality = (qualitySum/size).toLong().toString()
+                    )
+
+                    _avg_state.tryEmit(
+                        avgRoom
+                    )
+
                 }
         }
     }
