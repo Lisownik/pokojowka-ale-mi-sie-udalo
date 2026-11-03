@@ -3,9 +3,17 @@ package com.example.pokojowka_mobile
 import android.app.Activity
 import android.content.Intent
 import android.speech.RecognizerIntent
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.StartOffset
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,22 +30,75 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.pokojowka_mobile.network.repos.bot.BotRepository
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.ui.theme.RoomsGradientStart
 import com.example.pokojowka_mobile.ui.theme.tlo
+import io.noties.markwon.Markwon
+
+@Composable
+fun MarkdownText(markdown: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val markwon = remember { Markwon.create(context) }
+    val textColor = MaterialTheme.colorScheme.onSurface.toArgb()
+
+    AndroidView(
+        modifier = modifier,
+        factory = { ctx -> TextView(ctx).apply { setTextColor(textColor) } },
+        update = { tv -> markwon.setMarkdown(tv, markdown) }
+    )
+}
 
 data class ChatMessage(
     val text: String,
     val isFromUser: Boolean
 )
+
+
+@Composable
+fun TypingIndicator(
+    dotColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
+) {
+    val transition = rememberInfiniteTransition(label = "typing")
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        repeat(3) { index ->
+            val scale by transition.animateFloat(
+                initialValue = 0.5f,
+                targetValue = 1f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 600, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse,
+                    initialStartOffset = StartOffset(index * 150)
+                ),
+                label = "dot$index"
+            )
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .scale(scale)
+                    .clip(CircleShape)
+                    .background(dotColor)
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,11 +107,8 @@ fun ChatbotScreen(
     modifier: Modifier = Modifier
 ) {
     var messageText by remember { mutableStateOf("") }
-    val messages = remember {
-        mutableStateListOf(
-            ChatMessage("W czym mogę Ci dzisiaj pomóc w zarządzaniu inteligentnym domem?", false)
-        )
-    }
+    val messages by BotRepository.state.collectAsStateWithLifecycle()
+    val isLoading by BotRepository.isLoading.collectAsStateWithLifecycle()
 
     val scrollState = rememberScrollState()
     val context = LocalContext.current
@@ -150,17 +208,41 @@ fun ChatbotScreen(
                             shadowElevation = 2.dp,
                             modifier = Modifier.widthIn(max = 280.dp)
                         ) {
-                            Text(
-                                text = msg.text,
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = if (msg.isFromUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
-                                ),
-                                modifier = Modifier.padding(12.dp)
-                            )
+//                            Text(
+//                                text = msg.text,
+//                                style = MaterialTheme.typography.bodyMedium.copy(
+//                                    color = if (msg.isFromUser) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+//                                ),
+//                                modifier = Modifier.padding(12.dp)
+//                            )
+                            MarkdownText(markdown = msg.text, modifier = Modifier.padding(12.dp))
+                        }
+                    }
+                }
+                if(isLoading){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(
+                                topStart = 16.dp,
+                                topEnd = 16.dp,
+                                bottomStart = 4.dp,
+                                bottomEnd = 16.dp
+                            ),
+                            color = tlo,
+                            shadowElevation = 2.dp,
+                            modifier = Modifier.widthIn(max = 280.dp)
+                        ) {
+                            Box(modifier = Modifier.padding(12.dp)){
+                                TypingIndicator()
+                            }
                         }
                     }
                 }
             }
+
 
             // Pasek pisania
             Surface(
@@ -226,10 +308,8 @@ fun ChatbotScreen(
                     IconButton(
                         onClick = {
                             if (messageText.isNotBlank()) {
-                                messages.add(ChatMessage(messageText, true))
-                                val userMsg = messageText
+                                BotRepository.sendMessage(messageText)
                                 messageText = ""
-                                messages.add(ChatMessage("Otrzymałem wiadomość: \"$userMsg\". Przetwarzam zapytanie...", false))
                             }
                         },
                         modifier = Modifier

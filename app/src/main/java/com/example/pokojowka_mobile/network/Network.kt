@@ -3,6 +3,7 @@ package com.example.pokojowka_mobile.network
 import com.example.pokojowka_mobile.BuildConfig
 import com.example.pokojowka_mobile.debug.Debug
 import com.example.pokojowka_mobile.debug.LogClasses
+import com.example.pokojowka_mobile.network.repos.bot.BotApi
 import com.example.pokojowka_mobile.network.repos.bulbs.BulbsApi
 import com.example.pokojowka_mobile.network.repos.heaters.HeatersApi
 import com.example.pokojowka_mobile.network.repos.program.ProgramApi
@@ -90,4 +91,5 @@ object Network{
     val bulbsApi: BulbsApi = retrofit.create(BulbsApi::class.java)
     val windowsApi: WindowsApi = retrofit.create(WindowsApi::class.java)
     val heatersApi: HeatersApi = retrofit.create(HeatersApi::class.java)
+    val botApi: BotApi = retrofit.create(BotApi::class.java)
 }

@@ -1,7 +1,8 @@
-package com.example.pokojowka_mobile.network.repos
+package com.example.pokojowka_mobile.network.repos.house
 
 import com.example.pokojowka_mobile.data.HouseData
 import com.example.pokojowka_mobile.data.SampleHouseData
+import com.example.pokojowka_mobile.network.repos.Repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

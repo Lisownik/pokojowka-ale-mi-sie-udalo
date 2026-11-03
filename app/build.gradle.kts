@@ -29,7 +29,7 @@ android {
     buildTypes {
         release {
             buildConfigField("String", "API_URL", "\"http://centrala.lokal:1234\"")
-            buildConfigField("boolean", "STATIC_MODE", "true")
+            buildConfigField("boolean", "STATIC_MODE", "false")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -37,8 +37,8 @@ android {
             )
         }
         debug {
-            buildConfigField("String", "API_URL", "\"http://10.0.2.2:1234\"")
-            buildConfigField("boolean", "STATIC_MODE", "true")
+            buildConfigField("String", "API_URL", "\"http://192.168.1.3:1234\"")
+            buildConfigField("boolean", "STATIC_MODE", "false")
         }
     }
 
@@ -55,6 +55,7 @@ kotlin {
     }
 }
 dependencies {
+    implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.core.ktx.v1100)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -94,4 +95,7 @@ dependencies {
     implementation(libs.moshi)
     ksp(libs.moshi.kotlin.codegen)
     implementation(libs.converter.moshi.v2110)
+
+    implementation(libs.okhttp.sse)
+    implementation("io.noties.markwon:core:4.6.2")
 }
