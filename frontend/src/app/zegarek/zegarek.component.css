@@ -1,0 +1,15 @@
+.clock-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(32, 32, 32, 0.8);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 18px;
+  font-weight: bold;
+}

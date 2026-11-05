@@ -1,0 +1,146 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: url('/assets/background-default.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #111;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.light-theme {
+  background: url('/assets/background-jasne.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #111;
+}
+
+.light-theme .theme-toggle-btn {
+  background: #fff !important;
+  color: #111 !important;
+}
+
+body.light-theme .info{
+  background-color: white !important;
+  color: black !important;
+}
+
+body.light-theme .info img{
+  filter: invert(1) !important;
+}
+
+
+body.light-theme .sidebar button{
+  background: #D9D9D9 !important;
+  box-shadow: 0 3px 9px #0004;
+}
+
+body.light-theme .sidebar button img{
+  filter: invert(1) !important;
+}
+
+body.light-theme .sidebar-panel{
+  background: #D9D9D9 !important;
+  color: #111 !important;
+}
+
+body.light-theme .sidebar-panel img{
+  filter: invert(1) !important;
+}
+
+body.light-theme .sidebar-panel.open{
+  box-shadow: 0 3px 9px #0004;
+}
+
+body.light-theme .action button{
+  background: white !important;
+  border: 1px solid black !important;
+  background-image: url('/assets/icons/renka-black.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 60% !important;
+}
+
+body.light-theme .action p{
+  color: black !important;
+}
+
+body.light-theme .back-round-btn{
+  background: #D9D9D9 !important;
+  box-shadow: 0 3px 9px #0004;
+}
+
+body.light-theme .back-round-btn img{
+  filter: invert(1) !important;
+}
+
+body.light-theme .clock-container{
+  color: black !important;
+  background: white !important;
+  box-shadow: 0 3px 9px #0004;
+
+}
+
+body.light-theme .room{
+  background: white !important;
+  box-shadow: 0 3px 9px #0004;
+}
+
+body.light-theme .room .room-info span{
+  color: black !important;
+}
+
+body.light-theme .pot{
+  background: white !important;
+  box-shadow: 0 3px 9px #0004;
+}
+
+body.light-theme .pot .pot-info span{
+  color: black !important;
+}
+
+body.light-theme .room-header{
+  background: white !important;
+  box-shadow: 0 3px 9px #0004;
+  color: black !important;
+}
+
+body.light-theme .card{
+  background: white !important;
+  box-shadow: 0 3px 9px #0004;
+  color: black !important;
+}
+
+body.light-theme .card img{
+  filter: invert(1) !important;
+}
+
+body.light-theme .card .card-desc.good {
+  color: #4B5563  !important;
+}
+
+body.light-theme .error-info {
+  background: white !important;
+  color: #232323 !important;
+}
+
+body.light-theme .digit {
+  color: #232323 !important;
+}
+
+main{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar {
+  height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

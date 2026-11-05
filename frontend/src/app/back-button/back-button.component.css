@@ -1,0 +1,31 @@
+.back-round-btn {
+  background: #202020;
+  border: none;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: background 0.2s, transform 0.15s;
+  position: absolute;
+  bottom: 20px;
+  left: 10px;
+  z-index: 10;
+}
+
+.back-round-btn:hover, .back-round-btn:focus {
+  background: #313131;
+  transform: scale(1.08);
+}
+
+.back-round-btn img {
+  width: 28px;
+  height: 28px;
+  display: block;
+  pointer-events: none;
+}

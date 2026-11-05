@@ -1,0 +1,53 @@
+<div class="sidebar">
+
+  <div class="sidebar-cale">
+
+    <button (click)="togglePanel(1)">
+      <img src="/assets/icons/temp-white.png" alt="temp white">
+    </button>
+
+    <div class="sidebar-panel" [class.open]="openedPanel === 1">
+      <img src="/assets/icons/temp-white.png" alt="temp white">
+      <span>17°</span>
+    </div>
+  </div>
+
+  <div class="sidebar-cale">
+    <button (click)="togglePanel(2)">
+      <img src="/assets/icons/water-white.png" alt="water white">
+    </button>
+    <div class="sidebar-panel" [class.open]="openedPanel === 2">
+      <img src="/assets/icons/water-white.png" alt="water white">
+      <span>97%</span>
+    </div>
+  </div>
+
+  <div class="sidebar-cale">
+    <button (click)="togglePanel(3)">
+      <img src="/assets/icons/cisnienie-white.png" alt="cisnienie white">
+    </button>
+    <div class="sidebar-panel" [class.open]="openedPanel === 3">
+      <img src="/assets/icons/cisnienie-white.png" alt="cisnienie white">
+      <span>1030 Ha</span>
+    </div>
+  </div>
+
+  <div class="sidebar-cale">
+    <button (click)="togglePanel(4)">
+      <img src="/assets/icons/fire-white.png" alt="fire white">
+    </button>
+    <div class="sidebar-panel" [class.open]="openedPanel === 4">
+      <img src="/assets/icons/fire-white.png" alt="fire white">
+      <span>Lorem lo</span>
+    </div>
+  </div>
+
+  <button routerLink="/pokojowki">
+    <img src="/assets/icons/home-white.png" alt="home white">
+  </button>
+
+  <button routerLink="/potki">
+    <img src="/assets/icons/plant-white.png" alt="plant white">
+  </button>
+
+</div>

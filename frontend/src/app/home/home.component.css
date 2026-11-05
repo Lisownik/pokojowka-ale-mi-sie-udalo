@@ -1,0 +1,20 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.smiley-face {
+  position: fixed;
+  width: 450px;
+  height: 450px;
+  background-color: transparent;
+  background-image: url('/assets/twarzyczka.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center ;
+}
+
