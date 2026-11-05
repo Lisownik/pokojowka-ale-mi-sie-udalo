@@ -71,3 +71,17 @@ export interface ShortDevice {
 }
 
 export type EventActionConnections = EventToAction[];
+
+export enum NotificationType {
+  INFO = "INFO",
+  ERROR = "ERROR",
+  WARNING = "WARNING",
+  SILENT = "SILENT"
+}
+
+export interface Notification {
+  id: number;
+  type: NotificationType;
+  title: string;
+  description: string;
+}

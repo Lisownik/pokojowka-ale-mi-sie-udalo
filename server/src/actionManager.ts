@@ -11,6 +11,7 @@ import {
   everyID
 } from "./types";
 import {readFile, writeFile} from "node:fs/promises";
+import {parseAction} from "./notifications";
 
 
 export class ActionManager {
@@ -117,6 +118,9 @@ export class ActionManager {
     console.group("Emitting event");
     console.log("Received event: ", id, event, payload);
     const action = this.getAction(id, event);
+
+    parseAction(id, event, action);
+
     if (action)
       await this.publishEvent<T>(this.eventUrl(action.id, action.action), payload);
     console.groupEnd();

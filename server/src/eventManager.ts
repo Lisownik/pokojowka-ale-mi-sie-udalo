@@ -1,7 +1,8 @@
-import {Device, DeviceType, EventType} from "./types";
+import {Device, DeviceType, EventType, NotificationType} from "./types";
 import {Environment} from "./environment";
-import { ActionManager } from "./actionManager";
+import {ActionManager} from "./actionManager";
 import {MqttClient} from "mqtt";
+import {publishNotification} from "./notifications";
 
 
 export const Events: Record<DeviceType, EventType[]> = {
@@ -26,6 +27,11 @@ export const Events: Record<DeviceType, EventType[]> = {
   ]
 }
 
+const MAX_EVENTS = {
+  MAX_HEAT: 50.0,
+  MAX_COLD: 10.0
+}
+
 export class EventManager {
 
   private client: MqttClient | null = null;
@@ -46,14 +52,23 @@ export class EventManager {
     if (!device.state.temperature)
       return
     const temp = device.state.temperature;
-    //Check for hot
+
     if (temp > Environment.TEMPERATURE_MAX){
       this.emit(device.id, "hot");
+    }
+
+    if (temp > MAX_EVENTS.MAX_HEAT){
+      // publishNotification(NotificationType.ERROR, "TEMPERATURA SKOLIM", `W pokoju ${device.name} wykryto zbyt dużą temperaturę dla człowieka`);
     }
 
     if (temp < Environment.TEMPERATURE_MIN){
       this.emit(device.id, "cold");
     }
+
+    if (temp < MAX_EVENTS.MAX_COLD){
+      // publishNotification(NotificationType.ERROR, "ZIMNO W CHUJ", `W pokoju ${device.name} wykryto zbyt niską temperaturę dla człowieka`)
+    }
+
   }
 
   checkForEvents(device: Device, client: MqttClient) {

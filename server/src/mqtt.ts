@@ -1,11 +1,10 @@
 import mqtt, {MqttClient} from 'mqtt';
 import {DeviceManager} from "./deviceManager";
-import {DeviceType} from "./types";
+import {DeviceType, NotificationType} from "./types";
 import {Environment} from "./environment";
-import { NameManager } from './nameManager';
-import { EventManager } from './eventManager';
+import {NameManager} from './nameManager';
+import {EventManager} from './eventManager';
 import {publish} from "./routers/streaming.routes";
-
 
 
 export function startMqtt(deviceManager: DeviceManager, nameManager: NameManager, eventManager: EventManager) {
@@ -105,8 +104,9 @@ function handleState(
     return;
   }
 
-  if(!isRetained)
+  if(!isRetained){
     device.online = true;
+  }
 
   console.log(`Updated ${deviceId}`, device.state)
   publish(deviceManager, type);

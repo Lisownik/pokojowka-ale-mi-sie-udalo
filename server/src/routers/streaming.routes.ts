@@ -1,5 +1,5 @@
 import { DeviceManager } from "../deviceManager";
-import {anyID, DeviceType} from "../types";
+import {anyID, DeviceType, NotificationType, Notification} from "../types";
 import express, {Request, Response, Router} from "express";
 import {EventManager} from "../eventManager";
 
@@ -19,8 +19,8 @@ class Topic<T> {
     res.set({
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache, no-transform",
-      'Transfer-Encoding': 'chunked',
-      Connection: "keep-alive",
+      "Transfer-Encoding": 'chunked',
+      "Connection": "keep-alive",
       "X-Accel-Buffering": "no",
     });
     res.flushHeaders();
@@ -67,6 +67,9 @@ export function publish(deviceManager: DeviceManager, type: DeviceType){
   }
 }
 
+export const notificationTopic = new Topic("/stream/notifications");
+
+
 export const bulbsTopic = new Topic("/stream/bulbs")
 export const roomsTopic = new Topic("/stream/rooms")
 export const windowsTopic = new Topic("/stream/windows")
@@ -82,7 +85,7 @@ export function streamingRoutes(deviceManager: DeviceManager, eventManager: Even
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache, no-transform",
       'Transfer-Encoding': 'chunked',
-      Connection: "keep-alive",
+      "Connection": "keep-alive",
       "X-Accel-Buffering": "no",
     });
     res.flushHeaders();
@@ -132,6 +135,10 @@ export function streamingRoutes(deviceManager: DeviceManager, eventManager: Even
   router.get("/heaters", (req, res) => {
     heatersTopic.subscribe(req, res)
     publish(deviceManager, "heater")
+  })
+
+  router.get("/notifications", (req, res) => {
+    notificationTopic.subscribe(req, res)
   })
 
   return router;
