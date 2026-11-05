@@ -19,7 +19,7 @@
 
 ## Zmienne środowiskowe
 
-### Zmień zmnienne w [compose.yaml](./compose.yaml)
+### Zmień zmnienne w [compose.yaml](compose.yaml)
 
 ## Kontener Pokojówki
 
