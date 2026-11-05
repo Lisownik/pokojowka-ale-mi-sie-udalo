@@ -26,24 +26,35 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.pokojowka_mobile.MainActivity
+import com.squareup.moshi.JsonClass
 
 enum class NotificationType {
-    ERROR, INFO, SUCCESS
+    ERROR, INFO, WARNING, SILENT
 }
 
+@JsonClass(generateAdapter = true)
 data class NotificationData(
     val id: String,
     val type: NotificationType,
     val title: String,
-    val description: String,
-    val timestamp: String
+    val description: String = "",
+    val timestamp: String = ""
 ) {
 
     val icon: ImageVector
         get() = when (type) {
             NotificationType.ERROR -> Icons.Filled.Error
             NotificationType.INFO -> Icons.Filled.Info
-            NotificationType.SUCCESS -> Icons.Filled.CheckCircle
+            NotificationType.WARNING -> Icons.Filled.CheckCircle
+            NotificationType.SILENT -> Icons.Filled.Info
+        }
+
+    val notifIcon: Int
+        get() = when(type) {
+            NotificationType.ERROR -> android.R.drawable.stat_notify_error
+            NotificationType.INFO -> android.R.drawable.ic_dialog_info
+            NotificationType.WARNING -> android.R.drawable.stat_sys_warning
+            NotificationType.SILENT -> android.R.drawable.ic_dialog_info
         }
 }
 
@@ -51,7 +62,7 @@ data class NotificationData(
 val sampleGlobalNotificationsList = listOf(
     NotificationData("n1", NotificationType.ERROR, "Niska wilgotność gleby", "Chaber w sypialni jest do podlania.", "2 min temu"),
     NotificationData("n2", NotificationType.INFO, "Spadek temperatury", "Temp. w salonie spadła o 2 stopnie.", "20 min temu"),
-    NotificationData("n3", NotificationType.SUCCESS, "Podlewanie zakończone", "Rośliny w salonie zostały podlane.", "1 godz. temu"),
+    NotificationData("n3", NotificationType.WARNING, "Podlewanie zakończone", "Rośliny w salonie zostały podlane.", "1 godz. temu"),
     NotificationData("n4", NotificationType.ERROR, "Czujnik offline", "Czujnik dymu w garażu nie odpowiada.", "5 godz. temu"),
     NotificationData("n5", NotificationType.INFO, "Nowe urządzenie", "Wykryto nową żarówkę w kuchni.", "3 godz. temu")
 )

@@ -46,10 +46,16 @@ fun NotificationItem(
             tintColor = NotificationInfoTint
             iconColor = NotificationInfoBlue
         }
-        NotificationType.SUCCESS -> {
+        NotificationType.WARNING -> {
             barColor = NotificationSuccessGreen
             tintColor = NotificationSuccessTint
             iconColor = NotificationSuccessGreen
+        }
+
+        NotificationType.SILENT -> {
+            barColor = NotificationInfoBlue
+            tintColor = NotificationInfoTint
+            iconColor = NotificationInfoBlue
         }
     }
 
@@ -153,7 +159,7 @@ fun NotificationItemInfoPreview() {
 fun NotificationItemSuccessPreview() {
     PokojowkamobileTheme {
         NotificationItem(
-            type = NotificationType.SUCCESS,
+            type = NotificationType.WARNING,
             icon = Icons.Filled.CheckCircle,
             title = "System zaktualizowany",
             description = "Wszystkie urządzenia działają poprawnie.",
