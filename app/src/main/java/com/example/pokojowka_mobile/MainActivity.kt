@@ -34,8 +34,7 @@ import androidx.navigation.navArgument
 import com.example.pokojowka_mobile.components.AppBottomNavigationBar
 import com.example.pokojowka_mobile.data.NotificationHelper
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.network.repos.activity.ActivityRepository
-import com.example.pokojowka_mobile.network.repos.activity.ActivityService
+import com.example.pokojowka_mobile.network.repos.BackgroundService
 import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
 import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
 import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
@@ -106,12 +105,12 @@ class MainActivity : ComponentActivity() {
 
 fun startActivityService(context: Context) {
     ContextCompat.startForegroundService(
-        context, Intent(context, ActivityService::class.java)
+        context, Intent(context, BackgroundService::class.java)
     )
 }
 
 fun stopActivityService(context: Context) {
-    context.stopService(Intent(context, ActivityService::class.java))
+    context.stopService(Intent(context, BackgroundService::class.java))
 }
 
 @SuppressLint("FlowOperatorInvokedInComposition")
