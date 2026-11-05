@@ -3,6 +3,8 @@ import random
 import time
 from math import floor, isnan
 
+import weird
+
 import json
 from time import sleep
 
@@ -19,9 +21,20 @@ power = True
 brightness = 80
 temperature = 2700
 
+# PWM STATE
+freq = 5000
+duty = 1024
+
+# REAL STATE
+led_r = None
+led_g = None
+led_b = None
+
 
 EVERY_ID = "<every>"
 MY_ID = "none"
+
+platform = "none"
 
 
 def get_arg_id(argv):
@@ -30,11 +43,13 @@ def get_arg_id(argv):
             return a[5:]
     return None
 
-def print_with_style(text, char_cnt = LOG_CHAR_CNT):
+
+def print_with_style(text, char_cnt=LOG_CHAR_CNT):
     text = text.strip()
     char = '-'
     chars = math.floor((char_cnt - len(text) - 2)/2)
     print(char * chars + " " + text + " " + char * chars)
+
 
 def read_id_file():
     try:
@@ -44,13 +59,13 @@ def read_id_file():
                 raise ValueError("Id not stored in id.txt")
             return text
     except OSError or ValueError:
-        content = ''
         reg_id = "tried-to-register-id-no-implementation"
         if not reg_id:
             raise Exception("No server no id file or id in file")
         with open(env.ID_FILEPATH, 'w') as file:
             file.write(reg_id)
         return reg_id
+
 
 def get_my_id():
     arg_id = get_arg_id(sys.argv)
@@ -96,7 +111,7 @@ def get_initial_state(client, timeout_ms=1000):
         brightness = b
 
     p = data.get('power')
-    if p is "true" or p is "false":
+    if p == "true" or p == "false":
         print(f"\tPOWER: {p}")
         power = p == "true"
 
@@ -107,20 +122,32 @@ def get_initial_state(client, timeout_ms=1000):
 
     print('-' * LOG_CHAR_CNT)
 
+
 def connect_to_wifi():
     import network
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(env.WIFI_SSID, env.WIFI_PASSWORD)
     while not wlan.isconnected():
-        print("Not connected to WLAN")
+        print("Not connected to WLAN. Trying to reconnect...")
         time.sleep(1)
+
 
 def get_path_status():
     return f"devices/smart_led/{MY_ID}/status".encode()
 
+
 def get_path_state():
     return f"devices/smart_led/{MY_ID}/state".encode()
+
+
+def get_led_brightness():
+    global brightness
+    return int(brightness/100 * duty - 1)
+
+
+def get_rgb_from_kelvin(temperature):
+    return weird.kelvin_to_rgb(temperature)
 
 
 def process_state():
@@ -132,6 +159,17 @@ def process_state():
     print(f"brightness: {brightness}")
     print(f"color temperature: {temperature}")
     print("-" * 40)
+    if (platform == "esp32" and
+            led_b is not None and
+            led_r is not None and
+            led_g is not None):
+        led_r.duty(power * get_led_brightness() *
+                   get_rgb_from_kelvin(temperature)[0] // 255)
+        led_g.duty(power * get_led_brightness() *
+                   get_rgb_from_kelvin(temperature)[1] // 255)
+        led_b.duty(power * get_led_brightness() *
+                   get_rgb_from_kelvin(temperature)[2] // 255)
+
 
 def on_message(topic, msg):
     print("Message incoming: ", topic.decode(), msg.decode())
@@ -150,12 +188,10 @@ def on_message(topic, msg):
         if not isnan(new_brightness):
             brightness = new_brightness
 
-
-
-
     process_state()
     if client:
         publish_state(client)
+
 
 def get_subscriptions():
     return [
@@ -167,26 +203,32 @@ def get_subscriptions():
         f"events/smart_led-{EVERY_ID}/brightness",
     ]
 
+
 def subscribe(client):
     print("SUBSCRIBING")
     for sub in get_subscriptions():
         print("\tto topic: ", sub)
         client.subscribe(sub.encode())
 
+
 def getRandom(_min, _max):
     return _min + floor((random.random() * (_max - _min)))
 
+
 def publish_state(publisher):
+    global temperature
+    temperature = 2700
     publisher.publish(
         get_path_state(),
         json.dumps({
             "brightness": brightness,
             "power": "true" if power else "false",
-            "temperature": getRandom(2700, 4000),
+            "temperature": temperature,
         }).encode(),
         retain=True,
         qos=1,
     )
+
 
 def publish_status(publisher):
     publisher.publish(
@@ -198,16 +240,19 @@ def publish_status(publisher):
         qos=1,
     )
 
+
 def print_configuration():
     print("Starting Smart Ledzik firmware")
     print_with_style("CONFIGURATION DATA")
     print("MQTT BROKER and REST HOST: " + env.BROKER_HOST)
     print("MQTT BROKER PORT: " + str(env.BROKER_PORT))
     print("REST PORT: " + str(env.REST_POT))
-    print("ID FILE PATH: " +  env.ID_FILEPATH)
+    print("ID FILE PATH: " + env.ID_FILEPATH)
     print("STATIC MODE: " + "true" if env.STATIC else "false")
     print("-" * LOG_CHAR_CNT)
 
+
+HEARTBEAT_S = 5
 
 
 def main():
@@ -221,7 +266,11 @@ def main():
     print("STATUS PATH: " + get_path_status().decode())
     print("STATE PATH: " + get_path_state().decode())
 
-    client = MQTTClient(f"smart-led-client-{MY_ID}", env.BROKER_HOST, env.BROKER_PORT)
+    client = MQTTClient(
+        f"smart-led-client-{MY_ID}",
+        env.BROKER_HOST,
+        env.BROKER_PORT,
+        keepalive=30)
 
     get_initial_state(client)
 
@@ -231,11 +280,9 @@ def main():
         json.dumps({
             "online": False
         }).encode(),
-        retain = True,
-        qos = 1
+        retain=True,
+        qos=1
     )
-
-
 
     client.connect()
 
@@ -246,12 +293,38 @@ def main():
     publish_state(client)
 
     print("Now listening for messages")
+    last = 0
     while True:
-        client.wait_msg()
+        if time.time() - last >= HEARTBEAT_S:
+            client.ping()
+            last = time.time()
+        client.check_msg()
+        time.sleep(0.1)
+
+
+def realConfig():
+    global led_r, led_g, led_b
+    from machine import Pin, PWM
+    led_r = PWM(Pin(25))
+    led_r.freq(freq)
+    led_g = PWM(Pin(26))
+    led_g.freq(freq)
+    led_b = PWM(Pin(27))
+    led_b.freq(freq)
 
 
 if sys.platform == "esp32":
     connect_to_wifi()
+    print("jestem esp")
+    platform = "esp32"
+    realConfig()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        sys.print_exception(e)
+        print("Throwed uncatched exception. Restarting the machine...")
+        if platform == "esp32":
+            import machine
+            machine.reset()
