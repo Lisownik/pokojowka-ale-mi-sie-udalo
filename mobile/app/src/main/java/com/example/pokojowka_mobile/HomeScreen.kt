@@ -26,17 +26,16 @@ import com.example.pokojowka_mobile.components.SharedHeader
 import com.example.pokojowka_mobile.components.SmartHouseCard
 import com.example.pokojowka_mobile.data.EnvironmentData
 import com.example.pokojowka_mobile.data.GlobalPlantsList
-import com.example.pokojowka_mobile.data.NotificationData
 import com.example.pokojowka_mobile.data.NotificationType
 import com.example.pokojowka_mobile.data.UserData
 import com.example.pokojowka_mobile.data.UserSettingsManager
-import com.example.pokojowka_mobile.data.sampleGlobalNotificationsList
 import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
 import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
 import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
 import com.example.pokojowka_mobile.network.repos.windows.WindowsRepository
 import com.example.pokojowka_mobile.ui.theme.*
 import com.example.pokojowka_mobile.network.repos.house.HouseRepository
+import com.example.pokojowka_mobile.network.repos.notifications.NotificationRepository
 
 @Composable
 fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -47,11 +46,7 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
     val heatersList by HeatersRepository.state.collectAsStateWithLifecycle()
     val avgRoom by RoomsRepository.avgState.collectAsStateWithLifecycle()
 
-    val notificationsList = remember {
-        mutableStateListOf<NotificationData>().apply {
-            addAll(sampleGlobalNotificationsList.map { it.copy() })
-        }
-    }
+    val notificationsList by NotificationRepository.state.collectAsStateWithLifecycle()
 
     val newNotificationsCount = notificationsList.count { it.type == NotificationType.ERROR || it.type == NotificationType.INFO }
 
@@ -229,7 +224,9 @@ fun HomeScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 newNotificationsCount = newNotificationsCount,
-                notifications = notificationsList,
+                notifications = notificationsList.filter { notif ->
+                    notif.type === NotificationType.WARNING || notif.type === NotificationType.ERROR
+                }.takeLast(5),
                 onNotificationClick = { notificationId ->
                     println("Kliknięto powiadomienie ID: $notificationId")
                 }

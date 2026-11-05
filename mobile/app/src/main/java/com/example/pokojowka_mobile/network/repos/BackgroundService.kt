@@ -1,4 +1,4 @@
-package com.example.pokojowka_mobile.network.repos.activity
+package com.example.pokojowka_mobile.network.repos
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,8 +11,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import com.example.pokojowka_mobile.R
+import com.example.pokojowka_mobile.network.repos.activity.ActivityRepository
+import com.example.pokojowka_mobile.network.repos.notifications.NotificationRepository
 
-class ActivityService : Service() {
+class BackgroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
@@ -39,11 +41,13 @@ class ActivityService : Service() {
         )
 
         ActivityRepository.startStream()
+        NotificationRepository.startStream()
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
         ActivityRepository.stopStream()
+        NotificationRepository.stopStream()
         super.onDestroy()
     }
 

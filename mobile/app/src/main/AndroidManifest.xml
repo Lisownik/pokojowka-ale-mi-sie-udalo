@@ -22,7 +22,7 @@
         android:usesCleartextTraffic="true"
         >
         <service
-            android:name=".network.repos.activity.ActivityService"
+            android:name=".network.repos.BackgroundService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <property
