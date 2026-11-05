@@ -1,0 +1,96 @@
+package com.example.pokojowka_mobile
+
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.pokojowka_mobile.components.BulbsListSection
+import com.example.pokojowka_mobile.components.SharedHeader
+import com.example.pokojowka_mobile.data.SampleUserData
+import com.example.pokojowka_mobile.data.UserData
+import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
+import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
+
+@Composable
+fun BulbsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+    val bulbsListState by BulbsRepository.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val userSettingsManager = remember { UserSettingsManager(context) }
+
+    val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
+        initialValue = UserData(userName = "", lastName = "", connectedDevices = emptyList())
+    )
+
+    val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
+    val scrollState = rememberScrollState()
+
+    Scaffold(
+        containerColor = Color.Transparent,
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(scrollState)
+        ) {
+            SharedHeader(
+                userData = currentUserData,
+                environmentData = currentEnvironmentData,
+                onNotificationClick = {
+                    println("Powiadomienia kliknięte z BulbsScreen!")
+                }
+            )
+
+            BulbsListSection(
+                bulbs = bulbsListState,
+                onSwitchToggle = { bulbId, newState ->
+                    val index = bulbsListState.indexOfFirst { it.id == bulbId }
+                    if (index != -1) {
+                        BulbsRepository.setBulbState(bulbId, newState)
+                        Log.d("Logging bulbsListState", bulbsListState.toString())
+                    }
+                    Log.d("BulbsScreen", "Żarówka $bulbId przełączona na: $newState")
+                },
+                onBrightnessChange = { bulbId, newBrightness ->
+                    val index = bulbsListState.indexOfFirst { it.id == bulbId }
+                    if (index != -1) {
+                        BulbsRepository.setBulbBrightness(bulbId, newBrightness)
+                    }
+                    Log.d("BulbsScreen", "Jasność żarówki $bulbId zmieniona na: $newBrightness%")
+                },
+                onItemClick = { bulbId ->
+                    Log.d("BulbsScreen", "Nawigacja do BulbView dla żarówki: $bulbId")
+                    navController.navigate("${AppDestinations.BULB_VIEW_SCREEN_ROUTE}/$bulbId")
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 380, heightDp = 800)
+@Composable
+fun BulbsScreenPreview() {
+    PokojowkamobileTheme {
+        val navController = rememberNavController()
+        BulbsScreen(navController = navController)
+    }
+}

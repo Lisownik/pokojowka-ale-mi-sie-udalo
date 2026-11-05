@@ -1,0 +1,84 @@
+package com.example.pokojowka_mobile
+
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.pokojowka_mobile.components.HeatersSection
+import com.example.pokojowka_mobile.components.SharedHeader
+import com.example.pokojowka_mobile.data.SampleUserData
+import com.example.pokojowka_mobile.data.UserData
+import com.example.pokojowka_mobile.data.UserSettingsManager
+import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
+import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
+
+@Composable
+fun HeatersScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+    val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val userSettingsManager = remember { UserSettingsManager(context) }
+
+    val currentUserData by userSettingsManager.userPreferencesFlow.collectAsStateWithLifecycle(
+        initialValue = UserData(userName = "", lastName = "", connectedDevices = emptyList())
+    )
+
+    val currentEnvironmentData = remember { SampleUserData.defaultEnvironment }
+    val heaters by HeatersRepository.state.collectAsStateWithLifecycle()
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(scrollState)
+        ) {
+            SharedHeader(
+                userData = currentUserData,
+                environmentData = currentEnvironmentData,
+                onNotificationClick = {
+                    println("Powiadomienia kliknięte z HeatersScreen!")
+                }
+            )
+
+            HeatersSection(
+                heaters = heaters,
+                onHeaterClick = { heaterId ->
+                    Log.d("HeatersScreen", "Kliknięto grzejnik ID: $heaterId. Nawigacja do HeaterView.")
+                    navController.navigate("${AppDestinations.HEATER_VIEW_SCREEN_ROUTE}/$heaterId")
+                },
+                onHeaterToggle = { heaterId, isHeatingOn ->
+                    HeatersRepository.setHeatingState(heaterId, isHeatingOn)
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 380, heightDp = 800)
+@Composable
+fun HeatersScreenPreview() {
+    val navController = rememberNavController()
+    PokojowkamobileTheme {
+        HeatersScreen(navController = navController)
+    }
+}
