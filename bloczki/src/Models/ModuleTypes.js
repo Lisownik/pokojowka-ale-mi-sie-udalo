@@ -23,8 +23,17 @@ export const static_module_types = {
     isIdNeeded: true,
     events: [],
     actions: ["on", "off"],
-  }
-
+  },
+  roof: {
+    isIdNeeded: false,
+    events: [
+      "dark",
+      "sunny",
+      "rain",
+      "rain-stop"
+    ],
+    actions: []
+  },
 }
 
 export const anyID = "<any>"
