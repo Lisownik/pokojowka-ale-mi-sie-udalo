@@ -5,12 +5,15 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.core.app.NotificationManagerCompat
+import com.example.pokojowka_mobile.R
+import androidx.core.net.toUri
 
 object Notifier{
     private const val CHANNEL_ID = "my_pokojowka_albert_black"
@@ -18,15 +21,22 @@ object Notifier{
     var initialized: Boolean = false
     private lateinit var appContext: Context
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun init(context: Context) {
         Log.d("Notifier", "Initializing notifier")
         this.appContext = context.applicationContext
+
+        val soundUri = "android.resource://${context.packageName}/${R.raw.notification}".toUri()
+
         val channel = NotificationChannel(
             CHANNEL_ID,
             "Normal Notifications",
             NotificationManager.IMPORTANCE_HIGH
-        )
+        ).apply{
+            setSound(soundUri, audioAttributes)
+        }
+
         NotificationManagerCompat.from(appContext).createNotificationChannel(channel)
 
         val silentChannel = NotificationChannel(
