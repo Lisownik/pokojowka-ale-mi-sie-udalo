@@ -1,0 +1,47 @@
+<app-back-button></app-back-button>
+
+@let data = light()!.state;
+
+<div class="bulb-card" *ngIf="light">
+  <div class="bulb-header">
+    <div>
+      <h2 class="bulb-title">{{ light.name }}</h2>
+      <div class="bulb-desc">{{ 'zarowka.title' | transloco }}</div>
+    </div>
+    <div class="bulb-icon-placeholder">
+      <span class="bulb-ico"><img src="/assets/icons/slocne.png" alt="Ikona żarówki"></span>
+    </div>
+  </div>
+
+  <div class="bulb-status-row">
+    <span class="status-dot" [style.background-color]="data.power ? '#00ff77' : '#ff3d3d'"></span>
+    <span class="status-label">Status</span>
+    <span class="status-value" [ngClass]="{'on': data.power, 'off': !data.power}">{{ (data.power ? 'zarowka.on' : 'zarowka.off') | transloco }}</span>
+  </div>
+
+  <div class="bulb-slider-row">
+    <div class="slider-label">{{ 'zarowka.brightness' | transloco }}</div>
+    <input type="range" min="1" max="100" [value]="data.brightness" class="brightness-slider"
+           (input)="onBrightnessChange($event)" [disabled]="!data.power" />
+    <span class="slider-value">{{ data.brightness }}%</span>
+  </div>
+
+  <div class="bulb-slider-row">
+    <div class="slider-label">{{ 'zarowka.temp' | transloco }}</div>
+    <input type="range" min="2200" max="6500" step="100" [value]="data.temperature || 2700" class="temperature-slider"
+           (input)="onTemperatureChange($event)" [disabled]="!data.power" />
+    <span class="slider-value">{{ data.temperature || 3000 }}K</span>
+  </div>
+
+  <div class="bulb-btn-row">
+    <button
+      class="bulb-btn"
+      [ngClass]="data.power ? 'on' : 'off'"
+      (click)="toggleLight()">
+      <span class="bulb-center-ico">
+        <img src="/assets/icons/slocne.png" alt="Przycisk zasilania">
+      </span>
+      <span class="bulb-btn-text">{{ data.power ? 'ON' : 'OFF' }}</span>
+    </button>
+  </div>
+</div>

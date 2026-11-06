@@ -1,17 +1,16 @@
 <app-back-button></app-back-button>
-<app-action-button></app-action-button>
 
 
   <div class="plant-layout">
-
+    @let data = plant!.data;
     <div class="info top-left">
 
       <div class="info-title">
         <img src="assets/icons/humidity.png" alt="Wilgotność" class="info-icon smaller">
-        Wilgotność
+        {{ 'potki.wet' | transloco }}
       </div>
 
-      <div class="info-details">Umiarkowana 75%</div>
+      <div class="info-details">{{ transformWetness(data.wet) | transloco }} {{ data.wet }}%</div>
 
     </div>
 
@@ -19,10 +18,10 @@
 
       <div class="info-title">
         <img src="assets/icons/sun.png" alt="Nasłonecznienie" class="info-icon">
-        Naświetlenie
+        {{ 'potki.sun' | transloco }}
       </div>
 
-      <div class="info-details">Jasne światło 95%</div>
+      <div class="info-details">{{ transformSunlight(data.sun) | transloco }} {{ data.sun }}%</div>
 
     </div>
 
@@ -40,19 +39,19 @@
     <div class="info bottom-left">
       <div class="info-title">
         <img src="assets/icons/temp-white.png" alt="Temperatura" class="info-icon">
-        Temperatura
+        {{ 'potki.temp' | transloco }}
       </div>
 
-      <div class="info-details">Odpowiednia 75°C</div>
+      <div class="info-details">{{ tranformTemperature(data.temperature) | transloco }} {{ data.temperature }}°C</div>
 
     </div>
     <div class="info bottom-right">
       <div class="info-title">
         <img src="assets/icons/plant.png" alt="Nawożenie" class="info-icon">
-        Nawożenie
+        {{ 'potki.humidity' | transloco }}
       </div>
 
-      <div class="info-details">Słabe 53%</div>
+      <div class="info-details">{{ transformHumidity(data.humidity) | transloco }} {{ data.humidity }}%</div>
     </div>
   </div>
 

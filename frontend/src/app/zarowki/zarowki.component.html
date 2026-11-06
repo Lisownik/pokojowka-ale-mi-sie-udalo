@@ -1,0 +1,44 @@
+<app-back-button></app-back-button>
+
+<div class="lights-grid">
+  @for (light of lights(); track light.id) {
+    @let data = light!.state;
+
+    <div class="light-container" (click)="goToLight(light.id)">
+      <div class="light-header">
+        <h2>{{ light.name }}</h2>
+        <div class="light-status-indicator">
+          <div class="status-dot" [ngClass]="{'status-on': data.power, 'status-off': !data.power}"></div>
+          <span>{{ (data.power ? 'zarowka.on' : 'zarowka.off') | transloco }}</span>
+        </div>
+      </div>
+
+      <div class="light-content">
+        <div class="light-image">
+          <img src="/assets/icons/zarowka-2.png" alt="Żarówka" [ngClass]="{'light-on': data.power, 'light-off': !data.power}"/>
+        </div>
+
+        <div class="light-controls">
+          <div class="toggle-container">
+            <span class="toggle-label">{{ 'zarowka.onoff' | transloco }}</span>
+            <div class="toggle-button" [ngClass]="{'toggle-on': data.power}" (click)="toggleLight(light.id); $event.stopPropagation()">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+
+          <div class="slider-container">
+            <div class="slider-header">
+              <label>{{ 'zarowka.brightness' | transloco }}</label>
+              <span class="slider-value">{{ data.brightness }}%</span>
+            </div>
+            <input type="range" min="1" max="100" [value]="data.brightness"
+                   (input)="onBrightnessChange($event, light.id)" [disabled]="!data.power"
+                   (click)="$event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+    </div>
+  } @empty {
+    <h3 class="error-info">{{ 'zarowka.none' | transloco }}</h3>
+  }
+</div>

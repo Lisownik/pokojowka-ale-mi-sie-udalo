@@ -1,0 +1,63 @@
+{
+  "pokojowki": {
+    "none": "No displayable room modules",
+    "temp": "Temperature",
+    "humidity": "Humidity",
+    "aqi": "Air Quality",
+    "pressure": "Pressure",
+    "rating": "Room Rating",
+    "danger": "Dangers",
+    "safe": "Safe"
+  },
+  "potki": {
+    "none": "No displayable plant modules",
+    "wet": "Soil Humidity",
+    "sun": "Sunlight",
+    "nawoz": "Fertilizer Level",
+    "humidity": "Ambient Humidity",
+    "temp": "Temperature",
+    "wetness": {
+      "very_wet": "Very wet",
+      "wet": "Wet",
+      "normal": "Normal",
+      "dry": "Dry",
+      "very_dry": "Very dry"
+    },
+    "sunlight": {
+      "very_sunny": "Very sunny",
+      "sunny": "Sunny",
+      "normal": "Normal",
+      "cloudy": "Dark",
+      "very_cloudy": "Very dark"
+    },
+    "temperature": {
+      "very_cold": "Very cold",
+      "cold": "Cold",
+      "normal": "Normal",
+      "hot": "Warm",
+      "very_hot": "Hot"
+    },
+    "air_humidity": {
+      "very_dry": "Very low",
+      "dry": "Low",
+      "normal": "Normal",
+      "humid": "High",
+      "very_humid": "Very high"
+    }
+  },
+  "zarowka": {
+    "none": "No displayable light bulbs",
+    "title": "Smart Lighting",
+    "brightness": "Brightness",
+    "on": "On",
+    "off": "Off",
+    "onoff": "On/Off",
+    "temp": "Temperature"
+
+  },
+  "ogolne": {
+    "loading": "Loading...",
+    "error": "An error occurred. Please try again later.",
+    "noData": "No data available"
+  }
+}

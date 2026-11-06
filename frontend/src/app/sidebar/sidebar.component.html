@@ -8,7 +8,7 @@
 
     <div class="sidebar-panel" [class.open]="openedPanel === 1">
       <img src="/assets/icons/temp-white.png" alt="temp white">
-      <span>17°</span>
+      <span>lorem°</span>
     </div>
   </div>
 
@@ -18,7 +18,7 @@
     </button>
     <div class="sidebar-panel" [class.open]="openedPanel === 2">
       <img src="/assets/icons/water-white.png" alt="water white">
-      <span>97%</span>
+      <span>lorem°</span>
     </div>
   </div>
 
@@ -28,7 +28,7 @@
     </button>
     <div class="sidebar-panel" [class.open]="openedPanel === 3">
       <img src="/assets/icons/cisnienie-white.png" alt="cisnienie white">
-      <span>1030 Ha</span>
+      <span>lorem°</span>
     </div>
   </div>
 
@@ -38,7 +38,7 @@
     </button>
     <div class="sidebar-panel" [class.open]="openedPanel === 4">
       <img src="/assets/icons/fire-white.png" alt="fire white">
-      <span>Lorem lo</span>
+      <span>{{ `pokojowki.safe` | transloco}}</span>
     </div>
   </div>
 
@@ -48,6 +48,10 @@
 
   <button routerLink="/potki">
     <img src="/assets/icons/plant-white.png" alt="plant white">
+  </button>
+
+  <button routerLink="/zarowki">
+    <img src="/assets/icons/zarowka.png " alt="plant white">
   </button>
 
 </div>

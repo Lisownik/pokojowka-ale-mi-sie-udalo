@@ -1,42 +1,12 @@
 <app-back-button></app-back-button>
-<app-action-button></app-action-button>
 
 
 <div class="rooms-grid">
+  @defer (when rooms()){
+    @for (room of rooms() ; track room.id) {
+      @let data = room.state;
 
-<!--  <div  class="room" (click)="goToRoom(1)">-->
 
-<!--    <h2>Pokój 1</h2>-->
-
-<!--    <div class="room-content">-->
-
-<!--      <div class="room-image">-->
-<!--        <img src="/assets/pokojowka.png" alt="Pokojówka" />-->
-<!--      </div>-->
-
-<!--      <div class="room-info">-->
-<!--        <div class="info-row">-->
-<!--          <span>Temperatura</span>-->
-<!--          <span class="info-value">17°</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row">-->
-<!--          <span>Wilgotność</span>-->
-<!--          <span class="info-value">45%</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row">-->
-<!--          <span>Jakość powietrza</span>-->
-<!--          <span class="info-value">50 AQI</span>-->
-<!--        </div>-->
-
-<!--      </div>-->
-
-<!--    </div>-->
-
-<!--  </div>-->
-  @defer (when dataService.rooms){
-    @for (room of dataService.rooms ; track room.name) {
       <div  class="room" (click)="goToRoom(room.id)">
 
         <h2>{{ room.name }}</h2>
@@ -49,44 +19,44 @@
 
           <div class="room-info">
               <div class="info-row">
-                <span>Temperatura</span>
-                @if (room.data.temperature) {
+                <span>{{ 'pokojowki.temp' | transloco }}</span>
+                @if (data.temperature) {
                   <span class="info-value">
-<!--                    {{ room.data.temperature }}°-->
+<!--                    {{ data.temperature }}°-->
                     <app-animated-counter
-                      [value]="parseInt(room.data.temperature.toString())"
+                      [value]="parseInt(data.temperature.toString())"
                       suffix="°"
                       [minDigits]="1"
                       theme="default">
                     </app-animated-counter>
                   </span>
                 } @else {
-                  <span class="info-value">Brak odczytu</span>
+                  <span class="info-value">{{ 'ogolne.noData' | transloco }}</span>
                 }
               </div>
               <div class="info-row">
-                <span>Wilgotność</span>
-                @if (room.data.humidity) {
+                <span>{{ 'pokojowki.humidity' | transloco }}</span>
+                @if (data.humidity) {
                   <span class="info-value">
-<!--                    {{ room.data.humidity }}%-->
+<!--                    {{ data.humidity }}%-->
                     <app-animated-counter
-                    [value]="parseInt(room.data.humidity.toString())"
+                    [value]="parseInt(data.humidity.toString())"
                     suffix="%"
                     [minDigits]="1"
                     theme="default">
                     </app-animated-counter>
                   </span>
                 } @else {
-                  <span class="info-value">Brak Odczytu</span>
+                  <span class="info-value">{{ 'ogolne.noData' | transloco }}</span>
                 }
               </div>
               <div class="info-row">
-                <span>Jakość powietrza</span>
-                @if (room.data.quality) {
+                <span>{{ 'pokojowki.aqi' | transloco }}</span>
+                @if (data.quality) {
                   <span class="info-value">
-<!--                    {{ room.data.air_quality }} AQI-->
+<!--                    {{ data.air_quality }} AQI-->
                     <app-animated-counter
-                    [value]="room.data.quality"
+                    [value]="data.quality"
                     suffix="AQI"
                     [minDigits]="1"
                     theme="default"
@@ -95,7 +65,7 @@
                     </app-animated-counter>
                   </span>
                 } @else {
-                  <span class="info-value">Brak odczytu</span>
+                  <span class="info-value">{{ 'ogolne.noData' | transloco }}</span>
                 }
               </div>
           </div>
@@ -104,11 +74,9 @@
 
       </div>
     } @empty {
-        <h3 class="error-info">Nie ma żadnych dostępnych pokojówek</h3>
+        <h3 class="error-info">{{ 'pokojowki.none' | transloco }}</h3>
     }
   } @placeholder {
     Nic
   }
-
-
 </div>

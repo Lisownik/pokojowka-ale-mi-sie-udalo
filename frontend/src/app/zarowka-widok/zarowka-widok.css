@@ -1,0 +1,177 @@
+.bulb-card {
+  background: #222325;
+  border-radius: 24px;
+  padding: 32px 32px 24px 32px;
+  width: 450px;
+  color: #fff;
+  box-shadow: 0 2px 12px #0005;
+  margin: 24px auto;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.bulb-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.bulb-title {
+  font-size: 2rem;
+  color: #70A7FE;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+.bulb-desc {
+  font-size: 1rem;
+  color: #99a8d8;
+}
+
+.bulb-icon-placeholder {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: #4c4b4b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.bulb-ico img {
+  width: 30px;
+  height: 30px;
+  display: block;
+  filter: brightness(1.7) grayscale(1);
+}
+
+.bulb-status-row {
+  margin: 22px 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff3d3d;
+  margin-right: 6px;
+  display: inline-block;
+}
+.status-label {
+  font-weight: 600;
+  font-size: 1.08rem;
+  margin-right: 14px;
+}
+.status-value {
+  font-weight: 700;
+  font-size: 1.12rem;
+  margin-left: auto;
+  letter-spacing: 1px;
+}
+.status-value.off {
+  color: #ff3d3d;
+}
+.status-value.on {
+  color: #00ff77;
+}
+
+.bulb-slider-row {
+  margin: 18px 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.slider-label {
+  width: 90px;
+  font-size: 1rem;
+  color: #e3e7f7;
+}
+
+.brightness-slider,
+.temperature-slider {
+  accent-color: #1fff90;
+  height: 4px;
+  background: #333;
+  width: 200px;
+  margin-left: 10px;
+}
+
+.brightness-slider {
+  accent-color: #1fff90;
+}
+.temperature-slider {
+  accent-color: #ffb800;
+  background: linear-gradient(90deg, #ff7e1e 0%, #fff500 30%, #fff 100%);
+}
+.slider-value {
+  width: 65px;
+  text-align: right;
+  font-size: 1rem;
+  color: #70A7FE;
+  font-family: monospace;
+}
+
+.bulb-btn-row {
+  margin-top: 34px;
+  display: flex;
+  justify-content: center;
+}
+.bulb-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  font-size: 1.11rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 0 32px 8px #1fff9060;
+  background: linear-gradient(145deg, #00e167 60%, #28ffb8 100%);
+  color: #fff;
+  transition: box-shadow 0.18s, background 0.18s;
+  position: relative;
+}
+
+
+.bulb-center-ico img {
+  width: 35px;
+  height: 35px;
+  filter: drop-shadow(0 0 8px #1fff90a0);
+  display: block;
+  margin: 0 auto 7px auto;
+}
+
+.bulb-btn-text {
+  font-size: 1.21rem;
+  font-weight: bold;
+  letter-spacing: 1.1px;
+  margin-top: 2px;
+}
+
+.bulb-btn.off {
+  background: linear-gradient(145deg, #5e5e5e 60%, #7e7e7e 100%);
+  box-shadow: 0 0 12px 3px #5e5e5e60;
+  transition: box-shadow 0.18s, background 0.18s;
+}
+
+.bulb-btn.off .bulb-center-ico img {
+  filter: drop-shadow(0 0 8px #ffffff40);
+  opacity: 0.7;
+}
+
+.bulb-btn.off:hover {
+  background: linear-gradient(145deg, #666666 60%, #888888 100%);
+  box-shadow: 0 0 14px 4px #5e5e5e70;
+}
+
+.bulb-btn.on:hover {
+  background: linear-gradient(145deg, #00ee6c 60%, #2cffbc 100%);
+  box-shadow: 0 0 38px 10px #1fff9070;
+}
+

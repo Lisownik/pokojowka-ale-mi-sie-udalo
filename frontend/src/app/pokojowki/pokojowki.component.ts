@@ -1,23 +1,24 @@
-import {Component, Inject} from '@angular/core';
+import {Component, computed} from '@angular/core';
 import {BackButtonComponent} from "../back-button/back-button.component";
-import {ActionButtonComponent} from '../action-button/action-button.component';
-import {Data, Router} from "@angular/router";
-import {DataService, RoomInfo} from '../data.service';
+import {Router} from "@angular/router";
 import {AnimatedCounterComponent} from '../animated-counter/animated-counter.component';
+import {TranslocoPipe} from '@ngneat/transloco';
+import {RoomsRepository} from '../services/repo/rooms/rooms-repository';
 
 @Component({
   selector: 'app-pokojowki',
   imports: [
     BackButtonComponent
-    , ActionButtonComponent, AnimatedCounterComponent
+    ,AnimatedCounterComponent, TranslocoPipe
   ],
   templateUrl: './pokojowki.component.html',
   styleUrl: './pokojowki.component.css'
 })
 export class PokojowkiComponent {
-  // dataService: DataService = Inject(DataService)
 
-  constructor(private router: Router, public dataService: DataService) {
+  protected rooms = computed(() => this.roomRepo.state());
+
+  constructor(private router: Router, public roomRepo: RoomsRepository) {
   }
 
   goToRoom(roomId: string) {

@@ -1,0 +1,63 @@
+{
+  "pokojowki": {
+    "none": "Nie ma żadnych dostępnych pokojówek",
+    "temp": "Temperatura",
+    "humidity": "Wilgotność",
+    "aqi": "Jakość powietrza",
+    "pressure": "Ciśnienie",
+    "rating": "Ocena Pokoju",
+    "danger": "Zagrożenia",
+    "safe": "Brak"
+  },
+  "potki": {
+    "none": "Nie ma żadnych dostępnych potek",
+    "wet": "Wilgotność Gleby",
+    "sun": "Naświetlenie",
+    "nawoz": "Poziom Nawozu",
+    "humidity": "Wilgotność Otoczenia",
+    "temp": "Temperatura",
+    "wetness": {
+      "very_wet": "Bardzo mokra",
+      "wet": "Mokra",
+      "normal": "Normalna",
+      "dry": "Sucha",
+      "very_dry": "Bardzo sucha"
+    },
+    "sunlight": {
+      "very_sunny": "Bardzo słonecznie",
+      "sunny": "Słonecznie",
+      "normal": "Normalnie",
+      "cloudy": "Pochmurno",
+      "very_cloudy": "Bardzo pochmurno"
+    },
+    "temperature": {
+      "very_cold": "Bardzo zimno",
+      "cold": "Zimno",
+      "normal": "Normalnie",
+      "hot": "Ciepło",
+      "very_hot": "Bardzo ciepło"
+    },
+    "air_humidity": {
+      "very_dry": "Bardzo niska",
+      "dry": "Niska",
+      "normal": "Normalna",
+      "humid": "Wysoka",
+      "very_humid": "Bardzo wysoka"
+    }
+  },
+  "zarowka": {
+    "none": "Nie ma żadnych dostępnych żarówek",
+    "title": "Inteligente Oświetlenie",
+    "brightness": "Jasność",
+    "on": "Włączona",
+    "off": "Wyłączona",
+    "onoff": "Włącznik",
+    "temp": "Temperatura"
+
+  },
+  "ogolne": {
+    "loading": "Ładowanie...",
+    "error": "Wystąpił błąd. Spróbuj ponownie później.",
+    "noData": "Brak odczytu"
+  }
+}

@@ -1,5 +1,4 @@
 export const environment = {
   production: true,
-  serverUrl: 'http://localhost:3333',
-  roomsInfoEndpoint: '/room-values'
+  apiUrl: "http://localhost:1234",
 };
