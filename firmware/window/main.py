@@ -98,9 +98,9 @@ def get_initial_state(mqtt_client, timeout_ms=1000):
     print(received[0].decode())
 
     _open = data.get('open')
-    if isinstance(_open, str):
+    if isinstance(_open, bool):
         print(f"\tOpened: {_open}")
-        opened = _open == "true"
+        opened = _open
 
     print('-' * LOG_CHAR_CNT)
 
@@ -127,7 +127,7 @@ def publish_state(publisher):
     publisher.publish(
         get_path_state(),
         json.dumps({
-            "open": "true" if opened else "false",
+            "open": opened
         }).encode(),
         retain=True,
         qos=1,

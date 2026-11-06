@@ -8,17 +8,17 @@ const roomData: DeviceState = {
 }
 
 const bulbData: DeviceState = {
-  power: "false",
+  power: false,
   temperature: 1234,
   brightness: 99,
 }
 
 const windowData: DeviceState = {
-  open: "false",
+  open: false,
 }
 
 const heaterData: DeviceState = {
-  power: "false",
+  power: false,
   temperature: 11,
   temperatureGoal: 22
 }

@@ -90,9 +90,9 @@ def get_initial_state(client, timeout_ms=1000):
     print(received[0].decode())
 
     p = data.get('power')
-    if p is "true" or p is "false":
+    if isinstance(p, bool)
         print(f"\tPOWER: {p}")
-        power = p == "true"
+        power = p
 
     t = data.get('temperatureGoal')
     if isinstance(t, (int, float)) and not isnan(t):
@@ -175,7 +175,7 @@ def publish_state(publisher):
     publisher.publish(
         get_path_state(),
         json.dumps({
-            "power": "true" if power else "false",
+            "power": power,
             "temperatureGoal": temperature_goal,
             "temperature": sensor_temperature
         }).encode(),

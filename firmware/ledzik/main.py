@@ -3,8 +3,6 @@ import random
 import time
 from math import floor, isnan
 
-import weird
-
 import json
 from time import sleep
 
@@ -111,9 +109,9 @@ def get_initial_state(client, timeout_ms=1000):
         brightness = b
 
     p = data.get('power')
-    if p == "true" or p == "false":
+    if isinstance(p, bool):
         print(f"\tPOWER: {p}")
-        power = p == "true"
+        power = p
 
     t = data.get('temperature')
     if isinstance(t, (int, float)) and not isnan(t):
@@ -222,7 +220,7 @@ def publish_state(publisher):
         get_path_state(),
         json.dumps({
             "brightness": brightness,
-            "power": "true" if power else "false",
+            "power": power,
             "temperature": temperature,
         }).encode(),
         retain=True,

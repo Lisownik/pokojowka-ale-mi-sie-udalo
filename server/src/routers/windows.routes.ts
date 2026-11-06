@@ -1,6 +1,6 @@
 import {DeviceManager} from "../deviceManager";
 import {Router} from "express";
-import {isWindowState, WindowState} from "../types";
+import {ActionType, EventType, isWindowState, WindowState} from "../types";
 import {ActionManager} from "../actionManager";
 import {publish} from "./streaming.routes";
 import { enforceData } from "../data";
@@ -24,25 +24,19 @@ export function windowsRoutes(deviceManager: DeviceManager, actionManager: Actio
       return
     }
 
-    const state_string: string = req.params.state;
-    const state: WindowState = state_string as WindowState;
-    if(!isWindowState(state)){
-      res.status(400).send("state not set properly");
-      return
-    }
-
-    const isOpened: string = state === "open" ? "true" : "false";
+    const state: boolean = req.params.state == "true";
 
     if(!deviceManager.has(id)){
-      await actionManager.publishAction(id, "open", {"open": isOpened});
+      await actionManager.publishAction(id, "open", {"open": state});
       return res.status(200).send("Device not found");
     }
 
-    deviceManager.get(id)!.state.open = isOpened;
+    deviceManager.get(id)!.state.open = state;
 
     console.log(`spoko ale okno ${id} zmieniono na ${state}`)
 
-    await actionManager.publishAction(id, state, {"open": isOpened});
+    const action: ActionType = state ? "open" : "close"
+    await actionManager.publishAction(id, action, {"open": state});
 
 
     res.status(200).send({state});

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { DeviceManager } from "../deviceManager";
 import {ActionManager} from "../actionManager";
 import { enforceData } from "../data";
+import {ActionType} from "../types";
 
 export function heatersRoutes(deviceManager: DeviceManager, actionManager: ActionManager) {
   const router: Router = Router();
@@ -61,16 +62,16 @@ export function heatersRoutes(deviceManager: DeviceManager, actionManager: Actio
       return
     }
 
-    const state_string: string = req.params.state;
-    const state: boolean = state_string == "true"
+    const state: boolean = req.params.state == "true";
     console.log(`spoko nowy stan heatera ${id} na ${state}`);
 
     if(!deviceManager.has(id))
       return res.status(200).send("Heater device not found");
 
-    deviceManager.get(id)!.state.power = state_string
+    deviceManager.get(id)!.state.power = state
 
-    await actionManager.publishAction(id, state ? "on" : "off", {})
+    const action: ActionType = state ? "on" : "off";
+    await actionManager.publishAction(id, action, {})
 
     res.status(200).send({state});
   })

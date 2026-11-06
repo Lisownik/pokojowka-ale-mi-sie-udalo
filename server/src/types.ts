@@ -9,7 +9,8 @@ export const isWindowState = (value: string): boolean => windowStates.includes(v
 export interface DeviceState{
   temperature?: number;
   humidity?: number;
-  open?: string;
+  open?: boolean;
+  power?: boolean;
   position?: number;
   temperatureGoal?: number;
   [key: string]: any;

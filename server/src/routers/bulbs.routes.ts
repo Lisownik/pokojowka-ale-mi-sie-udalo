@@ -2,6 +2,7 @@ import {DeviceManager} from "../deviceManager";
 import {Router} from "express";
 import {ActionManager} from "../actionManager";
 import {enforceData} from "../data";
+import {ActionType} from "../types";
 
 export function bulbsRoutes(deviceManager: DeviceManager, actionManager: ActionManager) {
   const router: Router = Router();
@@ -35,16 +36,16 @@ export function bulbsRoutes(deviceManager: DeviceManager, actionManager: ActionM
       return
     }
 
-    const state_string: string = req.params.state;
-    const state: boolean = state_string == "true"
+    const state: boolean = req.params.state == "true";
     console.log(`spoko nowy stan żarówki ${id} na ${state} brightness`);
 
     if(!deviceManager.has(id))
       return res.status(200).send("Device not found");
 
-    deviceManager.get(id)!.state.power = state_string
+    deviceManager.get(id)!.state.power = state
 
-    await actionManager.publishAction(id, state ? "on" : "off", {})
+    const action: ActionType = state ? "on" : "off";
+    await actionManager.publishAction(id, action, {})
 
     res.status(200).send({state});
   })
