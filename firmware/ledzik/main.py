@@ -321,8 +321,8 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        sys.print_exception(e)
         print("Throwed uncatched exception. Restarting the machine...")
         if platform == "esp32":
+            sys.print_exception(e)
             import machine
             machine.reset()

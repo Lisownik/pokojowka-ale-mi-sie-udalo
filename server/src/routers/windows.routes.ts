@@ -1,8 +1,7 @@
 import {DeviceManager} from "../deviceManager";
 import {Router} from "express";
-import {ActionType, EventType, isWindowState, WindowState} from "../types";
+import {ActionType} from "../types";
 import {ActionManager} from "../actionManager";
-import {publish} from "./streaming.routes";
 import { enforceData } from "../data";
 
 export function windowsRoutes(deviceManager: DeviceManager, actionManager: ActionManager) {

@@ -1,7 +1,5 @@
 import math
-import random
 import time
-from math import floor, isnan
 
 import json
 from time import sleep

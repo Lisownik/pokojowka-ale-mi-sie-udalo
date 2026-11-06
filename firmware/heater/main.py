@@ -90,7 +90,7 @@ def get_initial_state(client, timeout_ms=1000):
     print(received[0].decode())
 
     p = data.get('power')
-    if isinstance(p, bool)
+    if isinstance(p, bool):
         print(f"\tPOWER: {p}")
         power = p
 

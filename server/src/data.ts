@@ -1,4 +1,4 @@
-import {Device, DeviceData, DeviceState, DeviceType} from "./types";
+import {Device, DeviceState, DeviceType} from "./types";
 
 const roomData: DeviceState = {
   temperature: 0,
