@@ -104,7 +104,7 @@ object WindowsRepository : Repository<List<WindowData>> {
         lock()
         scope.launch {
             Debug.logDebug(LogClasses.NETWORK, "Trying to set window state")
-            safeApiCall { api.changeState(windowId, if (isOpen) "open" else "close") }
+            safeApiCall { api.changeState(windowId, if (isOpen) "true" else "false") }
                 .onSuccess {
                     Debug.logDebug(LogClasses.NETWORK, "Pomyślnie zmieniono stan okna $windowId na $isOpen")
                 }

@@ -47,7 +47,7 @@ fun NetworkRoomData.toRoomData(): RoomData {
 
 @JsonClass(generateAdapter = true)
 data class InnerBulbData(
-    val power: String,
+    val power: Boolean,
     val brightness: Int,
     val temperature: Int
 )
@@ -67,14 +67,14 @@ fun NetworkBulbData.toBulbData(): BulbData {
         id = this.id,
         name = this.name,
         brightnessPercentage = this.state.brightness,
-        isSwitchedOn = this.state.power == "true",
+        isSwitchedOn = this.state.power,
         colorTemperatureKelvin = this.state.temperature,
     )
 }
 
 @JsonClass(generateAdapter = true)
 data class InnerWindowData(
-    val open: String
+    val open: Boolean
 )
 
 @JsonClass(generateAdapter = true)
@@ -92,14 +92,14 @@ fun NetworkWindowData.toWindowData(): WindowData {
         id = this.id,
         name = this.name,
         roomName = "TODO",
-        isOpen = this.state.open == "true",
+        isOpen = this.state.open,
 
     )
 }
 
 @JsonClass(generateAdapter = true)
 data class InnerHeaterData(
-    val power: String,
+    val power: Boolean,
     val temperatureGoal: Double,
     val temperature: Double
 )
@@ -119,7 +119,7 @@ fun NetworkHeaterData.toHeaterData(): HeaterData {
         id = this.id,
         name = this.name,
         roomName = "TODO",
-        isHeatingOn = this.state.power == "true",
+        isHeatingOn = this.state.power,
         currentTemp = this.state.temperature.toString(),
         targetTemp = this.state.temperatureGoal.toFloat(),
 
