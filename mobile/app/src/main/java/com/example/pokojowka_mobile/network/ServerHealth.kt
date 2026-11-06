@@ -17,10 +17,11 @@ object HealthState {
     val healthState: StateFlow<ServerHealth> = _healthState.asStateFlow()
 
     fun setHealthState(state: ServerHealth) {
-        _healthState.value = state
-        if(state == ServerHealth.UNHEALTHY)
+        if(state == ServerHealth.UNHEALTHY && _healthState.value !== ServerHealth.UNHEALTHY)
             Debug.debug {
                 Notifier.safeNotification("NETWORK ERROR", "BLABLA", android.R.drawable.ic_dialog_alert)
             }
+        _healthState.value = state
+
     }
 }
