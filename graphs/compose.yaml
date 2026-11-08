@@ -1,0 +1,7 @@
+services:
+  room:
+    build: .
+    container_name: "pokojowka-graph"
+    ports:
+      - '5000:8080'
+    restart: always
