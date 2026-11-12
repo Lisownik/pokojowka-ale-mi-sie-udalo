@@ -19,6 +19,7 @@ import {heatersRoutes} from "./routers/heaters.routes";
 import {EventManager} from "./eventManager";
 import {roofRoutes} from "./routers/roof.routes";
 import {developerRoutes} from "./routers/developer.routes";
+import {doorsRoutes} from "./routers/doors.routes";
 
 export function  createRouter(deviceManager: DeviceManager, nameManager: NameManager, actionManager: ActionManager, aiClient: AiClient, eventManager: EventManager): Express {
   const app = express()
@@ -33,6 +34,8 @@ export function  createRouter(deviceManager: DeviceManager, nameManager: NameMan
   app.use("/devices/bulb", bulbsRoutes(deviceManager, actionManager))
   app.use("/devices/heater", heatersRoutes(deviceManager, actionManager))
   app.use("/devices/roof", roofRoutes(deviceManager))
+  app.use("/devices/door", doorsRoutes(actionManager))
+  app.use("/devices/home", doorsRoutes(actionManager))
   app.use("/names", namesRoutes(nameManager))
   app.use("/", eventsRoutes(actionManager))
   app.use("/register", registerRoutes())

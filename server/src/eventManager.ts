@@ -24,6 +24,9 @@ export const Events: Record<DeviceType, EventType[]> = {
     "rain-stop",
     "sunny",
     "dark"
+  ],
+  "door": [
+    "near-door"
   ]
 }
 

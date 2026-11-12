@@ -1,4 +1,4 @@
-export type DeviceType = "room" | "window" | "yeelight" | "smart_led" | "mobile" | "heater" | "roof"
+export type DeviceType = "room" | "window" | "yeelight" | "smart_led" | "mobile" | "heater" | "roof" | "door"
 
 const validDeviceTypes: DeviceType[] = ["room", "window", "yeelight", "smart_led", "mobile"];
 const windowStates: WindowState[] = ["open", "close"]
@@ -31,7 +31,8 @@ export type BulbEvents = undefined
 export type MobileEvents = "programmed" | "go-out" | "go-in"
 export type RoomEvents = "cold" | "hot" | "bad-air"
 export type RoofEvents = "rain" | "rain-stop" | "dark" | "sunny"
-export type EventType = WindowEvents | HeaterEvents | BulbEvents | MobileEvents | RoomEvents | RoofEvents
+export type DoorEvents = "near-door"
+export type EventType = WindowEvents | HeaterEvents | BulbEvents | MobileEvents | RoomEvents | RoofEvents | DoorEvents
 
 
 

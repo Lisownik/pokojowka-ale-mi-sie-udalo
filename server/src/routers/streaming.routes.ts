@@ -1,5 +1,5 @@
 import { DeviceManager } from "../deviceManager";
-import {anyID, DeviceType, NotificationType, Notification} from "../types";
+import {anyID, DeviceType, NotificationType, Notification, Device, DeviceState} from "../types";
 import express, {Request, Response, Router} from "express";
 import {EventManager} from "../eventManager";
 
@@ -62,6 +62,28 @@ export function publish(deviceManager: DeviceManager, type: DeviceType){
         deviceManager.getOnlineType(type)
       )
       break;
+    case "roof":
+    case "door":
+      const roofs = deviceManager.getOnlineType("roof");
+      const doors = deviceManager.getOnlineType("door");
+
+
+      let roof = {state: {}}
+      let door = {state: {}}
+
+      if (roofs.length > 0)
+        roof = roofs[0];
+
+      if (doors.length > 0)
+        door = doors[0];
+
+      homeTopic.publish(
+        {
+          ...roof.state,
+          ...door.state
+        } as DeviceState
+      )
+      break;
     default:
       break;
   }
@@ -74,6 +96,7 @@ export const bulbsTopic = new Topic("/stream/bulbs")
 export const roomsTopic = new Topic("/stream/rooms")
 export const windowsTopic = new Topic("/stream/windows")
 export const heatersTopic = new Topic("/stream/heaters")
+export const homeTopic = new Topic("/stream/home")
 
 export function streamingRoutes(deviceManager: DeviceManager, eventManager: EventManager) {
   const router: Router = express.Router();
@@ -139,6 +162,11 @@ export function streamingRoutes(deviceManager: DeviceManager, eventManager: Even
 
   router.get("/notifications", (req, res) => {
     notificationTopic.subscribe(req, res)
+  })
+
+  router.get("/home", (req, res) => {
+    homeTopic.subscribe(req, res)
+    publish(deviceManager, "door")
   })
 
   return router;
