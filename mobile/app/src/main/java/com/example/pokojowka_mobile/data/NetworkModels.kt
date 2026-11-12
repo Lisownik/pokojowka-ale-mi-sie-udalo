@@ -125,3 +125,22 @@ fun NetworkHeaterData.toHeaterData(): HeaterData {
 
         )
 }
+
+@JsonClass(generateAdapter = true)
+data class NetworkHomeData(
+    val light: Int = -1,
+    val rain: Int = -1,
+    val open: Boolean = false,
+    val motion_detected: Boolean = false,
+    val motion_data: Int = -1
+)
+
+fun NetworkHomeData.toHouseData(): HouseData {
+    val rainDetected: Boolean = rain > 30
+    return HouseData(
+        isDoorOpen = open,
+        isDoorLocked = !open,
+        rainDetected = rainDetected,
+        weatherState = parseWeather(rainDetected, light)
+    )
+}

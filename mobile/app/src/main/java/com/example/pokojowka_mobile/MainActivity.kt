@@ -37,6 +37,7 @@ import com.example.pokojowka_mobile.data.UserSettingsManager
 import com.example.pokojowka_mobile.network.repos.BackgroundService
 import com.example.pokojowka_mobile.network.repos.bulbs.BulbsRepository
 import com.example.pokojowka_mobile.network.repos.heaters.HeatersRepository
+import com.example.pokojowka_mobile.network.repos.house.HouseRepository
 import com.example.pokojowka_mobile.network.repos.rooms.RoomsRepository
 import com.example.pokojowka_mobile.network.repos.windows.WindowsRepository
 import com.example.pokojowka_mobile.notifications.Notifier
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
         BulbsRepository.startStream()
         WindowsRepository.startStream()
         HeatersRepository.startStream()
-//        ActivityRepository.startStream()
+        HouseRepository.startStream()
 
         startActivityService(this)
 
@@ -88,6 +89,7 @@ class MainActivity : ComponentActivity() {
         BulbsRepository.startStream()
         WindowsRepository.startStream()
         HeatersRepository.startStream()
+        HouseRepository.startStream()
     }
 
     override fun onStop() {
@@ -96,6 +98,7 @@ class MainActivity : ComponentActivity() {
         BulbsRepository.stopStream()
         WindowsRepository.stopStream()
         HeatersRepository.stopStream()
+        HouseRepository.stopStream()
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package com.example.pokojowka_mobile.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pokojowka_mobile.data.HouseData
 import com.example.pokojowka_mobile.data.SampleHouseData
+import com.example.pokojowka_mobile.data.WeatherState
+import com.example.pokojowka_mobile.network.repos.house.HouseRepository
 import com.example.pokojowka_mobile.ui.theme.PokojowkamobileTheme
 import com.example.pokojowka_mobile.ui.theme.RoomStatusGood
 import com.example.pokojowka_mobile.ui.theme.tlo
@@ -46,7 +49,7 @@ fun SmartHouseCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val (weatherIcon, weatherText, weatherColor) = when (houseData.weatherState) {
+            val (weatherIcon, weatherText, weatherColor) = when (houseData.weatherState.text) {
                 "sunny" -> Triple(Icons.Filled.WbSunny, "Słonecznie", Color(0xFFFBBF24))
                 "dark" -> Triple(Icons.Filled.NightsStay, "Pochmurno", Color(0xFF94A3B8))
                 "sunny-rain" -> Triple(Icons.Filled.Grain, "Przelotne", Color(0xFF38BDF8))
@@ -94,8 +97,14 @@ fun SmartHouseCard(
                     .width(1.5.dp)
                     .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
             )
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(modifier = Modifier.clickable(
+                onClick = {
+                    HouseRepository.setDoorState(
+                        !houseData.isDoorOpen
+                    )
+                }
+            ),
+                verticalAlignment = Alignment.CenterVertically) {
                 val doorColor = if (houseData.isDoorLocked) RoomStatusGood else Color(0xFFF97316)
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
@@ -111,7 +120,8 @@ fun SmartHouseCard(
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             color = doorColor
-                        )
+                        ),
+
                     )
                 }
                 Spacer(modifier = Modifier.width(10.dp))
@@ -140,10 +150,10 @@ fun SmartHouseCardPreview() {
     PokojowkamobileTheme {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(16.dp)) {
             SmartHouseCard(
-                houseData = SampleHouseData.copy(weatherState = "sunny", isDoorLocked = true)
+                houseData = SampleHouseData.copy(weatherState = WeatherState.SUNNY, isDoorLocked = true)
             )
             SmartHouseCard(
-                houseData = SampleHouseData.copy(weatherState = "dark-rain", isDoorLocked = false)
+                houseData = SampleHouseData.copy(weatherState = WeatherState.DARK_RAIN, isDoorLocked = false)
             )
         }
     }
