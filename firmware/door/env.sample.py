@@ -1,0 +1,6 @@
+BROKER_HOST = ""
+BROKER_PORT = 0
+REST_POT = 0
+
+ID_FILEPATH = ""
+STATIC = True
