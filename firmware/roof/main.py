@@ -81,7 +81,7 @@ def get_initial_state(mqtt_client, timeout_ms=1000):
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 break
-            mqtt_client.loop(timeout=min(remaining, 1.0))
+            mqtt_client.loop(timeout=1.0)
     finally:
         mqtt_client.disconnect()
 
@@ -248,7 +248,7 @@ def main():
 
     client.connect()
 
-    # subscribe(client)
+    subscribe(client)
 
     publish_status(client)
 
