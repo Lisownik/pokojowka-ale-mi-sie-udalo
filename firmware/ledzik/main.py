@@ -4,7 +4,7 @@ import time
 from math import floor, isnan
 
 import json
-from time import sleep
+from time import ticks_ms, ticks_diff, sleep_ms
 
 from umqtt.simple import MQTTClient
 import sys
@@ -80,12 +80,15 @@ def get_initial_state(client, timeout_ms=1000):
     client.set_callback(lambda topic, msg: received.append(msg))
     client.connect()
     try:
+        client.connect()
         client.subscribe(get_path_state())
-        t = 0
-        while not received and t < timeout_ms:
+
+        start = ticks_ms()
+        while not received and ticks_diff(ticks_ms(), start) < timeout_ms:
             client.check_msg()
-            t += 50
-            sleep(0.05)
+            sleep_ms(50)
+    except Exception as e:
+        print("MQTT error:", e)
     finally:
         client.disconnect()
 

@@ -73,10 +73,15 @@ def get_initial_state(mqtt_client, timeout_ms=1000):
     mqtt_client.on_message = lambda _client, topic, msg: received.append(msg)
     mqtt_client.connect()
     try:
+        mqtt_client.connect()
         mqtt_client.subscribe(get_path_state())
-        t = 0
-        while not received and t < timeout_ms:
-            mqtt_client.loop(timeout_ms/1000)
+
+        deadline = time.monotonic() + timeout_ms / 1000
+        while not received:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
+            mqtt_client.loop(timeout=min(remaining, 1.0))
     finally:
         mqtt_client.disconnect()
 
