@@ -13,11 +13,11 @@ import { HouseRepository } from '../services/repo/house/house-repository';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  protected house = computed(() => this.houseRepo.state()[0]);
+  protected house = computed(() => this.houseRepo.state());
 
   constructor(public houseRepo: HouseRepository) {}
 
-  toggleDoor(): void {
-    this.houseRepo.toggleDoor();
+  toggleDoor(state: boolean): void {
+    this.houseRepo.toggleDoor(state);
   }
 }

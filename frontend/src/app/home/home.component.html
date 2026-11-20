@@ -4,29 +4,29 @@
   <div class="smiley-face"></div>
 
   @if (house(); as current) {
-    @let data = current.state;
-
+    @let data = current ;
+    @let rainDetected = (data.rain ?? 0) > 30;
     <div class="house-card">
       <div class="house-section">
-        <div class="icon-box" [class.rain]="data.rainDetected">
+        <div class="icon-box" [class.rain]="rainDetected">
           <img
-            [src]="data.rainDetected ? '/assets/icons/water-white.png' : '/assets/icons/sun.png'"
+            [src]="rainDetected ? '/assets/icons/water-white.png' : '/assets/icons/sun.png'"
             alt="Pogoda"
           />
         </div>
         <div class="info">
           <span class="label">{{ 'dom.weather' | transloco }}</span>
           <div class="value">
-            {{ data.outdoorTemp | number:'1.1-1' }}°C
-            <span class="sub">· {{ (data.rainDetected ? 'dom.rain' : 'dom.clear') | transloco }}</span>
+            {{ data.outdoorTemp ?? 0 | number:'1.1-1' }}°C
+            <span class="sub">· {{ (rainDetected ? 'dom.rain' : 'dom.clear') | transloco }}</span>
           </div>
         </div>
       </div>
 
       <div class="divider"></div>
 
-      <button type="button" class="house-section door-btn" [class.open]="data.doorOpen" (click)="toggleDoor()">
-        <div class="icon-box door" [class.open]="data.doorOpen">
+      <button type="button" class="house-section door-btn" [class.open]="data.open" (click)="toggleDoor(!data.open)">
+        <div class="icon-box door" [class.open]="data.open">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 20h14"/>
             <path d="M7 20V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v15"/>
@@ -35,8 +35,8 @@
         </div>
         <div class="info">
           <span class="label">{{ 'dom.doors' | transloco }}</span>
-          <div class="value status" [class.open]="data.doorOpen">
-            {{ (data.doorOpen ? 'dom.open' : 'dom.closed') | transloco }}
+          <div class="value status" [class.open]="data.open">
+            {{ (data.open ? 'dom.open' : 'dom.closed') | transloco }}
           </div>
         </div>
       </button>
