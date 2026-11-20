@@ -63,7 +63,7 @@ const MOCK_ROOMS: RoomData[] = [
 @Injectable({
   providedIn: 'root'
 })
-export class RoomsRepository extends Repository<RoomData> {
+export class RoomsRepository extends Repository<Array<RoomData>> {
   override state: WritableSignal<RoomData[]> = signal<RoomData[]>(
     environment.staticMode ? MOCK_ROOMS : []
   );
@@ -73,13 +73,15 @@ export class RoomsRepository extends Repository<RoomData> {
   constructor(protected sseService: SseService) {
     super();
 
-    if (!environment.staticMode) {
-      this.roomObservable = sseService.createEventSource<Array<RoomData>>('rooms');
+    if (environment.staticMode)
+      return
 
-      this.roomObservable.subscribe(roomData => {
-        this.state.set(roomData);
-      });
-    }
+    this.roomObservable = sseService.createEventSource<Array<RoomData>>('rooms');
+
+    this.roomObservable.subscribe(roomData => {
+      this.state.set(roomData);
+    });
+
   }
 
   override getData(): RoomData[] {

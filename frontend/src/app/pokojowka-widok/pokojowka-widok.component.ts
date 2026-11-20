@@ -10,8 +10,7 @@ import {QualityPipe} from '../pipes/quality.pipe';
 @Component({
   selector: 'app-pokojowka-widok',
   imports: [
-    BackButtonComponent
-    , AnimatedCounterComponent, TranslocoPipe, QualityPipe
+    BackButtonComponent, TranslocoPipe, QualityPipe
   ],
   templateUrl: './pokojowka-widok.component.html',
   styleUrl: './pokojowka-widok.component.css'
