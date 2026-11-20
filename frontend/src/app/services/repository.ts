@@ -1,8 +1,14 @@
-import {Signal} from '@angular/core';
+import {inject, Signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export abstract class Repository<T> {
-  abstract state: Signal<Array<T>>;
+  protected http = inject(HttpClient);
 
-  abstract getData(): Array<T>;
+  protected requestUrl(path: string): string{
+    return `${environment.apiUrl}${path}`
+  }
 
+  abstract state: Signal<T>;
+  abstract getData(): T;
 }

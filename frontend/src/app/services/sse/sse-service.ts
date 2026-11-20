@@ -13,13 +13,17 @@ export class SseService {
   createEventSource<T>(path: string): Observable<T> {
     const topicUrl = `${environment.apiUrl}/stream/${path.trim()}`;
 
+
     return new Observable<T>(observer => {
-      const eventSource = new EventSource(topicUrl);
+      const eventSource = new EventSource(topicUrl, {});
 
       eventSource.onmessage = event => {
-        const messageData: unknown = JSON.parse(event.data);
-        observer.next(messageData as T);
-      }
+        try {
+          observer.next(JSON.parse(event.data) as T);
+        } catch (e) {
+          console.error(`Invalid JSON from ${path}`, e);
+        }
+      };
 
       eventSource.onerror = event => {
         console.error(`Event source of ${path} struck an error: `, event);
