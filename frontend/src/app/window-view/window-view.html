@@ -1,0 +1,56 @@
+<app-back-button></app-back-button>
+
+@if (win(); as current) {
+  @let data = current.state;
+
+  <div class="detail-card" [class.active]="data.open">
+    <div class="detail-header">
+      <div>
+        <h2>{{ current.name }}</h2>
+        <span class="sub">{{ 'okna.title' | transloco }}</span>
+      </div>
+      <div class="icon-box" [class.on]="data.open">
+        <img src="/assets/icons/window.svg" alt="okienko" />
+      </div>
+    </div>
+
+    <div class="box status-row">
+      <div>
+        <span class="sub">{{ 'okna.state' | transloco }}</span>
+        <div class="status-text" [class.on]="data.open">
+          {{ (data.open ? 'okna.open' : 'okna.closed') | transloco }}
+        </div>
+      </div>
+
+      <button class="switch" [class.on]="data.open" (click)="toggleOpen()">
+        <span class="knob"></span>
+      </button>
+    </div>
+
+    <div class="params">
+      <div class="box">
+        <div class="param-top">
+          <span>{{ 'okna.outdoorTemp' | transloco }}</span>
+          <img src="/assets/icons/temp-white.png" alt="Temp" />
+        </div>
+        <div class="param-val">
+          @if (data.outdoorTemp !== undefined) {
+            {{ data.outdoorTemp | number:'1.1-1' }}°C
+          } @else {
+            —
+          }
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="param-top">
+          <span>{{ 'okna.rain' | transloco }}</span>
+          <img src="/assets/icons/water-white.png" alt="Deszcz" />
+        </div>
+        <div class="param-val" [class.accent]="data.rainDetected">
+          {{ (data.rainDetected ? 'okna.rainYes' : 'okna.rainNo') | transloco }}
+        </div>
+      </div>
+    </div>
+  </div>
+}

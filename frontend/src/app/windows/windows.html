@@ -1,0 +1,59 @@
+<app-back-button></app-back-button>
+
+<div class="windows-grid">
+  @for (win of windows(); track win.id) {
+    @let data = win.state;
+
+    <div class="window-card" [class.active]="data.open" (click)="goToWindow(win.id)">
+      <div class="window-header">
+        <div class="window-title-group">
+          <div class="window-icon" [class.on]="data.open">
+            <img src="/assets/icons/window.svg" alt="okienko" />
+          </div>
+          <div>
+            <h2>{{ win.name }}</h2>
+            <span class="status-badge" [class.on]="data.open">
+              <span class="status-dot"></span>
+              {{ (data.open ? 'okna.open' : 'okna.closed') | transloco }}
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="toggle-switch"
+          [class.on]="data.open"
+          (click)="toggleWindow(win.id, $event)"
+          [attr.aria-checked]="data.open"
+          role="switch"
+        >
+          <span class="toggle-knob"></span>
+        </button>
+      </div>
+
+      <div class="window-metrics">
+        <div class="metric-box">
+          <span class="metric-label">{{ 'okna.outdoorTemp' | transloco }}</span>
+          <span class="metric-value">
+            @if (data.outdoorTemp !== undefined) {
+              {{ data.outdoorTemp | number:'1.1-1' }}°C
+            } @else {
+              —
+            }
+          </span>
+        </div>
+
+        <div class="metric-divider"></div>
+
+        <div class="metric-box">
+          <span class="metric-label">{{ 'okna.rain' | transloco }}</span>
+          <span class="metric-value" [class.rain-alert]="data.rainDetected">
+            {{ (data.rainDetected ? 'okna.rainYes' : 'okna.rainNo') | transloco }}
+          </span>
+        </div>
+      </div>
+    </div>
+  } @empty {
+    <h3 class="error-info">{{ 'okna.none' | transloco }}</h3>
+  }
+</div>

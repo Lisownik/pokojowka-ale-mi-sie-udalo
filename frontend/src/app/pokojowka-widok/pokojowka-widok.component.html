@@ -1,250 +1,76 @@
 <app-back-button></app-back-button>
 
-<div class="room-view-bg">
-  @defer (when room()) {
-    @let data= room()!.state;
+@if (room(); as current) {
+  @let data = current.state;
 
-    <div class="room-header">{{ room()!.name }}</div>
+  <div class="room-view">
+    <div class="room-top">
+      <div class="icon-box">
+        <img src="/assets/icons/home-white.png" alt="Pokój" />
+      </div>
+      <div>
+        <h2>{{ current.name }}</h2>
+      </div>
+    </div>
+
     <div class="room-grid">
-      <div class="card temperature">
-        <div class="card-title">
-          {{ 'pokojowki.temp' | transloco }}
-          <img src="assets/icons/temp-white.png" alt="Temperatura" class="icon" />
+      <div class="param-card">
+        <div class="param-top">
+          <span>{{ 'pokojowki.temp' | transloco }}</span>
+          <img src="/assets/icons/temp-white.png" alt="Temperatura" />
         </div>
-        <div class="card-value">
-<!--          {{ data.temperature }}°C-->
-          <app-animated-counter
-            [value]="parseInt(data.temperature.toString())"
-            suffix=""
-            [minDigits]="1"
-            theme="default">
-          </app-animated-counter>
-          .
-          <app-animated-counter
-            [value]="parseInt((data.temperature%1 * 100).toString())"
-            suffix="°C"
-            [minDigits]="1"
-            theme="default">
-          </app-animated-counter>
-        </div>
-<!--        @if (dataService.rooms.length > 1) {-->
-<!--          <div class="card-desc up">-->
-<!--            <img-->
-<!--              [src]="`assets/icons/arrow-${(data.temperature - dataService.roomAvg.temperature) > 0 ? 'up' : 'down'}.png`"-->
-<!--              alt="Wzrost" class="icon-mini" />-->
-<!--            {{ Math.abs((data.temperature - dataService.roomAvg.temperature)).toFixed(1) }}° stopni {{ (data.temperature - dataService.roomAvg.temperature) > 0 ? "więcej" : "mniej" }}-->
-<!--          </div>-->
-<!--        }-->
-
-<!--                <div class="card-desc up">
-          <img src="assets/icons/arrow-up.png" alt="Wzrost" class="icon-mini" />
-          <app-animated-counter
-            [value]="parseInt((data.temperature - dataService.roomAvg.temperature).toString())"
-            suffix=""
-            [minDigits]="1"
-            [fontSize]="14"
-            theme="default">
-          </app-animated-counter>
-          @if ((data.temperature - dataService.roomAvg.temperature) % 1 !== 0) {
-            .          <app-animated-counter
-              [value]="parseInt((Number(((data.temperature - dataService.roomAvg.temperature)%1).toFixed(1))*10).toString())"
-              suffix=""
-              [minDigits]="1"
-              [fontSize]="14"
-              theme="default">
-            </app-animated-counter>
-          }
-           stopni {{ (data.temperature - dataService.roomAvg.temperature) > 0 ? "więcej" : "mniej" }}
-        </div>-->
+        <div class="param-val">{{ data.temperature.toFixed(1) }}°C</div>
+        <div class="param-sub">Optymalna temperatura</div>
       </div>
-      <div class="card pressure">
-        <div class="card-title">
-          {{ 'pokojowki.humidity' | transloco }}
 
-          <img src="assets/icons/cisnienie-white.png" alt="Ciśnienie" class="icon" />
-
+      <div class="param-card">
+        <div class="param-top">
+          <span>{{ 'pokojowki.pressure' | transloco }}</span>
+          <img src="/assets/icons/cisnienie-white.png" alt="Ciśnienie" />
         </div>
-        <div class="card-value">
-<!--          {{ data.pressure }} hPa-->
-          <app-animated-counter
-            [value]="parseInt(data.pressure.toString())"
-            suffix=""
-            [minDigits]="1"
-            theme="default">
-          </app-animated-counter>
-          .
-          <app-animated-counter
-            [value]="parseInt((data.pressure % 1 * 100).toString())"
-            suffix="hPa"
-            [minDigits]="1"
-            theme="default">
-          </app-animated-counter>
-        </div>
-<!--        @if (dataService.rooms.length > 1) {-->
-<!--        <div class="card-desc down">-->
-<!--          <img-->
-<!--            [src]="`assets/icons/arrow-${(data.pressure - dataService.roomAvg.pressure) > 0 ? 'up' : 'down'}.png`"-->
-<!--            alt="Wzrost" class="icon-mini" />-->
-<!--          {{ Math.abs((data.pressure - dataService.roomAvg.pressure)).toFixed(1) }} hPa {{ (data.pressure - dataService.roomAvg.pressure) > 0 ? "więcej" : "mniej" }}-->
-
-<!--        </div>-->
-<!--        }-->
+        <div class="param-val">{{ data.pressure.toFixed(1) }} hPa</div>
+        <div class="param-sub">Stabilne ciśnienie</div>
       </div>
-      <div class="card rating">
-        <div class="card-title">
-          {{ 'pokojowki.rating' | transloco }}
 
-          <img src="assets/icons/rating.png" alt="Ocena" class="icon" />
-
+      <div class="param-card">
+        <div class="param-top">
+          <span>{{ 'pokojowki.rating' | transloco }}</span>
+          <img src="/assets/icons/rating.png" alt="Ocena" />
         </div>
-        <div class="card-value">95/100</div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fg"></div>
+        <div class="param-val accent">95/100</div>
+        <div class="progress-bg">
+          <div class="progress-fg"></div>
         </div>
       </div>
-      <div class="card humidity">
-        <div class="card-title">
-          {{ 'pokojowki.humidity' | transloco }}
-          <img src="assets/icons/humidity.png" alt="Wilgotność" class="icon-smaler" />
 
+      <div class="param-card">
+        <div class="param-top">
+          <span>{{ 'pokojowki.humidity' | transloco }}</span>
+          <img src="/assets/icons/humidity.png" alt="Wilgotność" class="icon-narrow" />
         </div>
-        <div class="card-value">
-<!--          {{ data.humidity }}%-->
-          <app-animated-counter
-            [value]="parseInt(data.humidity.toString())"
-            suffix=""
-            [minDigits]="1"
-            theme="default">
-          </app-animated-counter>
-          .
-          <app-animated-counter
-            [value]="parseInt((data.humidity%1 * 100).toString())"
-            suffix="%"
-            [minDigits]="1"
-            theme="default">
-          </app-animated-counter>
-        </div>
-        <div class="card-desc good">
-          — Dobry poziom
-        </div>
+        <div class="param-val">{{ data.humidity.toFixed(1) }}%</div>
+        <div class="param-sub">Dobry poziom</div>
       </div>
-      <div class="card air">
-        <div class="card-title">
-          {{ 'pokojowki.aqi' | transloco }}
 
-          <img src="assets/icons/air.png" alt="Jakość powietrza" class="icon" />
-
+      <div class="param-card">
+        <div class="param-top">
+          <span>{{ 'pokojowki.aqi' | transloco }}</span>
+          <img src="/assets/icons/air.png" alt="Jakość powietrza" />
         </div>
-        <div class="card-value">
-          {{ data.quality | qualityMeasure }}
-        </div>
-        <div class="card-desc">
-          AQI:
-<!--          {{ data.air_quality }}-->
-          <app-animated-counter
-            [value]="data.quality"
-            suffix=""
-            [minDigits]="1"
-            theme="default">
-          </app-animated-counter>
-        </div>
+        <div class="param-val accent">{{ data.quality | qualityMeasure }}</div>
+        <div class="param-sub">AQI: {{ data.quality }}</div>
       </div>
-      <div class="card threats">
-        <div class="card-title">
-          {{ 'pokojowki.danger' | transloco }}
 
-          <img src="/assets/icons/warning.png" alt="Zagrożenia" class="icon" />
-
+      <div class="param-card">
+        <div class="param-top">
+          <span>{{ 'pokojowki.danger' | transloco }}</span>
+          <img src="/assets/icons/warning.png" alt="Zagrożenia" />
         </div>
-        <div class="threat-row">
-          <span class="label co">CO:</span> Brak
-        </div>
-        <div class="threat-row">
-          <span class="label gas">Gaz:</span> Brak
+        <div class="threats-list">
+          <div class="threat-pill"><span>CO:</span> {{ 'pokojowki.safe' | transloco }}</div>
+          <div class="threat-pill"><span>Gaz:</span> {{ 'pokojowki.safe' | transloco }}</div>
         </div>
       </div>
     </div>
-  } @placeholder {
-    <div class="room-header">Pokój 1</div>
-    <div class="room-grid">
-      <div class="card temperature">
-        <div class="card-title">
-          {{ 'pokojowki.temp' | transloco }}
-
-          <img src="assets/icons/temp-white.png" alt="Temperatura" class="icon" />
-
-        </div>
-        <div class="card-value">22.5°C</div>
-        <div class="card-desc up">
-          <img src="assets/icons/arrow-up.png" alt="Wzrost" class="icon-mini" />
-          0.5° stopni więcej
-        </div>
-      </div>
-      <div class="card pressure">
-        <div class="card-title">
-          {{ 'pokojowki.pressure' | transloco }}
-
-          <img src="assets/icons/cisnienie-white.png" alt="Ciśnienie" class="icon" />
-
-        </div>
-        <div class="card-value">1013 hPa</div>
-        <div class="card-desc down">
-          <img src="assets/icons/arrow-down.png" alt="Spadek" class="icon-mini" />
-          100 niższe
-        </div>
-      </div>
-      <div class="card rating">
-        <div class="card-title">
-          {{ 'pokojowki.rating' | transloco }}
-
-          <img src="assets/icons/rating.png" alt="Ocena" class="icon" />
-
-        </div>
-        <div class="card-value">95/100</div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fg"></div>
-        </div>
-      </div>
-      <div class="card humidity">
-        <div class="card-title">
-          {{ 'pokojowki.humidity' | transloco }}
-
-          <img src="assets/icons/humidity.png" alt="Wilgotność" class="icon-smaler" />
-
-        </div>
-        <div class="card-value">45%</div>
-        <div class="card-desc good">
-          — Dobry poziom
-        </div>
-      </div>
-      <div class="card air">
-        <div class="card-title">
-          {{ 'pokojowki.aqi' | transloco }}
-
-          <img src="assets/icons/air.png" alt="Jakość powietrza" class="icon" />
-
-        </div>
-        <div class="card-value">Dobra</div>
-        <div class="card-desc">
-          AQI: 50
-        </div>
-      </div>
-      <div class="card threats">
-        <div class="card-title">
-          {{ 'pokojowki.danger' | transloco }}
-
-          <img src="/assets/icons/warning.png" alt="Zagrożenia" class="icon" />
-
-        </div>
-        <div class="threat-row">
-          <span class="label co">CO:</span> Brak
-        </div>
-        <div class="threat-row">
-          <span class="label gas">Gaz:</span> Brak
-        </div>
-      </div>
-    </div>
-  }
-
-
-</div>
+  </div>
+}

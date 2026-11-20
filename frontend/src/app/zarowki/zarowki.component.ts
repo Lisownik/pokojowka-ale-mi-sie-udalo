@@ -1,11 +1,9 @@
-import {Component, computed, inject} from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { BackButtonComponent } from '../back-button/back-button.component';
 import { CommonModule } from '@angular/common';
-import {TranslocoPipe} from '@ngneat/transloco';
-import {BulbsRepository} from '../services/repo/bulbs/bulbs-repository';
-
-
+import { TranslocoPipe } from '@ngneat/transloco';
+import { BulbsRepository } from '../services/repo/bulbs/bulbs-repository';
 
 @Component({
   selector: 'app-zarowki',
@@ -17,16 +15,15 @@ import {BulbsRepository} from '../services/repo/bulbs/bulbs-repository';
 export class ZarowkiComponent {
   protected lights = computed(() => this.bulbsRepo.state());
 
-
-  constructor(private router: Router, public bulbsRepo: BulbsRepository) {
-  }
+  constructor(private router: Router, public bulbsRepo: BulbsRepository) {}
 
   toggleLight(id: string) {
-    //TODO()
+    this.bulbsRepo.togglePower(id);
   }
 
   onBrightnessChange(event: Event, id: string) {
-    //TODO()
+    const val = parseInt((event.target as HTMLInputElement).value, 10);
+    this.bulbsRepo.setBrightness(id, val);
   }
 
   goToLight(id: string) {

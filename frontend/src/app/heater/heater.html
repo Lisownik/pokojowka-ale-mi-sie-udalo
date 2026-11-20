@@ -1,0 +1,53 @@
+<app-back-button></app-back-button>
+
+<div class="heaters-grid">
+  @for (heater of heaters(); track heater.id) {
+    @let data = heater.state;
+
+    <div class="heater-card" [class.active]="data.power" (click)="goToHeater(heater.id)">
+      <div class="heater-header">
+        <div class="heater-title-group">
+          <div class="heater-icon" [class.on]="data.power">
+            <img src="/assets/icons/heater.svg" alt="Grzejnik" />
+          </div>
+          <div>
+            <h2>{{ heater.name }}</h2>
+            <span class="status-badge" [class.on]="data.power">
+              <span class="status-dot"></span>
+              {{ (data.power ? 'grzejniki.on' : 'grzejniki.off') | transloco }}
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="toggle-switch"
+          [class.on]="data.power"
+          (click)="toggleHeater(heater.id, $event)"
+          [attr.aria-checked]="data.power"
+          role="switch"
+        >
+          <span class="toggle-knob"></span>
+        </button>
+      </div>
+
+      <div class="temp-metrics">
+        <div class="metric-box">
+          <span class="metric-label">{{ 'grzejniki.currentTemp' | transloco }}</span>
+          <span class="metric-value">{{ data.temperature | number:'1.1-1' }}°C</span>
+        </div>
+
+        <div class="metric-divider"></div>
+
+        <div class="metric-box">
+          <span class="metric-label">{{ 'grzejniki.targetTemp' | transloco }}</span>
+          <span class="metric-value target" [class.on]="data.power">
+            {{ data.temperatureGoal | number:'1.1-1' }}°C
+          </span>
+        </div>
+      </div>
+    </div>
+  } @empty {
+    <h3 class="error-info">{{ 'grzejniki.none' | transloco }}</h3>
+  }
+</div>

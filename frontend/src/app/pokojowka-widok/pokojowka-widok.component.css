@@ -1,139 +1,159 @@
-.room-view-bg {
-  position: relative;
-  left: -40px;
-  top: 40px;
+:host {
+  min-height: 100vh;
+  padding-bottom: 10vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
-.room-header {
-  background: #24282c;
+.room-view {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 94vw;
+}
+
+.room-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #232323;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 14px 20px;
   color: #fff;
-  font-weight: 600;
-  font-size: 1rem;
-  border-radius: 7px;
-  padding: 4px 18px;
-  margin-bottom: 16px;
-  align-self: flex-start;
+  width: fit-content;
+}
+
+.icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-box img {
+  width: 22px;
+  height: 22px;
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin: 0 0 2px;
+}
+
+.sub {
+  font-size: 0.85rem;
+  color: #9ca3af;
 }
 
 .room-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 22px 24px;
-  width: 680px;
-  max-width: 98vw;
-  margin: 0 auto;
+  grid-template-columns: repeat(3, 250px);
+  gap: 18px;
 }
 
-.card {
-  background: #202225;
-  width: 260px;
-  height: 150px;
-  border-radius: 10px;
-  padding: 17px 21px 13px 21px;
-  color: #fff;
-  box-shadow: 0 2px 10px #0003;
+.param-card {
+  background: #232323;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 18px 20px;
+  color: #f3f4f6;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 15px;
-}
-
-.card-title {
-  font-size: 1rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
   justify-content: space-between;
+  min-height: 145px;
 }
 
-.icon-smaler{
-  opacity: 0.7;
-  width: 17px;
-  height: 22px;
-}
-
-
-.icon {
-  width: 22px;
-  height: 22px;
-  opacity: 0.7;
-}
-
-.icon-mini {
-  width: 16px;
-  height: 16px;
-  opacity: 0.8;
-}
-
-.card-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.card-desc {
-  font-size: 0.97rem;
-  opacity: 0.85;
+.param-top {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 4px;
+  font-size: 0.9rem;
+  color: #9ca3af;
 }
 
-.card-desc.up {
-  color: #059669;
-}
-.card-desc.down {
-  color: #2563EB;
-}
-.card-desc.good {
-  color: #ffffff;
-}
-.card-desc.bad {
-  color: #ff7f7f;
+.param-top img {
+  width: 20px;
+  height: 20px;
+  opacity: 0.75;
 }
 
-.rating .card-value {
-  margin-bottom: 8px;
+.param-top img.icon-narrow {
+  width: 15px;
+  height: 20px;
 }
 
-.progress-bar-bg {
-  background: #333b56;
-  border-radius: 5px;
-  height: 9px;
-  width: 100%;
+.param-val {
+  font-size: 1.55rem;
+  font-weight: 700;
+  margin: 8px 0 4px;
+}
+
+.param-val.accent {
+  color: #818cf8;
+}
+
+.param-sub {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.progress-bg {
+  background: #333;
+  border-radius: 6px;
+  height: 8px;
   overflow: hidden;
 }
 
-.progress-bar-fg {
-  background: linear-gradient(90deg, #7fff9b, #4898ff);
+.progress-fg {
+  background: #6366f1;
   height: 100%;
-  border-radius: 5px;
-  transition: width 0.3s;
   width: 95%;
+  border-radius: 6px;
 }
 
-.threat-row {
-  background: #ECFDF5;
-  border-radius: 5px;
-  padding: 7px 13px;
-  margin-bottom: 0px;
-  font-size: 1rem;
+.threats-list {
   display: flex;
-  align-items: center;
-  gap: 7px;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.threat-pill {
+  background: rgba(34, 197, 94, 0.14);
+  color: #4ade80;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
+
+:host-context(body.light-theme) .room-top,
+:host-context(body.light-theme) .param-card {
+  background: #fff;
+  border-color: #e5e7eb;
+  color: #111;
+}
+
+:host-context(body.light-theme) .param-top img {
+  filter: invert(1);
+}
+
+:host-context(body.light-theme) .param-val.accent {
+  color: #4f46e5;
+}
+
+:host-context(body.light-theme) .progress-bg {
+  background: #e5e7eb;
+}
+
+:host-context(body.light-theme) .threat-pill {
+  background: #ecfdf5;
   color: #047857;
 }
-.threat-row:last-child {
-  margin-bottom: 0;
-}
-
-
-.card.threats {
-  gap: 12px;
-}
-

@@ -59,5 +59,34 @@
     "loading": "Ładowanie...",
     "error": "Wystąpił błąd. Spróbuj ponownie później.",
     "noData": "Brak odczytu"
+  },
+  "grzejniki": {
+    "none": "Nie ma żadnych dostępnych grzejników",
+    "title": "Inteligentne Ogrzewanie",
+    "on": "Grzanie aktywne",
+    "off": "Wyłączony",
+    "currentTemp": "Obecna temp.",
+    "targetTemp": "Docelowa temp.",
+    "setTarget": "Ustaw temperaturę docelową",
+    "power": "Stan grzania"
+  },
+  "okna": {
+    "none": "Nie ma żadnych dostępnych okien",
+    "title": "Smart Okna",
+    "open": "Otwarte",
+    "closed": "Zamknięte",
+    "state": "Stan okna",
+    "outdoorTemp": "Temp. zewn.",
+    "rain": "Opady deszczu",
+    "rainYes": "Wykryty",
+    "rainNo": "Brak"
+  },
+  "dom": {
+    "weather": "Na zewnątrz",
+    "rain": "Pada deszcz",
+    "clear": "Bez opadów",
+    "doors": "Drzwi wejściowe",
+    "open": "Otwarte",
+    "closed": "Zamknięte"
   }
 }
