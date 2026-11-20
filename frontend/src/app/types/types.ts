@@ -40,11 +40,15 @@ export interface HeaterData extends SseData{
 export interface WindowData extends SseData{
   state: {
     open: boolean;
+    outdoorTemp?: number;
+    rainDetected?: boolean;
   }
 }
 
-export interface HouseData extends SseData{
+export interface HouseData extends SseData {
   state: {
-    //TODO()
-  }
+    outdoorTemp: number;
+    rainDetected: boolean;
+    doorOpen: boolean;
+  };
 }

@@ -59,5 +59,34 @@
     "loading": "Loading...",
     "error": "An error occurred. Please try again later.",
     "noData": "No data available"
+  },
+  "grzejniki": {
+    "none": "No displayable heaters",
+    "title": "Smart Heating",
+    "on": "Heating active",
+    "off": "Off",
+    "currentTemp": "Current temp.",
+    "targetTemp": "Target temp.",
+    "setTarget": "Set target temperature",
+    "power": "Heating state"
+  },
+  "okna": {
+    "none": "No displayable windows",
+    "title": "Smart Windows",
+    "open": "Open",
+    "closed": "Closed",
+    "state": "Window state",
+    "outdoorTemp": "Outdoor temp.",
+    "rain": "Rain",
+    "rainYes": "Detected",
+    "rainNo": "None"
+  },
+  "dom": {
+    "weather": "Outside",
+    "rain": "Raining",
+    "clear": "Clear",
+    "doors": "Front door",
+    "open": "Open",
+    "closed": "Closed"
   }
 }

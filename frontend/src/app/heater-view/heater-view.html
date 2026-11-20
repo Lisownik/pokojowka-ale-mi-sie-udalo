@@ -1,0 +1,71 @@
+<app-back-button></app-back-button>
+
+@if (heater(); as current) {
+  @let data = current.state;
+
+  <div class="detail-card" [class.active]="data.power">
+    <div class="detail-header">
+      <div>
+        <h2>{{ current.name }}</h2>
+        <span class="sub">{{ 'grzejniki.title' | transloco }}</span>
+      </div>
+      <div class="icon-box" [class.on]="data.power">
+        <img src="/assets/icons/heater.svg" alt="Grzejnik" />
+      </div>
+    </div>
+
+    <div class="box status-row">
+      <div>
+        <span class="sub">{{ 'grzejniki.power' | transloco }}</span>
+        <div class="status-text" [class.on]="data.power">
+          {{ (data.power ? 'grzejniki.on' : 'grzejniki.off') | transloco }}
+        </div>
+      </div>
+
+      <button class="switch" [class.on]="data.power" (click)="togglePower()">
+        <span class="knob"></span>
+      </button>
+    </div>
+
+    <div class="box control-box">
+      <span class="sub">{{ 'grzejniki.setTarget' | transloco }}</span>
+
+      <div class="stepper">
+        <button class="step-btn" (click)="changeTemp(-step)" [disabled]="data.temperatureGoal <= minTemp">−</button>
+        <div class="target-big" [class.on]="data.power">{{ data.temperatureGoal | number:'1.1-1' }}°C</div>
+        <button class="step-btn plus" (click)="changeTemp(step)" [disabled]="data.temperatureGoal >= maxTemp">+</button>
+      </div>
+
+      <input
+        type="range"
+        [min]="minTemp"
+        [max]="maxTemp"
+        [step]="step"
+        [value]="data.temperatureGoal"
+        (input)="onSliderChange($event)"
+      />
+      <div class="bounds">
+        <span>{{ minTemp }}°C</span>
+        <span>{{ maxTemp }}°C</span>
+      </div>
+    </div>
+
+    <div class="params">
+      <div class="box param">
+        <div class="param-top">
+          <span>{{ 'grzejniki.currentTemp' | transloco }}</span>
+          <img src="/assets/icons/temp-white.png" alt="Temp" />
+        </div>
+        <div class="param-val">{{ data.temperature | number:'1.1-1' }}°C</div>
+      </div>
+
+      <div class="box param">
+        <div class="param-top">
+          <span>{{ 'grzejniki.targetTemp' | transloco }}</span>
+          <img src="/assets/icons/fire-white.png" alt="Cel" />
+        </div>
+        <div class="param-val accent">{{ data.temperatureGoal | number:'1.1-1' }}°C</div>
+      </div>
+    </div>
+  </div>
+}
