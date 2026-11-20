@@ -12,12 +12,12 @@ export const static_module_types = {
   mobile: {
     isIdNeeded: false,
     events: ["go-in", "go-out", "programmed"],
-    actions: ["notify-byob"]
+    actions: [""]
   },
   heater: {
     isIdNeeded: true,
-    events: ["start", "stop"],
-    actions: ["start", "stop"]
+    events: [],
+    actions: ["on", "off"]
   },
   smart_led: {
     isIdNeeded: true,
