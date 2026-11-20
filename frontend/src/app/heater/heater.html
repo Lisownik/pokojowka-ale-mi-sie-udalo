@@ -23,7 +23,7 @@
           type="button"
           class="toggle-switch"
           [class.on]="data.power"
-          (click)="toggleHeater(heater.id, $event)"
+          (click)="toggleHeater(heater.id, !data.power, $event)"
           [attr.aria-checked]="data.power"
           role="switch"
         >

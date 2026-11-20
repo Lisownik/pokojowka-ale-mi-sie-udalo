@@ -37,9 +37,9 @@ export class HeaterView implements OnInit {
     });
   }
 
-  togglePower(): void {
+  togglePower(power: boolean): void {
     const h = this.heater();
-    if (h) this.heatersRepo.togglePower(h.id);
+    if (h) this.heatersRepo.togglePower(h.id, power);
   }
 
   changeTemp(delta: number): void {

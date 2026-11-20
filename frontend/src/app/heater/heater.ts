@@ -17,9 +17,9 @@ export class Heater {
 
   constructor(private router: Router, public heatersRepo: HeatersRepository) {}
 
-  toggleHeater(id: string, event: Event): void {
+  toggleHeater(id: string, power: boolean, event: Event): void {
     event.stopPropagation();
-    this.heatersRepo.togglePower(id);
+    this.heatersRepo.togglePower(id, power);
   }
 
   goToHeater(id: string): void {
