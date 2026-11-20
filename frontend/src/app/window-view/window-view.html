@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <button class="switch" [class.on]="data.open" (click)="toggleOpen()">
+      <button class="switch" [class.on]="data.open" (click)="toggleOpen(!data.open)">
         <span class="knob"></span>
       </button>
     </div>

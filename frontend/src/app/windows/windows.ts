@@ -17,9 +17,9 @@ export class Windows {
 
   constructor(private router: Router, public windowsRepo: WindowsRepository) {}
 
-  toggleWindow(id: string, event: Event): void {
+  toggleWindow(id: string, power: boolean, event: Event): void {
     event.stopPropagation();
-    this.windowsRepo.toggleOpen(id);
+    this.windowsRepo.toggleOpen(id, power);
   }
 
   goToWindow(id: string): void {

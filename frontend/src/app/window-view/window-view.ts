@@ -33,8 +33,8 @@ export class WindowView implements OnInit {
     });
   }
 
-  toggleOpen(): void {
+  toggleOpen(power: boolean): void {
     const w = this.win();
-    if (w) this.windowsRepo.toggleOpen(w.id);
+    if (w) this.windowsRepo.toggleOpen(w.id, power);
   }
 }

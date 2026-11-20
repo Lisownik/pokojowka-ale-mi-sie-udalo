@@ -1,7 +1,7 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { Repository } from '../../repository';
 import { WindowData } from '../../../types/types';
-import { Observable } from 'rxjs';
+import {firstValueFrom, Observable} from 'rxjs';
 import { SseService } from '../../sse/sse-service';
 import { environment } from '../../../../environments/environment';
 
@@ -47,34 +47,43 @@ const MOCK_WINDOWS: WindowData[] = [
 @Injectable({
   providedIn: 'root'
 })
-export class WindowsRepository extends Repository<WindowData> {
+export class WindowsRepository extends Repository<Array<WindowData>> {
   override state: WritableSignal<WindowData[]> = signal<WindowData[]>(
     environment.staticMode ? MOCK_WINDOWS : []
   );
 
-  private roomObservable: Observable<Array<WindowData>> | null = null;
+  private windowObservable: Observable<Array<WindowData>> | null = null;
 
   constructor(protected sseService: SseService) {
     super();
 
-    if (!environment.staticMode) {
-      this.roomObservable = sseService.createEventSource<Array<WindowData>>('windows');
+    if (environment.staticMode)
+      return
 
-      this.roomObservable.subscribe(windowData => {
-        this.state.set(windowData);
-      });
-    }
+    this.windowObservable = sseService.createEventSource<Array<WindowData>>('windows');
+
+    this.windowObservable.subscribe(windowData => {
+      this.state.set(windowData);
+    });
+
   }
 
   override getData(): WindowData[] {
     return this.state();
   }
 
-  toggleOpen(id: string): void {
+  toggleOpen(id: string, power: boolean): Promise<unknown> {
     this.state.update(windows =>
       windows.map(w =>
         w.id === id ? { ...w, state: { ...w.state, open: !w.state.open } } : w
       )
     );
+
+    return firstValueFrom(
+      this.http.put(
+        this.requestUrl(`/devices/window/${id}/state/${power}`),
+        {}
+      )
+    )
   }
 }

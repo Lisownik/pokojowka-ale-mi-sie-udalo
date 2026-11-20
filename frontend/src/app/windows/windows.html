@@ -23,7 +23,7 @@
           type="button"
           class="toggle-switch"
           [class.on]="data.open"
-          (click)="toggleWindow(win.id, $event)"
+          (click)="toggleWindow(win.id, !data.open, $event)"
           [attr.aria-checked]="data.open"
           role="switch"
         >

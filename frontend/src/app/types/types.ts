@@ -45,10 +45,11 @@ export interface WindowData extends SseData{
   }
 }
 
-export interface HouseData extends SseData {
-  state: {
-    outdoorTemp: number;
-    rainDetected: boolean;
-    doorOpen: boolean;
-  };
+export class HouseData {
+  outdoorTemp?: number;
+  rain?: number;
+  open?: boolean;
+  motion_data?: number;
+  motion_detected?: boolean;
+
 }
