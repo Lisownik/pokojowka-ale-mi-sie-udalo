@@ -36,16 +36,16 @@ export class ZarowkaWidok implements OnInit {
     });
   }
 
-  toggleLight(): void {
+  toggleLight(power: boolean): void {
     if (this.lightId) {
-      this.bulbsRepo.togglePower(this.lightId);
+      this.bulbsRepo.togglePower(this.lightId, power)
     }
   }
 
   onBrightnessChange(event: Event): void {
     if (!this.lightId) return;
     const val = parseInt((event.target as HTMLInputElement).value, 10);
-    this.bulbsRepo.setBrightness(this.lightId, val);
+    this.bulbsRepo.setBrightness(this.lightId, val)
   }
 
   onTemperatureChange(event: Event): void {

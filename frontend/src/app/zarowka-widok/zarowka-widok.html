@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <button class="switch" [class.on]="data.power" (click)="toggleLight()">
+      <button class="switch" [class.on]="data.power" (click)="toggleLight(!data.power)">
         <span class="knob"></span>
       </button>
     </div>

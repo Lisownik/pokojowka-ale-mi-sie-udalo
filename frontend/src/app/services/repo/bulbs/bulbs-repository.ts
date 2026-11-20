@@ -1,7 +1,7 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { Repository } from '../../repository';
 import { BulbData } from '../../../types/types';
-import { Observable } from 'rxjs';
+import {firstValueFrom, Observable} from 'rxjs';
 import { SseService } from '../../sse/sse-service';
 import { environment } from '../../../../environments/environment';
 
@@ -59,43 +59,59 @@ const MOCK_BULBS: BulbData[] = [
 @Injectable({
   providedIn: 'root'
 })
-export class BulbsRepository extends Repository<BulbData> {
+export class BulbsRepository extends Repository<Array<BulbData>> {
   override state: WritableSignal<BulbData[]> = signal<BulbData[]>(
     environment.staticMode ? MOCK_BULBS : []
   );
 
-  private roomObservable: Observable<Array<BulbData>> | null = null;
+  private bulbObservable: Observable<Array<BulbData>> | null = null;
 
   constructor(protected sseService: SseService) {
     super();
 
-    if (!environment.staticMode) {
-      this.roomObservable = sseService.createEventSource<Array<BulbData>>('bulbs');
+    if (environment.staticMode)
+      return
 
-      this.roomObservable.subscribe(roomData => {
-        this.state.set(roomData);
-      });
-    }
+    this.bulbObservable = sseService.createEventSource<Array<BulbData>>('bulbs');
+
+    this.bulbObservable.subscribe(roomData => {
+      this.state.set(roomData);
+    });
+
   }
 
   override getData(): BulbData[] {
     return this.state();
   }
 
-  togglePower(id: string): void {
+  togglePower(id: string, power: boolean): Promise<unknown> {
     this.state.update(bulbs =>
       bulbs.map(b =>
-        b.id === id ? { ...b, state: { ...b.state, power: !b.state.power } } : b
+        b.id === id ? { ...b, state: { ...b.state, power: power } } : b
       )
     );
+
+    return firstValueFrom(
+      this.http.put(
+        this.requestUrl(`/devices/bulb/${id}/state/${power}`),
+        {}
+      )
+    )
   }
 
-  setBrightness(id: string, brightness: number): void {
+  setBrightness(id: string, brightness: number): Promise<unknown> {
     this.state.update(bulbs =>
       bulbs.map(b =>
         b.id === id ? { ...b, state: { ...b.state, brightness } } : b
       )
     );
+
+    return firstValueFrom(
+      this.http.put(
+        this.requestUrl(`/devices/bulb/${id}/brightness/${brightness}`),
+        {}
+      )
+    )
   }
 
   setTemperature(id: string, temperature: number): void {
@@ -104,5 +120,6 @@ export class BulbsRepository extends Repository<BulbData> {
         b.id === id ? { ...b, state: { ...b.state, temperature } } : b
       )
     );
+
   }
 }

@@ -17,8 +17,8 @@ export class ZarowkiComponent {
 
   constructor(private router: Router, public bulbsRepo: BulbsRepository) {}
 
-  toggleLight(id: string) {
-    this.bulbsRepo.togglePower(id);
+  toggleLight(id: string, power: boolean) {
+    this.bulbsRepo.togglePower(id, power);
   }
 
   onBrightnessChange(event: Event, id: string) {

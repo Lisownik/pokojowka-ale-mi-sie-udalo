@@ -23,7 +23,7 @@
           type="button"
           class="toggle-switch"
           [class.on]="data.power"
-          (click)="toggleLight(light.id); $event.stopPropagation()"
+          (click)="toggleLight(light.id, !data.power); $event.stopPropagation()"
           [attr.aria-checked]="data.power"
           role="switch"
         >
