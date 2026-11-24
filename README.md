@@ -68,8 +68,8 @@ Bazowy URL: `http://<host>:<port>`
 </details>
 
 <details>
-<hr>
 <summary><b>Devices (/devices)</b></summary>
+<hr>
 
 | Metoda | Endpoint       | Opis                                                                                      |
 |--------|----------------|-------------------------------------------------------------------------------------------|
