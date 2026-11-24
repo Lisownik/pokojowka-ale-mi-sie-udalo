@@ -24,8 +24,6 @@ import {parseAction} from "./notifications";
  * const actionManager = new ActionManager();
  * actionManager.tryEmit(id, event, "test")
  *
- * @remarks
- * Holds no mutable state; safe to share across requests.
  */
 export class ActionManager {
 
