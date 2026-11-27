@@ -61,7 +61,7 @@ export class DiscordBot {
 
       void this.syncCommands();
     } catch (e) {
-      console.error('Failed to initialize Discord bot:', e);
+      console.error('Failed to initialize Discord bot');
       this.isGit = false;
     } finally {
       console.groupEnd();
@@ -82,7 +82,7 @@ export class DiscordBot {
       console.log('Successfully reloaded application (/) commands.');
 
     } catch (error) {
-      console.error('Failed to sync application commands:', error);
+      console.error('Failed to sync application commands');
       this.isGit = false;
     }
   }
@@ -139,7 +139,7 @@ export class DiscordBot {
       await this.client?.login(this.TOKEN);
       this.isGit = true;
     } catch (e) {
-      console.error('Discord login failed:', e);
+      console.error('Discord login failed');
       this.isGit = false;
     }
   }

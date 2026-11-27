@@ -10,7 +10,7 @@ from time import sleep
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 import sys
 import env
-from ..lib.net import connect_to_wifi
+from lib.net import connect_to_wifi
 
 # CONST VALS
 LOG_CHAR_CNT = 60

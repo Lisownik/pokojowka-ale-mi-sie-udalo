@@ -7,7 +7,20 @@ from umqtt.simple import MQTTClient
 import sys
 import env
 from ..lib.net import connect_to_wifi
+from machine import Pin, PWM
 
+# Servo state
+
+PIN = 10
+
+CLOSED_ANGLE = 30
+OPENED_ANGLE = 120
+
+servo = PWM(Pin(10))
+servo.freq(50)
+
+MIN_NS = 500_000
+MAX_NS = 2_500_000
 
 # CONST VALS
 LOG_CHAR_CNT = 60
@@ -70,9 +83,10 @@ def get_initial_state(mqtt_client, timeout_ms=1000):
 
     print_with_style("INITIAL STATE")
     mqtt_client.set_callback(lambda topic, msg: received.append(msg))
-    mqtt_client.connect()
+    print("Trying to connect")
     try:
         mqtt_client.connect()
+        print("Subscribing")
         mqtt_client.subscribe(get_path_state())
 
         start = ticks_ms()
@@ -104,12 +118,15 @@ def get_initial_state(mqtt_client, timeout_ms=1000):
         opened = _open
 
     print('-' * LOG_CHAR_CNT)
+    process_state()
 
 def process_state():
     global opened
     print_with_style("CURRENT STATE", 40)
     print(f"Opened state: {opened}")
     print("-" * 40)
+
+    move_to(OPENED_ANGLE if opened else CLOSED_ANGLE, 1000)
 
 def on_message(topic, msg):
     global opened
@@ -120,9 +137,10 @@ def on_message(topic, msg):
 
     opened = event == "open"
 
-    process_state()
     if client:
         publish_state(client)
+
+    process_state()
 
 def publish_state(publisher):
     publisher.publish(
@@ -179,7 +197,10 @@ def main():
     print("STATUS PATH: " + get_path_status().decode())
     print("STATE PATH: " + get_path_state().decode())
 
-    client = MQTTClient(f"window-client-{MY_ID}", env.BROKER_HOST, env.BROKER_PORT)
+    client = MQTTClient(f"{MY_ID}",
+    env.BROKER_HOST,
+    env.BROKER_PORT,
+    keepalive=30)
 
     get_initial_state(client)
 
@@ -206,7 +227,7 @@ def main():
         client.wait_msg()
 
 
-if sys.platform == "esp32":
+if sys.platform == "esp32" or sys.platform == "rp2":
     connect_to_wifi(env)
 
 if __name__ == "__main__":

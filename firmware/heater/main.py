@@ -9,7 +9,7 @@ from time import ticks_ms, ticks_diff, sleep_ms
 from umqtt.simple import MQTTClient
 import sys
 import env
-from ..lib.net import connect_to_wifi
+from lib.net import connect_to_wifi
 
 import utime
 

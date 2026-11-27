@@ -7,7 +7,7 @@ from time import sleep
 from umqtt.simple import MQTTClient
 import sys
 import env
-from ..lib.net import connect_to_wifi
+from lib.net import connect_to_wifi
 
 
 # CONST VALS
