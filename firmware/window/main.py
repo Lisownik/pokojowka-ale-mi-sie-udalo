@@ -6,7 +6,20 @@ from time import ticks_ms, ticks_diff, sleep_ms
 from umqtt.simple import MQTTClient
 import sys
 import env
+from machine import Pin, PWM
 
+# Servo state
+
+PIN = 10
+
+CLOSED_ANGLE = 30
+OPENED_ANGLE = 120
+
+servo = PWM(Pin(10))
+servo.freq(50)
+
+MIN_NS = 500_000
+MAX_NS = 2_500_000
 
 # CONST VALS
 LOG_CHAR_CNT = 60
@@ -20,6 +33,32 @@ opened = False
 EVERY_ID = "<every>"
 MY_ID = "none"
 
+
+current_angle = 90.0
+
+def set_angle(angle):
+    global current_angle
+    angle = max(0.0, min(180.0, float(angle)))
+    pulse_ns = int(MIN_NS + (angle / 180.0) * (MAX_NS - MIN_NS))
+    servo.duty_ns(pulse_ns)
+    current_angle = angle
+
+def move_to(target_angle, duration_ms, step_ms=20):
+    target_angle = max(0.0, min(180.0, float(target_angle)))
+    start_angle = current_angle
+    
+    if duration_ms <= step_ms:
+        set_angle(target_angle)
+        return
+
+    steps = int(duration_ms // step_ms)
+    angle_step = (target_angle - start_angle) / steps
+
+    for i in range(1, steps + 1):
+        set_angle(start_angle + angle_step * i)
+        time.sleep_ms(step_ms)
+
+    set_angle(target_angle)
 
 def get_arg_id(argv):
     for a in argv[1:]:
@@ -69,9 +108,10 @@ def get_initial_state(mqtt_client, timeout_ms=1000):
 
     print_with_style("INITIAL STATE")
     mqtt_client.set_callback(lambda topic, msg: received.append(msg))
-    mqtt_client.connect()
+    print("Trying to connect")
     try:
         mqtt_client.connect()
+        print("Subscribing")
         mqtt_client.subscribe(get_path_state())
 
         start = ticks_ms()
@@ -103,12 +143,15 @@ def get_initial_state(mqtt_client, timeout_ms=1000):
         opened = _open
 
     print('-' * LOG_CHAR_CNT)
+    process_state()
 
 def process_state():
     global opened
     print_with_style("CURRENT STATE", 40)
     print(f"Opened state: {opened}")
     print("-" * 40)
+
+    move_to(OPENED_ANGLE if opened else CLOSED_ANGLE, 1000)
 
 def on_message(topic, msg):
     global opened
@@ -119,9 +162,10 @@ def on_message(topic, msg):
 
     opened = event == "open"
 
-    process_state()
     if client:
         publish_state(client)
+
+    process_state()    
 
 def publish_state(publisher):
     publisher.publish(
@@ -178,7 +222,10 @@ def main():
     print("STATUS PATH: " + get_path_status().decode())
     print("STATE PATH: " + get_path_state().decode())
 
-    client = MQTTClient(f"window-client-{MY_ID}", env.BROKER_HOST, env.BROKER_PORT)
+    client = MQTTClient(f"{MY_ID}", 
+    env.BROKER_HOST, 
+    env.BROKER_PORT,
+    keepalive=30)
 
     get_initial_state(client)
 
@@ -211,9 +258,10 @@ def connect_to_wifi():
     wlan.connect(env.WIFI_SSID, env.WIFI_PASSWORD)
     while not wlan.isconnected():
         print("Not connected to WLAN")
+        wlan.connect(env.WIFI_SSID, env.WIFI_PASSWORD)
         time.sleep(1)
 
-if sys.platform == "esp32":
+if sys.platform == "esp32" or sys.platform == "rp2":
     connect_to_wifi()
 
 if __name__ == "__main__":

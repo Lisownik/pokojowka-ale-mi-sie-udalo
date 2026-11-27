@@ -4,10 +4,7 @@ import { DeviceManager } from "./deviceManager";
 import {everyID} from "./types";
 
 export class AiClient {
-  client = new OpenAI({
-    // baseURL: Environment.GPT_BASE_URL,
-    apiKey: Environment.GPT_API_KEY
-  })
+  client: OpenAI | null = null 
 
 
 
@@ -16,11 +13,18 @@ export class AiClient {
   isOk: boolean = true;
 
   constructor(public deviceManager: DeviceManager) {
-
+    try{
+      this.client = new OpenAI({
+    // baseURL: Environment.GPT_BASE_URL,
+    apiKey: Environment.GPT_API_KEY
+  })
+    } catch(e){
+      console.error("Failed initialization of ai client")
+    }
   }
 
   private async useChatCompletion(systemTopic: string, userTopic: string): Promise<string | null>{
-    if(!this.isOk)
+    if(!this.isOk || !this.client)
       return "nothing..."
 
     console.log("useChatCompletion", systemTopic);
