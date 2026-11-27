@@ -35,6 +35,32 @@ EVERY_ID = "<every>"
 MY_ID = "none"
 
 
+current_angle = 90.0
+
+def set_angle(angle):
+    global current_angle
+    angle = max(0.0, min(180.0, float(angle)))
+    pulse_ns = int(MIN_NS + (angle / 180.0) * (MAX_NS - MIN_NS))
+    servo.duty_ns(pulse_ns)
+    current_angle = angle
+
+def move_to(target_angle, duration_ms, step_ms=20):
+    target_angle = max(0.0, min(180.0, float(target_angle)))
+    start_angle = current_angle
+
+    if duration_ms <= step_ms:
+        set_angle(target_angle)
+        return
+
+    steps = int(duration_ms // step_ms)
+    angle_step = (target_angle - start_angle) / steps
+
+    for i in range(1, steps + 1):
+        set_angle(start_angle + angle_step * i)
+        time.sleep_ms(step_ms)
+
+    set_angle(target_angle)
+
 def get_arg_id(argv):
     for a in argv[1:]:
         if a.startswith("--id="):
