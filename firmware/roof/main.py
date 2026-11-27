@@ -10,6 +10,7 @@ from time import sleep
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 import sys
 import env
+from ..lib.net import connect_to_wifi
 
 # CONST VALS
 LOG_CHAR_CNT = 60
@@ -259,18 +260,9 @@ def main():
         publish_state(client)
         sleep(5)
 
-def connect_to_wifi():
-    import wifi
-    while not wifi.radio.connected:
-        try:
-            wifi.radio.connect(env.WIFI_SSID, env.WIFI_PASSWORD)
-        except ConnectionError as e:
-            print("Not connected to WLAN:", e)
-            time.sleep(1)
-    print("Connected, IP:", wifi.radio.ipv4_address)
 
 if sys.platform == "esp32":
-    connect_to_wifi()
+    connect_to_wifi(env)
 
 if __name__ == "__main__":
     main()

@@ -7,6 +7,7 @@ from time import sleep
 from umqtt.simple import MQTTClient
 import sys
 import env
+from ..lib.net import connect_to_wifi
 
 
 # CONST VALS
@@ -218,17 +219,9 @@ def main():
     while True:
         client.wait_msg()
 
-def connect_to_wifi():
-    import network
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    wlan.connect(env.WIFI_SSID, env.WIFI_PASSWORD)
-    while not wlan.isconnected():
-        print("Not connected to WLAN")
-        time.sleep(1)
 
 if sys.platform == "esp32":
-    connect_to_wifi()
+    connect_to_wifi(env)
 
 if __name__ == "__main__":
     main()

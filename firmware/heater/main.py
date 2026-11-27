@@ -9,6 +9,7 @@ from time import ticks_ms, ticks_diff, sleep_ms
 from umqtt.simple import MQTTClient
 import sys
 import env
+from ..lib.net import connect_to_wifi
 
 import utime
 
@@ -110,14 +111,6 @@ def get_initial_state(client, timeout_ms=1000):
 
     print('-' * LOG_CHAR_CNT)
 
-def connect_to_wifi():
-    import network
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    wlan.connect(env.WIFI_SSID, env.WIFI_PASSWORD)
-    while not wlan.isconnected():
-        print("Not connected to WLAN")
-        time.sleep(1)
 
 def get_path_status():
     return f"devices/heater/{MY_ID}/status".encode()
@@ -261,7 +254,7 @@ def main():
 
 
 if sys.platform == "esp32":
-    connect_to_wifi()
+    connect_to_wifi(env)
 
 if __name__ == "__main__":
     main()

@@ -10,7 +10,9 @@ from umqtt.simple import MQTTClient
 import sys
 import env
 
-LOG_CHAR_CNT = 60
+from lib.net import connect_to_wifi
+from lib.fancyPrint import print_with_style, LOG_CHAR_CNT
+from lib.idFile import get_my_id
 
 client = "None"
 
@@ -24,10 +26,8 @@ freq = 5000
 duty = 1024
 
 # REAL STATE
-led_r = None
-led_g = None
-led_b = None
-
+pinout = 21
+led = None
 
 EVERY_ID = "<every>"
 MY_ID = "none"
@@ -35,68 +35,30 @@ MY_ID = "none"
 platform = "none"
 
 
-def get_arg_id(argv):
-    for a in argv[1:]:
-        if a.startswith("--id="):
-            return a[5:]
-    return None
-
-
-def print_with_style(text, char_cnt=LOG_CHAR_CNT):
-    text = text.strip()
-    char = '-'
-    chars = math.floor((char_cnt - len(text) - 2)/2)
-    print(char * chars + " " + text + " " + char * chars)
-
-
-def read_id_file():
-    try:
-        with open(env.ID_FILEPATH, 'r') as file:
-            text = file.read()
-            if text == "":
-                raise ValueError("Id not stored in id.txt")
-            return text
-    except OSError or ValueError:
-        reg_id = "tried-to-register-id-no-implementation"
-        if not reg_id:
-            raise Exception("No server no id file or id in file")
-        with open(env.ID_FILEPATH, 'w') as file:
-            file.write(reg_id)
-        return reg_id
-
-
-def get_my_id():
-    arg_id = get_arg_id(sys.argv)
-    if arg_id:
-        return arg_id
-    return read_id_file()
-
-
-def get_initial_state(client, timeout_ms=1000):
+def get_initial_state(mqtt_client, timeout_ms=1000):
     global brightness, power, temperature
     received = []
 
     print_with_style("INITIAL STATE")
-    client.set_callback(lambda topic, msg: received.append(msg))
-    client.connect()
+    mqtt_client.set_callback(lambda topic, msg: received.append(msg))
+    mqtt_client.connect()
     try:
-        client.connect()
-        client.subscribe(get_path_state())
+        mqtt_client.connect()
+        mqtt_client.subscribe(get_path_state())
 
         start = ticks_ms()
         while not received and ticks_diff(ticks_ms(), start) < timeout_ms:
-            client.check_msg()
+            mqtt_client.check_msg()
             sleep_ms(50)
     except Exception as e:
         print("MQTT error:", e)
     finally:
-        client.disconnect()
+        mqtt_client.disconnect()
 
     if not received:
         print("no retained state found")
         print('-' * LOG_CHAR_CNT)
         return
-
     try:
         data = json.loads(received[0].decode())
     except ValueError:
@@ -124,16 +86,6 @@ def get_initial_state(client, timeout_ms=1000):
     print('-' * LOG_CHAR_CNT)
 
 
-def connect_to_wifi():
-    import network
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    wlan.connect(env.WIFI_SSID, env.WIFI_PASSWORD)
-    while not wlan.isconnected():
-        print("Not connected to WLAN. Trying to reconnect...")
-        time.sleep(1)
-
-
 def get_path_status():
     return f"devices/smart_led/{MY_ID}/status".encode()
 
@@ -143,12 +95,9 @@ def get_path_state():
 
 
 def get_led_brightness():
-    global brightness
-    return int(brightness/100 * duty - 1)
-
-
-def get_rgb_from_kelvin(temperature):
-    return weird.kelvin_to_rgb(temperature)
+    global brightness, duty
+    u16 = math.pow(2,16)-1
+    return int(brightness/100 * u16)
 
 
 def process_state():
@@ -159,17 +108,12 @@ def process_state():
     print(f"power state: {'on' if power else 'off'}")
     print(f"brightness: {brightness}")
     print(f"color temperature: {temperature}")
+    print(f"platform: {platform}")
+    if platform == "esp32" or platform == "rp2":
+        currDuty = power * get_led_brightness()
+        print(f"powering led: {currDuty}")
+        led.duty_u16(currDuty)
     print("-" * 40)
-    if (platform == "esp32" and
-            led_b is not None and
-            led_r is not None and
-            led_g is not None):
-        led_r.duty(power * get_led_brightness() *
-                   get_rgb_from_kelvin(temperature)[0] // 255)
-        led_g.duty(power * get_led_brightness() *
-                   get_rgb_from_kelvin(temperature)[1] // 255)
-        led_b.duty(power * get_led_brightness() *
-                   get_rgb_from_kelvin(temperature)[2] // 255)
 
 
 def on_message(topic, msg):
@@ -189,9 +133,9 @@ def on_message(topic, msg):
         if not isnan(new_brightness):
             brightness = new_brightness
 
-    process_state()
     if client:
         publish_state(client)
+    process_state()
 
 
 def get_subscriptions():
@@ -261,7 +205,7 @@ def main():
     global client
     print_configuration()
 
-    MY_ID = get_my_id()
+    MY_ID = get_my_id(sys, env.ID_FILEPATH)
 
     print("MY ID: " + MY_ID)
     print("STATUS PATH: " + get_path_status().decode())
@@ -304,28 +248,21 @@ def main():
 
 
 def realConfig():
-    global led_r, led_g, led_b
+    global led
     from machine import Pin, PWM
-    led_r = PWM(Pin(25))
-    led_r.freq(freq)
-    led_g = PWM(Pin(26))
-    led_g.freq(freq)
-    led_b = PWM(Pin(27))
-    led_b.freq(freq)
+    led = PWM(Pin(pinout))
+    led.freq(freq)
+    led.duty_u16(duty)
 
-
-if sys.platform == "esp32":
-    connect_to_wifi()
-    print("jestem esp")
-    platform = "esp32"
-    realConfig()
 
 if __name__ == "__main__":
     try:
+        if sys.platform == "esp32" or sys.platform == "rp2":
+            connect_to_wifi(env)
+            platform = sys.platform
+            realConfig()
         main()
     except Exception as e:
-        print("Throwed uncatched exception. Restarting the machine...")
-        if platform == "esp32":
-            sys.print_exception(e)
-            import machine
-            machine.reset()
+        print("Crashed:", e)
+        time.sleep(2)
+        machine.reset()
